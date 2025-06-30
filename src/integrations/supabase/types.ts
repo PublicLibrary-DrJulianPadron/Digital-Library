@@ -9,13 +9,114 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      horarios_bloqueados: {
+        Row: {
+          created_at: string
+          descripcion: string | null
+          es_permanente: boolean | null
+          fecha: string
+          hora_fin: string
+          hora_inicio: string
+          id: string
+          motivo: string
+        }
+        Insert: {
+          created_at?: string
+          descripcion?: string | null
+          es_permanente?: boolean | null
+          fecha: string
+          hora_fin: string
+          hora_inicio: string
+          id?: string
+          motivo: string
+        }
+        Update: {
+          created_at?: string
+          descripcion?: string | null
+          es_permanente?: boolean | null
+          fecha?: string
+          hora_fin?: string
+          hora_inicio?: string
+          id?: string
+          motivo?: string
+        }
+        Relationships: []
+      }
+      solicitudes_prestamo_sala: {
+        Row: {
+          cedula: string
+          comentarios_admin: string | null
+          created_at: string
+          descripcion: string
+          email: string
+          equipos_solicitados: string | null
+          estado: string
+          fecha_evento: string
+          fecha_respuesta: string | null
+          hora_fin: string
+          hora_inicio: string
+          id: string
+          nombre_completo: string
+          numero_participantes: number
+          numero_solicitud: string
+          requiere_equipos: boolean | null
+          telefono: string
+          tipo_evento: string
+          updated_at: string
+        }
+        Insert: {
+          cedula: string
+          comentarios_admin?: string | null
+          created_at?: string
+          descripcion: string
+          email: string
+          equipos_solicitados?: string | null
+          estado?: string
+          fecha_evento: string
+          fecha_respuesta?: string | null
+          hora_fin: string
+          hora_inicio: string
+          id?: string
+          nombre_completo: string
+          numero_participantes: number
+          numero_solicitud: string
+          requiere_equipos?: boolean | null
+          telefono: string
+          tipo_evento: string
+          updated_at?: string
+        }
+        Update: {
+          cedula?: string
+          comentarios_admin?: string | null
+          created_at?: string
+          descripcion?: string
+          email?: string
+          equipos_solicitados?: string | null
+          estado?: string
+          fecha_evento?: string
+          fecha_respuesta?: string | null
+          hora_fin?: string
+          hora_inicio?: string
+          id?: string
+          nombre_completo?: string
+          numero_participantes?: number
+          numero_solicitud?: string
+          requiere_equipos?: boolean | null
+          telefono?: string
+          tipo_evento?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_solicitud_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

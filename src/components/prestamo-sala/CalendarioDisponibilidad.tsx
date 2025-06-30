@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { format, isSameDay, isAfter, isBefore, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CalendarIcon, InfoIcon } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CalendarioDisponibilidadProps {
   fechaSeleccionada?: Date;
@@ -20,19 +21,42 @@ export function CalendarioDisponibilidad({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulamos la carga de fechas ocupadas desde la base de datos
     const cargarFechasOcupadas = async () => {
       setIsLoading(true);
       try {
-        // Aquí se consultarán las fechas ocupadas desde Supabase
-        // Por ahora simulamos algunas fechas ocupadas
-        const fechasSimuladas = [
-          new Date(2024, 11, 15), // 15 de diciembre
-          new Date(2024, 11, 22), // 22 de diciembre
-          new Date(2024, 11, 25), // 25 de diciembre (Navidad)
-          new Date(2025, 0, 1),   // 1 de enero (Año Nuevo)
-        ];
-        setFechasOcupadas(fechasSimuladas);
+        // Obtener horarios bloqueados
+        const { data: horariosBloquados, error: errorBloqueados } = await supabase
+          .from('horarios_bloqueados')
+          .select('fecha')
+          .gte('fecha', new Date().toISOString().split('T')[0]);
+
+        // Obtener solicitudes aprobadas
+        const { data: solicitudesAprobadas, error: errorSolicitudes } = await supabase
+          .from('solicitudes_prestamo_sala')
+          .select('fecha_evento')
+          .eq('estado', 'aprobada')
+          .gte('fecha_evento', new Date().toISOString().split('T')[0]);
+
+        if (errorBloqueados) {
+          console.error('Error al cargar horarios bloqueados:', errorBloqueados);
+        }
+        if (errorSolicitudes) {
+          console.error('Error al cargar solicitudes aprobadas:', errorSolicitudes);
+        }
+
+        // Combinar fechas ocupadas
+        const fechasOcupadasSet = new Set<string>();
+        
+        horariosBloquados?.forEach(horario => {
+          fechasOcupadasSet.add(horario.fecha);
+        });
+
+        solicitudesAprobadas?.forEach(solicitud => {
+          fechasOcupadasSet.add(solicitud.fecha_evento);
+        });
+
+        const fechasOcupadasArray = Array.from(fechasOcupadasSet).map(fecha => new Date(fecha + 'T00:00:00'));
+        setFechasOcupadas(fechasOcupadasArray);
       } catch (error) {
         console.error('Error al cargar fechas ocupadas:', error);
       } finally {
@@ -54,32 +78,25 @@ export function CalendarioDisponibilidad({
     const limiteMaximo = addDays(hoy, 90);
     if (isAfter(fecha, limiteMaximo)) return false;
     
+    // No permitir domingos (día 0)
+    if (fecha.getDay() === 0) return false;
+    
     // Verificar si la fecha está ocupada
     return !fechasOcupadas.some(fechaOcupada => isSameDay(fecha, fechaOcupada));
-  };
-
-  const getEstadoFecha = (fecha: Date) => {
-    if (!esFechaDisponible(fecha)) {
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      
-      if (isBefore(fecha, hoy)) return 'pasada';
-      if (fechasOcupadas.some(f => isSameDay(f, fecha))) return 'ocupada';
-      return 'no-disponible';
-    }
-    return 'disponible';
   };
 
   const modifiers = {
     ocupada: fechasOcupadas,
     disponible: (fecha: Date) => esFechaDisponible(fecha),
-    seleccionada: fechaSeleccionada ? [fechaSeleccionada] : []
+    seleccionada: fechaSeleccionada ? [fechaSeleccionada] : [],
+    domingo: (fecha: Date) => fecha.getDay() === 0
   };
 
   const modifiersClassNames = {
     ocupada: 'bg-red-100 text-red-800 hover:bg-red-200 line-through',
     disponible: 'bg-green-50 text-green-800 hover:bg-green-100 cursor-pointer',
-    seleccionada: 'bg-biblioteca-blue text-white hover:bg-biblioteca-blue/80 ring-2 ring-biblioteca-gold'
+    seleccionada: 'bg-biblioteca-blue text-white hover:bg-biblioteca-blue/80 ring-2 ring-biblioteca-gold',
+    domingo: 'bg-gray-100 text-gray-400 cursor-not-allowed'
   };
 
   return (
@@ -139,6 +156,10 @@ export function CalendarioDisponibilidad({
                 <div className="w-4 h-4 bg-biblioteca-blue rounded mr-3"></div>
                 <span className="text-sm text-biblioteca-gray">Fecha seleccionada</span>
               </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded mr-3"></div>
+                <span className="text-sm text-biblioteca-gray">Domingos (cerrado)</span>
+              </div>
             </div>
           </div>
 
@@ -177,6 +198,7 @@ export function CalendarioDisponibilidad({
               <li>• Capacidad máxima: 50 personas</li>
               <li>• Solicitud mínima: 2 días de anticipación</li>
               <li>• Confirmación por email en 24 horas</li>
+              <li>• Los domingos la biblioteca permanece cerrada</li>
             </ul>
           </div>
         </div>

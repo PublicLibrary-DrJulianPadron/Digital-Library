@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowLeft, User, Mail, Phone, Hash, Calendar, Clock, Users, FileText } from 'lucide-react';
 import { DatosSolicitud } from '@/pages/PrestamoSala';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface FormularioSolicitudProps {
   datosSolicitud: Partial<DatosSolicitud>;
@@ -29,6 +31,7 @@ export function FormularioSolicitud({
   isLoading
 }: FormularioSolicitudProps) {
   const [errores, setErrores] = useState<Record<string, string>>({});
+  const { toast } = useToast();
 
   const validarCampo = (campo: string, valor: any) => {
     const nuevosErrores = { ...errores };
@@ -123,13 +126,61 @@ export function FormularioSolicitud({
     e.preventDefault();
     
     if (!validarFormulario()) {
+      toast({
+        title: "Error en el formulario",
+        description: "Por favor corrige los errores antes de continuar",
+        variant: "destructive"
+      });
       return;
     }
 
     try {
+      // Preparar datos para inserción en Supabase
+      const datosParaInsertar = {
+        fecha_evento: datosSolicitud.fecha!.toISOString().split('T')[0],
+        hora_inicio: datosSolicitud.horaInicio!,
+        hora_fin: datosSolicitud.horaFin!,
+        tipo_evento: datosSolicitud.tipoEvento!,
+        numero_participantes: datosSolicitud.numeroParticipantes!,
+        descripcion: datosSolicitud.descripcion!,
+        requiere_equipos: datosSolicitud.requiereEquipos || false,
+        equipos_solicitados: datosSolicitud.equiposSolicitados || null,
+        nombre_completo: datosSolicitud.nombreCompleto!,
+        cedula: datosSolicitud.cedula!,
+        email: datosSolicitud.email!,
+        telefono: datosSolicitud.telefono!
+      };
+
+      const { data, error } = await supabase
+        .from('solicitudes_prestamo_sala')
+        .insert([datosParaInsertar])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error al insertar solicitud:', error);
+        toast({
+          title: "Error al enviar solicitud",
+          description: "Hubo un problema al procesar tu solicitud. Inténtalo nuevamente.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('Solicitud enviada exitosamente:', data);
+      toast({
+        title: "Solicitud enviada",
+        description: "Tu solicitud ha sido registrada exitosamente",
+      });
+
       await onEnviar(datosSolicitud as DatosSolicitud);
     } catch (error) {
       console.error('Error al enviar formulario:', error);
+      toast({
+        title: "Error inesperado",
+        description: "Ocurrió un error inesperado. Por favor inténtalo de nuevo.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -375,8 +426,8 @@ export function FormularioSolicitud({
                 {datosSolicitud.tipoEvento && (
                   <div>
                     <p className="text-sm text-biblioteca-gray mb-1">Tipo de Evento</p>
-                    <Badge variant="outline" className="bg-biblioteca-light/20">
-                      {datosSolicitud.tipoEvento}
+                    <Badge variant="outline" className="bg-biblioteca-light/20 capitalize">
+                      {datosSolicitud.tipoEvento.replace('-', ' ')}
                     </Badge>
                   </div>
                 )}

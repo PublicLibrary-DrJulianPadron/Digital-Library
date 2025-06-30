@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Clock, ArrowLeft, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SelectorHorariosProps {
   fecha: Date;
@@ -38,17 +39,59 @@ export function SelectorHorarios({
     const cargarDisponibilidadHorarios = async () => {
       setIsLoading(true);
       try {
+        const fechaStr = fecha.toISOString().split('T')[0];
+        
+        // Consultar horarios bloqueados para esta fecha
+        const { data: horariosBloquados, error: errorBloqueados } = await supabase
+          .from('horarios_bloqueados')
+          .select('hora_inicio, hora_fin')
+          .eq('fecha', fechaStr);
+
+        // Consultar solicitudes aprobadas para esta fecha
+        const { data: solicitudesAprobadas, error: errorSolicitudes } = await supabase
+          .from('solicitudes_prestamo_sala')
+          .select('hora_inicio, hora_fin')
+          .eq('fecha_evento', fechaStr)
+          .eq('estado', 'aprobada');
+
+        if (errorBloqueados) {
+          console.error('Error al cargar horarios bloqueados:', errorBloqueados);
+        }
+        if (errorSolicitudes) {
+          console.error('Error al cargar solicitudes aprobadas:', errorSolicitudes);
+        }
+
         // Generar franjas horarias de 2 horas cada una
         const franjas: FranjaHoraria[] = [
           { inicio: '08:00', fin: '10:00', disponible: true, etiqueta: 'Mañana temprano' },
           { inicio: '10:00', fin: '12:00', disponible: true, etiqueta: 'Media mañana' },
-          { inicio: '12:00', fin: '14:00', disponible: false, etiqueta: 'Mediodía' }, // Ocupado
+          { inicio: '12:00', fin: '14:00', disponible: true, etiqueta: 'Mediodía' },
           { inicio: '14:00', fin: '16:00', disponible: true, etiqueta: 'Tarde temprana' },
           { inicio: '16:00', fin: '18:00', disponible: true, etiqueta: 'Tarde' },
         ];
 
-        // Aquí se consultaría la disponibilidad real desde Supabase
-        // Por ahora simulamos algunos horarios ocupados
+        // Marcar franjas como ocupadas
+        const horariosOcupados = [
+          ...(horariosBloquados || []),
+          ...(solicitudesAprobadas || [])
+        ];
+
+        franjas.forEach(franja => {
+          const ocupado = horariosOcupados.some(horario => {
+            const inicioFranja = franja.inicio;
+            const finFranja = franja.fin;
+            const inicioOcupado = horario.hora_inicio;
+            const finOcupado = horario.hora_fin;
+
+            // Verificar si hay solapamiento
+            return (inicioFranja < finOcupado && finFranja > inicioOcupado);
+          });
+
+          if (ocupado) {
+            franja.disponible = false;
+          }
+        });
+
         setFranjasHorarias(franjas);
       } catch (error) {
         console.error('Error al cargar disponibilidad de horarios:', error);

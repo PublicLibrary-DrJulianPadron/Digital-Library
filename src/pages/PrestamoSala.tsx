@@ -102,12 +102,12 @@ const PrestamoSala = () => {
             onEnviar={async (datos) => {
               setIsLoading(true);
               try {
-                // Aquí se enviará la solicitud a Supabase
-                console.log('Enviando solicitud:', datos);
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Simulación
+                // Los datos ya se insertaron en FormularioSolicitud
+                console.log('Solicitud procesada:', datos);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Simulación
                 setPasoActual('confirmacion');
               } catch (error) {
-                console.error('Error al enviar solicitud:', error);
+                console.error('Error al procesar solicitud:', error);
               } finally {
                 setIsLoading(false);
               }
