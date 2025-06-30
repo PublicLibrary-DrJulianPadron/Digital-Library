@@ -80,6 +80,11 @@ const Catalog = () => {
 
   const genres = Array.from(new Set(books.map(book => book.genre)));
 
+  const handleGenreChange = (value: string) => {
+    // Convert "all-genres" back to empty string for internal state
+    setSelectedGenre(value === 'all-genres' ? '' : value);
+  };
+
   const handleAddBook = (bookData: Omit<Book, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newBook: Book = {
       ...bookData,
@@ -168,8 +173,8 @@ const Catalog = () => {
           <BookSearch
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
-            selectedGenre={selectedGenre}
-            onGenreChange={setSelectedGenre}
+            selectedGenre={selectedGenre || 'all-genres'}
+            onGenreChange={handleGenreChange}
             genres={genres}
           />
 

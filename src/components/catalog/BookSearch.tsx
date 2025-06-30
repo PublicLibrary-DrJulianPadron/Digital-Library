@@ -39,7 +39,7 @@ export function BookSearch({
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los géneros</SelectItem>
+            <SelectItem value="all-genres">Todos los géneros</SelectItem>
             {genres.map((genre) => (
               <SelectItem key={genre} value={genre}>
                 {genre}
