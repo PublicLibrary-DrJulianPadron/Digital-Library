@@ -10,6 +10,7 @@ import { UserProfile } from "./components/UserProfile";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
 import PrestamoSala from "./pages/PrestamoSala";
+import Estadisticas from "./pages/Estadisticas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/catalogo" element={<Catalog />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
+                  <Route path="/estadisticas" element={<Estadisticas />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
