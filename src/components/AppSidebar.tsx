@@ -1,60 +1,36 @@
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Home, BookOpen, Calendar, Clock, BarChart3, User } from "lucide-react";
-
-const menuItems = [
-  {
-    title: "Inicio",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Catálogo",
-    url: "/catalogo",
-    icon: BookOpen,
-  },
-  {
-    title: "Préstamo Sala",
-    url: "/prestamo-sala",
-    icon: Calendar,
-  },
-  {
-    title: "Historia",
-    url: "/historia",
-    icon: Clock,
-  },
-];
-
-const adminItems = [
-  {
-    title: "Estadísticas",
-    url: "/estadisticas",
-    icon: BarChart3,
-  },
-  {
-    title: "Gestión",
-    url: "/gestion",
-    icon: User,
-  },
-];
-
+const menuItems = [{
+  title: "Inicio",
+  url: "/",
+  icon: Home
+}, {
+  title: "Catálogo",
+  url: "/catalogo",
+  icon: BookOpen
+}, {
+  title: "Préstamo Sala",
+  url: "/prestamo-sala",
+  icon: Calendar
+}, {
+  title: "Historia",
+  url: "/historia",
+  icon: Clock
+}];
+const adminItems = [{
+  title: "Estadísticas",
+  url: "/estadisticas",
+  icon: BarChart3
+}, {
+  title: "Gestión",
+  url: "/gestion",
+  icon: User
+}];
 export function AppSidebar() {
-  return (
-    <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
+  return <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
       <SidebarHeader className="border-b border-sidebar-border/20">
         <div className="flex flex-col items-center py-4">
-          <div className="w-12 h-12 bg-biblioteca-gold rounded-full flex items-center justify-center mb-2">
+          <div className="w-12 h-12 bg-biblioteca-gold rounded-full flex items-center justify-center mb-2 bg-zinc-50">
             <BookOpen className="w-6 h-6 text-biblioteca-blue" />
           </div>
           <h2 className="font-display text-sm font-semibold text-white text-center leading-tight">
@@ -73,19 +49,14 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
-                  >
+              {menuItems.map(item => <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
                     <a href={item.url} className="flex items-center gap-3">
                       <item.icon size={18} />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                </SidebarMenuItem>)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -96,19 +67,14 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
-                  >
+              {adminItems.map(item => <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
                     <a href={item.url} className="flex items-center gap-3">
                       <item.icon size={18} />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                </SidebarMenuItem>)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -124,6 +90,5 @@ export function AppSidebar() {
           </p>
         </div>
       </SidebarFooter>
-    </Sidebar>
-  );
+    </Sidebar>;
 }
