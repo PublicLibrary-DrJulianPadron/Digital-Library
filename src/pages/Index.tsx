@@ -1,16 +1,13 @@
-
 import { SearchSection } from "@/components/SearchSection";
 import { FeaturedBooks } from "@/components/FeaturedBooks";
 import { ServicesSection } from "@/components/ServicesSection";
 import { NewsSection } from "@/components/NewsSection";
 import { Footer } from "@/components/Footer";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       {/* Hero Section con búsqueda */}
       <section className="relative bg-gradient-to-br from-biblioteca-blue to-biblioteca-red/10 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 celosia-decoration opacity-20"></div>
+        <div className="absolute inset-0 celosia-decoration opacity-20 bg-zinc-400"></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">
@@ -57,8 +54,6 @@ const Index = () => {
       
       {/* Footer */}
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
