@@ -34,7 +34,7 @@ const App = () => (
               <div className="flex-1">
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/catalogo" element={<Catalog />} />
+                  <Route path="/coleccion" element={<Catalog />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
