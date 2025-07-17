@@ -1,5 +1,5 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Home, BookOpen, Calendar, Clock, BarChart3, User } from "lucide-react";
+import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
 const menuItems = [{
   title: "Inicio",
   url: "/",
@@ -25,6 +25,10 @@ const adminItems = [{
   title: "Gestión",
   url: "/gestion",
   icon: User
+},{
+  title: "Colección",
+  url: "/coleccion",
+  icon: LibraryBig
 }];
 export function AppSidebar() {
   return <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
@@ -85,7 +89,7 @@ export function AppSidebar() {
           <p className="text-xs text-biblioteca-gold">
             Av. Orinoco con Calle Libertador
           </p>
-          <p className="text-xs text-white/80">
+          <p className="text-xs text  -white/80">
             Maturín, Monagas, Venezuela
           </p>
         </div>
