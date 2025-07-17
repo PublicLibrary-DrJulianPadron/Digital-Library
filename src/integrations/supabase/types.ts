@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      libros: {
+        Row: {
+          ano_publicacion: number | null
+          autor: string
+          cantidad_existencia: number
+          created_at: string
+          id: string
+          isbn: string | null
+          nombre: string
+          tipo_material: string
+          updated_at: string
+        }
+        Insert: {
+          ano_publicacion?: number | null
+          autor: string
+          cantidad_existencia?: number
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          nombre: string
+          tipo_material?: string
+          updated_at?: string
+        }
+        Update: {
+          ano_publicacion?: number | null
+          autor?: string
+          cantidad_existencia?: number
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          nombre?: string
+          tipo_material?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       solicitudes_prestamo_sala: {
         Row: {
           cedula: string
