@@ -89,7 +89,7 @@ export function AppSidebar() {
           <p className="text-xs text-biblioteca-gold">
             Av. Orinoco con Calle Libertador
           </p>
-          <p className="text-xs text-white/80">
+          <p className="text-xs text  -white/80">
             Maturín, Monagas, Venezuela
           </p>
         </div>
