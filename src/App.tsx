@@ -9,6 +9,7 @@ import { AppSidebar } from "./components/AppSidebar";
 import { UserProfile } from "./components/UserProfile";
 import Index from "./pages/Index";
 import Catalog from "./pages/Catalog";
+import Coleccion from "./pages/Coleccion";
 import PrestamoSala from "./pages/PrestamoSala";
 import Estadisticas from "./pages/Estadisticas";
 import Gestion from "./pages/Gestion";
@@ -34,7 +35,8 @@ const App = () => (
               <div className="flex-1">
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/coleccion" element={<Catalog />} />
+                  <Route path="/catalogo" element={<Catalog />} />
+                  <Route path="/coleccion" element={<Coleccion />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
