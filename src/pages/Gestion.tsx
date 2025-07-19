@@ -10,6 +10,7 @@ import { Eye, Search, ChevronUp, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { AddUserDialog } from '@/components/AddUserDialog';
 
 interface Usuario {
   id: string;
@@ -157,7 +158,7 @@ export default function Gestion() {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold text-biblioteca-blue">Gestión de Usuarios</h1>
         
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -167,6 +168,7 @@ export default function Gestion() {
               className="pl-10"
             />
           </div>
+          <AddUserDialog onUserAdded={fetchUsuarios} />
         </div>
       </div>
 

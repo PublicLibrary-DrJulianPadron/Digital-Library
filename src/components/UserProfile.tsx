@@ -1,4 +1,6 @@
 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogOut } from "lucide-react";
 import {
   DropdownMenu,
@@ -9,8 +11,77 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+
+interface CurrentUser {
+  id: string;
+  nombre_completo: string;
+  email: string;
+}
 
 export function UserProfile() {
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchCurrentUser();
+    
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        fetchCurrentUser();
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, nombre_completo, email')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (profile) {
+          setCurrentUser(profile);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleProfileClick = () => {
+    if (currentUser?.id) {
+      navigate(`/gestion/usuario/${currentUser.id}`);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -18,15 +89,20 @@ export function UserProfile() {
           <Avatar className="w-8 h-8 border-2 border-biblioteca-gold">
             <AvatarImage src="/placeholder-user.jpg" />
             <AvatarFallback className="bg-biblioteca-gold text-biblioteca-blue font-semibold">
-              U
+              {currentUser ? getInitials(currentUser.nombre_completo) : 'U'}
             </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-lg" align="end">
-        <DropdownMenuLabel className="text-biblioteca-blue">Mi Cuenta</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-biblioteca-blue">
+          {currentUser ? currentUser.nombre_completo : 'Mi Cuenta'}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer hover:bg-biblioteca-light transition-colors">
+        <DropdownMenuItem 
+          className="cursor-pointer hover:bg-biblioteca-light transition-colors"
+          onClick={handleProfileClick}
+        >
           <User className="mr-2 h-4 w-4" />
           <span>Perfil</span>
         </DropdownMenuItem>
@@ -39,7 +115,10 @@ export function UserProfile() {
           <span>Configuración</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer hover:bg-red-50 text-red-600 transition-colors">
+        <DropdownMenuItem 
+          className="cursor-pointer hover:bg-red-50 text-red-600 transition-colors"
+          onClick={handleSignOut}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar Sesión</span>
         </DropdownMenuItem>
