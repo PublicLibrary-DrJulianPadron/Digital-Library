@@ -47,7 +47,7 @@ export default function Gestion() {
   const fetchUsuarios = async () => {
     try {
       const { data, error } = await supabase
-        .from('usuarios')
+        .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -102,7 +102,7 @@ export default function Gestion() {
   const toggleUsuarioStatus = async (usuarioId: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('usuarios')
+        .from('profiles')
         .update({ activo: !currentStatus })
         .eq('id', usuarioId);
 
