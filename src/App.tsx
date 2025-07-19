@@ -14,6 +14,7 @@ import PrestamoSala from "./pages/PrestamoSala";
 import Estadisticas from "./pages/Estadisticas";
 import Gestion from "./pages/Gestion";
 import DetallesUsuario from "./pages/DetallesUsuario";
+import UserProfilePage from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,7 +41,7 @@ const App = () => (
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
-                  <Route path="/gestion/usuario/:id" element={<DetallesUsuario />} />
+                  <Route path="/gestion/usuario/:id" element={<UserProfilePage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

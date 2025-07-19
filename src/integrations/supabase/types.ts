@@ -83,6 +83,60 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          activo: boolean
+          cedula: string
+          created_at: string
+          direccion: string | null
+          edad: number | null
+          email: string
+          fecha_registro: string
+          id: string
+          nombre_completo: string
+          ocupacion: string | null
+          prestamos_activos: number
+          telefono: string | null
+          total_libros_prestados: number
+          ultima_actividad: string | null
+          updated_at: string
+        }
+        Insert: {
+          activo?: boolean
+          cedula: string
+          created_at?: string
+          direccion?: string | null
+          edad?: number | null
+          email: string
+          fecha_registro?: string
+          id: string
+          nombre_completo: string
+          ocupacion?: string | null
+          prestamos_activos?: number
+          telefono?: string | null
+          total_libros_prestados?: number
+          ultima_actividad?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activo?: boolean
+          cedula?: string
+          created_at?: string
+          direccion?: string | null
+          edad?: number | null
+          email?: string
+          fecha_registro?: string
+          id?: string
+          nombre_completo?: string
+          ocupacion?: string | null
+          prestamos_activos?: number
+          telefono?: string | null
+          total_libros_prestados?: number
+          ultima_actividad?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       solicitudes_prestamo_sala: {
         Row: {
           cedula: string
@@ -149,6 +203,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usuarios: {
         Row: {
           activo: boolean
@@ -200,9 +283,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "bibliotecario" | "usuario"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -329,6 +419,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "bibliotecario", "usuario"],
+    },
   },
 } as const
