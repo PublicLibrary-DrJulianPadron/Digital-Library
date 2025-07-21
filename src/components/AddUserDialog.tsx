@@ -119,7 +119,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-biblioteca-primary hover:bg-biblioteca-primary/90">
+        <Button className="bg-primary fg-primary-foreground hover:bg-biblioteca-primary/90">
           <UserPlus className="h-4 w-4 mr-2" />
           Agregar Usuario
         </Button>
