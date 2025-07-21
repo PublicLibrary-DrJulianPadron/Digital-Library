@@ -18,6 +18,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
     nombre_completo: '',
     cedula: '',
     email: '',
+    password: '',
     telefono: '',
     edad: '',
     direccion: '',
@@ -28,10 +29,10 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nombre_completo || !formData.cedula || !formData.email) {
+    if (!formData.email || !formData.password) {
       toast({
         title: "Error",
-        description: "Por favor complete los campos obligatorios",
+        description: "Por favor complete email y contraseña",
         variant: "destructive",
       });
       return;
@@ -43,6 +44,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
       // First create the auth user
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: formData.email,
+        password: formData.password,
         email_confirm: true,
         user_metadata: {
           nombre_completo: formData.nombre_completo,
@@ -89,6 +91,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
           nombre_completo: '',
           cedula: '',
           email: '',
+          password: '',
           telefono: '',
           edad: '',
           direccion: '',
@@ -121,40 +124,18 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
       <DialogTrigger asChild>
         <Button className="bg-primary fg-primary-foreground hover:bg-biblioteca-primary/90">
           <UserPlus className="h-4 w-4 mr-2" />
-          Agregar Usuario
+          Añadir usuario
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Agregar Nuevo Usuario</DialogTitle>
+          <DialogTitle>Añadir Usuario</DialogTitle>
           <DialogDescription>
-            Complete la información del nuevo usuario. Los campos marcados con * son obligatorios.
+            Complete la información del nuevo usuario. Solo email y contraseña son obligatorios.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre_completo">Nombre Completo *</Label>
-              <Input
-                id="nombre_completo"
-                value={formData.nombre_completo}
-                onChange={(e) => handleInputChange('nombre_completo', e.target.value)}
-                placeholder="Ingrese el nombre completo"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cedula">Cédula *</Label>
-              <Input
-                id="cedula"
-                value={formData.cedula}
-                onChange={(e) => handleInputChange('cedula', e.target.value)}
-                placeholder="Ingrese la cédula"
-                required
-              />
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="email">Email *</Label>
               <Input
@@ -164,6 +145,38 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 placeholder="Ingrese el email"
                 required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Contraseña *</Label>
+              <Input
+                id="password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                placeholder="Ingrese la contraseña"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="nombre_completo">Nombre Completo</Label>
+              <Input
+                id="nombre_completo"
+                value={formData.nombre_completo}
+                onChange={(e) => handleInputChange('nombre_completo', e.target.value)}
+                placeholder="Ingrese el nombre completo"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cedula">Cédula</Label>
+              <Input
+                id="cedula"
+                value={formData.cedula}
+                onChange={(e) => handleInputChange('cedula', e.target.value)}
+                placeholder="Ingrese la cédula"
               />
             </div>
 
