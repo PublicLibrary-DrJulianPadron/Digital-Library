@@ -28,7 +28,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       toast({
         title: "Error",
@@ -39,7 +39,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
     }
 
     setLoading(true);
-    
+
     try {
       // First create the auth user
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
@@ -122,7 +122,7 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-primary fg-primary-foreground hover:bg-biblioteca-primary/90">
+        <Button className="bg-primary fg-primary-foreground hover:bg-primary/90">
           <UserPlus className="h-4 w-4 mr-2" />
           Añadir usuario
         </Button>
@@ -223,18 +223,18 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
               disabled={loading}
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading}
-              className="bg-biblioteca-primary hover:bg-biblioteca-primary/90"
+              className="bg-primary fg-primary-foreground hover:bg-primary/90"
             >
               {loading ? "Creando..." : "Crear Usuario"}
             </Button>
