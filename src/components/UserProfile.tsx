@@ -106,7 +106,10 @@ export function UserProfile() {
           <User className="mr-2 h-4 w-4" />
           <span>Perfil</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer hover:bg-biblioteca-light transition-colors">
+        <DropdownMenuItem 
+          className="cursor-pointer hover:bg-biblioteca-light transition-colors"
+          onClick={() => navigate('/mis-prestamos')}
+        >
           <BookOpen className="mr-2 h-4 w-4" />
           <span>Mis Préstamos</span>
         </DropdownMenuItem>
