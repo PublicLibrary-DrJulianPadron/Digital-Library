@@ -83,6 +83,54 @@ export type Database = {
         }
         Relationships: []
       }
+      loans: {
+        Row: {
+          book_id: string
+          created_at: string
+          estado: Database["public"]["Enums"]["loan_state"]
+          fecha_fin: string
+          fecha_inicio: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          estado?: Database["public"]["Enums"]["loan_state"]
+          fecha_fin: string
+          fecha_inicio?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          estado?: Database["public"]["Enums"]["loan_state"]
+          fecha_fin?: string
+          fecha_inicio?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "libros"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           activo: boolean
@@ -293,6 +341,11 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "bibliotecario" | "usuario"
+      loan_state:
+        | "PRESTADO"
+        | "EN ESPERA DE DEVOLUCION"
+        | "DEVUELTO"
+        | "EXTRAVIADO"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -421,6 +474,12 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "bibliotecario", "usuario"],
+      loan_state: [
+        "PRESTADO",
+        "EN ESPERA DE DEVOLUCION",
+        "DEVUELTO",
+        "EXTRAVIADO",
+      ],
     },
   },
 } as const
