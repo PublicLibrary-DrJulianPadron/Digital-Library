@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,8 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
     ocupacion: '',
   });
   const { toast } = useToast();
+
+  const dialogTitleId = useId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +131,8 @@ export function AddUserDialog({ onUserAdded }: AddUserDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Añadir Usuario</DialogTitle>
+          {/* Apply the unique ID to the DialogTitle */}
+          <DialogTitle id={dialogTitleId}>Añadir Usuario</DialogTitle>
           <DialogDescription>
             Complete la información del nuevo usuario. Solo email y contraseña son obligatorios.
           </DialogDescription>

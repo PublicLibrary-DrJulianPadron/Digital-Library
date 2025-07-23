@@ -62,7 +62,12 @@ export default function MisPrestamos() {
           variant: "destructive",
         });
       } else {
-        setLoans(data || []);
+        setLoans(
+          (data || []).map((loan: any) => ({
+            ...loan,
+            libros: Array.isArray(loan.libros) ? loan.libros[0] : loan.libros
+          }))
+        );
       }
     } catch (error) {
       console.error('Error fetching loans:', error);

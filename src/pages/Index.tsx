@@ -2,7 +2,7 @@ import { SearchSection } from "@/components/SearchSection";
 import { FeaturedBooks } from "@/components/FeaturedBooks";
 import { ServicesSection } from "@/components/ServicesSection";
 import { NewsSection } from "@/components/NewsSection";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/components/layout/Footer";
 const Index = () => {
   return <div className="min-h-screen">
       {/* Hero Section con búsqueda */}

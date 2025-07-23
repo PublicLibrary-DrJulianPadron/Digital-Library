@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Book } from '@/types/book';
+import React, { useState, useId } from 'react';
+import { Book } from '@/types/models/books';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, MapPin, Calendar, BookOpen, User } from 'lucide-react';
@@ -23,6 +23,7 @@ interface BookCardProps {
 
 export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const dialogTitleId = useId();
 
   const getAvailabilityColor = () => {
     if (book.availableCopies === 0) return 'bg-red-100 text-red-800';
@@ -37,7 +38,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
   };
 
   return (
-    <div 
+    <div
       className="relative group book-card-hover bg-white rounded-lg border border-gray-200 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -49,7 +50,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
           alt={book.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        
+
         {/* Availability Badge */}
         <div className="absolute top-2 right-2">
           <Badge className={`${getAvailabilityColor()} text-xs font-medium`}>
@@ -67,8 +68,8 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
           >
             <Edit className="w-3 h-3" />
           </Button>
-          
-          <AlertDialog>
+
+          <AlertDialog aria-labelledby={dialogTitleId}> {/* Use the generated ID here */}
             <AlertDialogTrigger asChild>
               <Button
                 size="sm"
@@ -80,13 +81,13 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>¿Eliminar libro?</AlertDialogTitle>
+                <AlertDialogTitle id={dialogTitleId}>¿Eliminar libro?</AlertDialogTitle>
                 <AlertDialogDescription>
                   Esta acción no se puede deshacer. Se eliminará permanentemente "{book.title}" del catálogo.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogCancel autoFocus>Cancelar</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => onDelete(book.id)}
                   className="bg-red-600 hover:bg-red-700"
@@ -96,6 +97,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
         </div>
       </div>
 
@@ -105,10 +107,10 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
           {book.title}
         </h3>
         <p className="text-biblioteca-gray text-xs mb-2">{book.author}</p>
-        
+
         <div className="flex items-center justify-between text-xs text-biblioteca-gray">
-          <span>{book.totalCopies} ejemplares</span>
-          <span>{book.publishedYear}</span>
+          <span>{book.quantityInStock} ejemplares</span>
+          <span>{book.publicationYear}</span>
         </div>
       </div>
 
@@ -119,39 +121,39 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
             <h3 className="font-display font-semibold text-biblioteca-blue text-sm mb-2 line-clamp-2">
               {book.title}
             </h3>
-            
+
             <div className="space-y-2 text-xs">
               <div className="flex items-center text-biblioteca-gray">
                 <User className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span className="truncate">{book.author}</span>
               </div>
-              
+
               <div className="flex items-center text-biblioteca-gray">
                 <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span>{book.genre}</span>
               </div>
-              
+
               <div className="flex items-center text-biblioteca-gray">
                 <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.publishedYear}</span>
+                <span>{book.publicationYear}</span>
               </div>
-              
+
               <div className="flex items-center text-biblioteca-gray">
                 <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span>{book.location}</span>
               </div>
             </div>
-            
+
             <p className="text-xs text-biblioteca-gray mt-3 line-clamp-3">
               {book.description}
             </p>
           </div>
-          
+
           <div className="mt-4 pt-3 border-t border-gray-200">
             <div className="flex justify-between items-center text-xs">
               <span className="text-biblioteca-gray">Disponibles:</span>
               <Badge className={`${getAvailabilityColor()} text-xs`}>
-                {book.availableCopies}/{book.totalCopies}
+                {book.availableCopies}/{book.quantityInStock}
               </Badge>
             </div>
           </div>

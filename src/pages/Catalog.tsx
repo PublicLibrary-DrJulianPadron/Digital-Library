@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { BookList } from '@/components/catalog/BookList';
-import { BookForm } from '@/components/catalog/BookForm';
-import { BookSearch } from '@/components/catalog/BookSearch';
+import { BookList } from '@/features/books/components/BookList';
+import { BookForm } from '@/features/books/components/BookForm/BookForm';
+import { BookSearch } from '@/features/books/components/BookSearch';
 import { Button } from '@/components/ui/button';
 import { Plus, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Book } from '@/types/book';
+import { BookRow, Book } from '@/types/models/books';
+import { MaterialType, LanguageCode } from "@/types/common/enums";
+
 
 const Catalog = () => {
-    const [books, setBooks] = useState<Book[]>([
+    const [books, setBooks] = useState<BookRow[]>([
         {
             id: '1',
             title: 'Cien Años de Soledad',
@@ -16,16 +18,16 @@ const Catalog = () => {
             isbn: '978-0-06-088328-7',
             genre: 'Realismo Mágico',
             publisher: 'Editorial Sudamericana',
-            publishedYear: 1967,
-            totalCopies: 5,
+            publicationYear: 1967,
+            quantityInStock: 5,
             availableCopies: 3,
             description: 'Una obra maestra del realismo mágico que narra la historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo.',
             coverUrl: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop',
-            language: 'Español',
+            language: LanguageCode.Spanish,
             pages: 417,
             location: 'Estante A-1',
-            createdAt: new Date('2024-01-15'),
-            updatedAt: new Date('2024-01-15')
+            created_at: new Date('2024-01-15'),
+            updated_at: new Date('2024-01-15')
         },
         {
             id: '2',
@@ -34,16 +36,16 @@ const Catalog = () => {
             isbn: '978-84-376-0494-7',
             genre: 'Novela Criollista',
             publisher: 'Cátedra',
-            publishedYear: 1929,
-            totalCopies: 3,
+            publicationYear: 1929,
+            quantityInStock: 3,
             availableCopies: 2,
             description: 'Clásico de la literatura venezolana que retrata la lucha entre civilización y barbarie en los llanos venezolanos.',
             coverUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop',
-            language: 'Español',
+            language: LanguageCode.Spanish,
             pages: 384,
             location: 'Estante B-2',
-            createdAt: new Date('2024-01-10'),
-            updatedAt: new Date('2024-01-10')
+            created_at: new Date('2024-01-10'),
+            updated_at: new Date('2024-01-10')
         },
         {
             id: '3',
@@ -52,23 +54,23 @@ const Catalog = () => {
             isbn: '978-980-01-0123-4',
             genre: 'Novela Histórica',
             publisher: 'Monte Ávila Editores',
-            publishedYear: 1931,
-            totalCopies: 4,
+            publicationYear: 1931,
+            quantityInStock: 4,
             availableCopies: 0,
             description: 'Novela histórica sobre la Guerra de Independencia de Venezuela, considerada una de las mejores obras de la literatura venezolana.',
             coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop',
-            language: 'Español',
+            language: LanguageCode.Spanish,
             pages: 298,
             location: 'Estante B-3',
-            createdAt: new Date('2024-01-05'),
-            updatedAt: new Date('2024-01-05')
+            created_at: new Date('2024-01-05'),
+            updated_at: new Date('2024-01-05')
         }
     ]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [editingBook, setEditingBook] = useState<Book | null>(null);
+    const [editingBook, setEditingBook] = useState<BookRow | null>(null);
 
     const filteredBooks = books.filter(book => {
         const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,24 +87,24 @@ const Catalog = () => {
         setSelectedGenre(value === 'all-genres' ? '' : value);
     };
 
-    const handleAddBook = (bookData: Omit<Book, 'id' | 'createdAt' | 'updatedAt'>) => {
-        const newBook: Book = {
+    const handleAddBook = (bookData: Omit<BookRow, 'id' | 'created_at' | 'updated_at'>) => {
+        const newBook: BookRow = {
             ...bookData,
             id: Date.now().toString(),
-            createdAt: new Date(),
-            updatedAt: new Date()
+            created_at: new Date(),
+            updated_at: new Date()
         };
         setBooks([...books, newBook]);
         setIsFormOpen(false);
     };
 
-    const handleEditBook = (bookData: Omit<Book, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const handleEditBook = (bookData: Omit<BookRow, 'id' | 'created_at' | 'updated_at'>) => {
         if (editingBook) {
-            const updatedBook: Book = {
+            const updatedBook: BookRow = {
                 ...bookData,
                 id: editingBook.id,
-                createdAt: editingBook.createdAt,
-                updatedAt: new Date()
+                created_at: editingBook.created_at,
+                updated_at: new Date()
             };
             setBooks(books.map(book => book.id === editingBook.id ? updatedBook : book));
             setEditingBook(null);
@@ -114,7 +116,7 @@ const Catalog = () => {
         setBooks(books.filter(book => book.id !== bookId));
     };
 
-    const openEditForm = (book: Book) => {
+    const openEditForm = (book: BookRow) => {
         setEditingBook(book);
         setIsFormOpen(true);
     };
@@ -144,7 +146,7 @@ const Catalog = () => {
                             </div>
                         </div>
 
-                        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+                        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen} aria-labelledby="dialog-title">
                             <DialogTrigger asChild>
                                 <Button
                                     onClick={openAddForm}
@@ -167,6 +169,7 @@ const Catalog = () => {
                                 />
                             </DialogContent>
                         </Dialog>
+                        
                     </div>
 
                     {/* Search and Filters */}
@@ -184,7 +187,7 @@ const Catalog = () => {
                         </div>
                         <div className="bg-biblioteca-light/30 rounded-lg p-4">
                             <div className="text-2xl font-bold text-biblioteca-blue">
-                                {books.reduce((sum, book) => sum + book.totalCopies, 0)}
+                                {books.reduce((sum, book) => sum + book.quantityInStock, 0)}
                             </div>
                             <div className="text-sm text-biblioteca-gray">Total de Ejemplares</div>
                         </div>
@@ -196,7 +199,7 @@ const Catalog = () => {
                         </div>
                         <div className="bg-biblioteca-light/30 rounded-lg p-4">
                             <div className="text-2xl font-bold text-biblioteca-red">
-                                {books.reduce((sum, book) => sum + (book.totalCopies - book.availableCopies), 0)}
+                                {books.reduce((sum, book) => sum + (book.quantityInStock - book.availableCopies), 0)}
                             </div>
                             <div className="text-sm text-biblioteca-gray">En Préstamo</div>
                         </div>

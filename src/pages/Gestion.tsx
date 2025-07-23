@@ -219,7 +219,7 @@ export default function Gestion() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <AlertDialog>
+                        <AlertDialog aria-labelledby="dialog-title">
                           <AlertDialogTrigger asChild>
                             <div>
                               <Switch
@@ -230,7 +230,7 @@ export default function Gestion() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmar cambio de estado</AlertDialogTitle>
+                              <AlertDialogTitle id="dialog-title">Confirmar cambio de estado</AlertDialogTitle>
                               <AlertDialogDescription>
                                 ¿Está seguro de que desea {usuario.activo ? 'desactivar' : 'activar'} al usuario {usuario.nombre_completo}?
                               </AlertDialogDescription>
@@ -304,7 +304,7 @@ export default function Gestion() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Confirmar cambio de estado</AlertDialogTitle>
+                        <AlertDialogTitle id="dialog-title">Confirmar cambio de estado</AlertDialogTitle>
                         <AlertDialogDescription>
                           ¿Está seguro de que desea {usuario.activo ? 'desactivar' : 'activar'} al usuario {usuario.nombre_completo}?
                         </AlertDialogDescription>
