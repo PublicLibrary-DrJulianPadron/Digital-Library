@@ -1,4 +1,6 @@
-import { MaterialType, LanguageCode } from "@/common/common/enums";
+import { MaterialType } from "@/features/books/types/material-types";
+import { LanguageCode } from "@/features/books/types/language-code";
+import { Genre } from "@/features/books/types/genres";
 
 export interface Book {
   id?: string;
@@ -8,7 +10,7 @@ export interface Book {
   publicationYear?: number | null;
   quantityInStock?: number;
   materialType?: MaterialType;
-  genre?: string;
+  genre?: Genre;
   publisher?: string;
   availableCopies?: number;
   description?: string;
@@ -19,7 +21,6 @@ export interface Book {
 }
 
 export type BookRow = Book & {
-  id: string;
   created_at?: string | Date; 
   updated_at?: string | Date; 
 };

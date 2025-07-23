@@ -1,31 +1,34 @@
-import { Json } from '@/types/common/json';
-import { AppRole, LoanState, AppRoleConstants, LoanStateConstants } from './common/enums';
+import { Json } from '@/common/types/json';
+import { AppRole, AppRoleConstants, } from '@/features/authentication/types/user_roles';
+import { LoanState, LoanStateConstants } from '@/features/loans/types/loans';
+
+
 
 import {
-  HorariosBloqueadosRow, HorariosBloqueadosInsert, HorariosBloqueadosUpdate,
-} from './models/horarios_bloqueados';
-import {
   BookRow, BookInsert, BookUpdate,
-} from './models/books';
+} from '@/features/books/types/books';
 import {
   LoanRow, LoanInsert, LoanUpdate,
-} from './models/loans';
+} from '@/features/loans/types/loans';
 import {
   ProfilesRow, ProfilesInsert, ProfilesUpdate,
-} from './models/profiles';
+} from '@/features/users/types/profiles';
 import {
   SolicitudesPrestamoSalaRow, SolicitudesPrestamoSalaInsert, SolicitudesPrestamoSalaUpdate,
-} from './models/solicitudes_prestamo_sala';
+} from '@/features/room-bookings/types/room_booking';
+import {
+  HorariosBloqueadosRow, HorariosBloqueadosInsert, HorariosBloqueadosUpdate,
+} from '@/features/room-bookings/types/horarios_bloqueados';
 import {
   UserRolesRow, UserRolesInsert, UserRolesUpdate,
-} from './models/user_roles';
+} from '@/features/authentication/types/user_roles';
 import {
   UsuariosRow, UsuariosInsert, UsuariosUpdate,
-} from './models/usuarios';
+} from '@/features/users/types/usuarios';
 
 export type Database = {
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)";
+    PostgrestVersion: "12@/features2@/features3 (519615d)";
   };
   public: {
     Tables: {

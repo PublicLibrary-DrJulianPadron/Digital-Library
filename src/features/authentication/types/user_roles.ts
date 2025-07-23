@@ -1,22 +1,17 @@
-import { AppRole } from '@/common/common/enums';
+export const AppRoleConstants = ["admin", "bibliotecario", "usuario"] as const;
 
-export type UserRolesRow = {
-  created_at: string;
-  id: string;
-  role: AppRole;
-  user_id: string;
-};
+export type AppRole = typeof AppRoleConstants[number];
 
-export type UserRolesInsert = {
-  created_at?: string;
-  id?: string;
-  role?: AppRole;
-  user_id: string;
-};
-
-export type UserRolesUpdate = {
-  created_at?: string;
+export type UserRole = {
   id?: string;
   role?: AppRole;
   user_id?: string;
+}
+
+export type UserRolesRow = UserRole & {
+  created_at?: string;
 };
+
+export type UserRolesInsert = Partial<UserRole>;
+
+export type UserRolesUpdate = Partial<UserRole>;

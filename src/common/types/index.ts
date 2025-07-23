@@ -1,48 +1,49 @@
-export type { Json } from '@/types/common/json';
-export type { AppRole, LoanState } from '@/types/common/enums';
+export type { Json } from '@/common/types/json';
+export type { AppRole } from '@/features/authentication/types/user_roles';
+import type { LoanState } from '@/features/loans/types/loans';
 
 export type {
     HorariosBloqueadosRow,
     HorariosBloqueadosInsert,
     HorariosBloqueadosUpdate,
-} from '@/types/models/horarios_bloqueados';
+} from '@/features/room-bookings/types/horarios_bloqueados';
 
 export type {
     Book,
     BookRow,
     BookInsert,
     BookUpdate,
-} from '@/types/models/books';
+} from '@/features/books/types/books';
 
 export type {
     LoanRow,
     LoanInsert,
     LoanUpdate,
-} from '@/types/models/loans';
+} from '@/features/loans/types/loans';;
 
 export type {
     ProfilesRow,
     ProfilesInsert,
     ProfilesUpdate,
-} from '@/types/models/profiles';
+} from '@/features/users/types/profiles';
 
 export type {
     SolicitudesPrestamoSalaRow,
     SolicitudesPrestamoSalaInsert,
     SolicitudesPrestamoSalaUpdate,
-} from '@/types/models/solicitudes_prestamo_sala';
+} from '@/features/room-bookings/types/room_booking';
 
 export type {
     UserRolesRow,
     UserRolesInsert,
     UserRolesUpdate,
-} from '@/types/models/user_roles';
+} from '@/features/authentication/types/user_roles';
 
 export type {
     UsuariosRow,
     UsuariosInsert,
     UsuariosUpdate,
-} from '@/types/models/usuarios';
+} from '@/features/users/types/usuarios';
 
 export type {
     Database,
@@ -52,4 +53,4 @@ export type {
     Enums,
     CompositeTypes,
     Constants,
-} from '@/types/database';
+} from '@/common/types/database';

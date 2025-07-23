@@ -10,7 +10,7 @@ import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { Save, X, Upload } from 'lucide-react';
-import { Book } from '@/types';
+import { Book } from '@/common/types';
 import { MaterialType, LanguageCode, MaterialTypeOptions, LanguageOptions, GenreOptions } from '@/common/common/enums';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
 import { BookRow } from '@/features/books/types/books';

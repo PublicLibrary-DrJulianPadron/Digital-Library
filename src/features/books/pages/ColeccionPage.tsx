@@ -11,7 +11,7 @@ import { Badge } from "@/common/components/ui/badge";
 import { Eye, Trash2, Plus, Minus, Edit } from "lucide-react";
 import { useToast } from "@/common/hooks/use-toast";
 import { BookForm } from "@/features/books/components/BookForm/BookForm";
-import { BookRow as Book } from "@/types";
+import { BookRow as Book } from "@/common/types";
 
 interface BookFormProps {
   book?: Book | null;
