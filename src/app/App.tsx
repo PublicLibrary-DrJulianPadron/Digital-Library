@@ -23,32 +23,32 @@ const queryClient = new QueryClient();
 
 const App = () => {
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const disableButton = () => {
-      const injectedButton = document.getElementById('lovable-badge');
-      if (injectedButton) {
-        injectedButton.remove(); 
-        console.log('Provider button disabled/removed.');
-      } else {
-        console.log('Provider button not found yet.');
-      }
-    };
+  //   const disableButton = () => {
+  //     const injectedButton = document.getElementById('lovable-badge');
+  //     if (injectedButton) {
+  //       injectedButton.remove(); 
+  //       console.log('Provider button disabled/removed.');
+  //     } else {
+  //       console.log('Provider button not found yet.');
+  //     }
+  //   };
 
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.addedNodes.length > 0) {
-          disableButton();
-        }
-      });
-    });
+  //   const observer = new MutationObserver((mutations) => {
+  //     mutations.forEach((mutation) => {
+  //       if (mutation.addedNodes.length > 0) {
+  //         disableButton();
+  //       }
+  //     });
+  //   });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+  //   observer.observe(document.body, { childList: true, subtree: true });
 
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     observer.disconnect();
+  //   };
+  // }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
