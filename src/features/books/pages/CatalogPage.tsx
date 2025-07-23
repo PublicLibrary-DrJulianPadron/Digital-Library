@@ -6,7 +6,8 @@ import { Button } from '@/common/components/ui/button';
 import { Plus, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/common/components/ui/dialog';
 import { BookRow, Book } from '@/features/books/types/books';
-import { MaterialType, LanguageCode } from "@/common/common/enums";
+import { MaterialType } from '@/features/books/types/material-types';
+import { LanguageCodeConstants } from '@/features/books/types/language-code';
 
 
 const Catalog = () => {
@@ -23,7 +24,7 @@ const Catalog = () => {
             availableCopies: 3,
             description: 'Una obra maestra del realismo mágico que narra la historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo.',
             coverUrl: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop',
-            language: LanguageCode.Spanish,
+            language: LanguageCodeConstants[0], // "Español"
             pages: 417,
             location: 'Estante A-1',
             created_at: new Date('2024-01-15'),
@@ -41,7 +42,7 @@ const Catalog = () => {
             availableCopies: 2,
             description: 'Clásico de la literatura venezolana que retrata la lucha entre civilización y barbarie en los llanos venezolanos.',
             coverUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop',
-            language: LanguageCode.Spanish,
+            language: LanguageCodeConstants[0],
             pages: 384,
             location: 'Estante B-2',
             created_at: new Date('2024-01-10'),
@@ -59,7 +60,7 @@ const Catalog = () => {
             availableCopies: 0,
             description: 'Novela histórica sobre la Guerra de Independencia de Venezuela, considerada una de las mejores obras de la literatura venezolana.',
             coverUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop',
-            language: LanguageCode.Spanish,
+            language: LanguageCodeConstants[0],
             pages: 298,
             location: 'Estante B-3',
             created_at: new Date('2024-01-05'),

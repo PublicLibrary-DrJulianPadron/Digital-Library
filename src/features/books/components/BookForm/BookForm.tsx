@@ -11,7 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { Save, X, Upload } from 'lucide-react';
 import { Book } from '@/common/types';
-import { MaterialType, LanguageCode, MaterialTypeOptions, LanguageOptions, GenreOptions } from '@/common/common/enums';
+import { MaterialType, MaterialTypeConstants } from '@/features/books/types/material-types';
+import { LanguageCode, LanguageCodeConstants } from '@/features/books/types/language-code';
+import { GenreOptions } from '@/features/books/types/genres';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
 import { BookRow } from '@/features/books/types/books';
 
@@ -211,7 +213,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                     name="materialType"
                     control={control}
                     rules={{ required: 'El tipo de material es requerido' }}
-                    defaultValue={book?.materialType || MaterialTypeOptions[0]}
+                    defaultValue={book?.materialType || MaterialTypeConstants[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -221,7 +223,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                           <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {MaterialTypeOptions.map((type) => (
+                          {MaterialTypeConstants.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>
@@ -320,7 +322,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                     name="language"
                     control={control}
                     rules={{ required: 'El idioma es requerido' }}
-                    defaultValue={book?.language || LanguageOptions[0]}
+                    defaultValue={book?.language || LanguageCodeConstants[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -330,7 +332,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                           <SelectValue placeholder="Seleccionar idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          {LanguageOptions.map((language) => (
+                          {LanguageCodeConstants.map((language) => (
                             <SelectItem key={language} value={language}>
                               {language}
                             </SelectItem>
