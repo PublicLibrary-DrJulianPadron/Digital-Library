@@ -103,35 +103,35 @@ export function UserProfile() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <Avatar className="w-8 h-8 border-2 border-biblioteca-gold">
+            <Avatar className="w-8 h-8 border-2 border-accent">
               <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback className="bg-biblioteca-gold text-biblioteca-blue font-semibold">
+              <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
                 {getInitials(currentUser.nombre_completo)}
               </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-white border border-gray-200 shadow-lg" align="end">
-          <DropdownMenuLabel className="text-biblioteca-blue">
+        <DropdownMenuContent className="w-56" align="end">
+          <DropdownMenuLabel className="text-foreground">
             {currentUser.nombre_completo}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer hover:bg-biblioteca-light transition-colors"
+            className="cursor-pointer transition-colors"
             onClick={handleProfileClick}
           >
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="cursor-pointer hover:bg-biblioteca-light transition-colors"
+            className="cursor-pointer transition-colors"
             onClick={handleMyLoansClick}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             <span>Mis Préstamos</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="cursor-pointer hover:bg-biblioteca-light transition-colors"
+            className="cursor-pointer transition-colors"
             onClick={handleSettingsClick}
           >
             <Settings className="mr-2 h-4 w-4" />
@@ -139,7 +139,7 @@ export function UserProfile() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer hover:bg-red-50 text-red-600 transition-colors"
+            className="cursor-pointer hover:bg-destructive/10 text-destructive transition-colors"
             onClick={handleSignOut}
           >
             <LogOut className="mr-2 h-4 w-4" />
@@ -152,7 +152,7 @@ export function UserProfile() {
     return (
       <button
         onClick={handleSignInClick}
-        className="flex items-center space-x-2 px-4 py-2 rounded-md bg-biblioteca-gold text-biblioteca-blue font-semibold hover:opacity-90 transition-opacity"
+        className="flex items-center space-x-2 px-4 py-2 rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
       >
         <LogIn className="h-4 w-4" />
         <span>Iniciar Sesión</span>

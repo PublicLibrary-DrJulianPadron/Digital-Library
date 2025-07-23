@@ -30,8 +30,8 @@ const App = () => (
           <div className="min-h-screen flex w-full">
             <AppSidebar />
             <main className="flex-1 flex flex-col">
-              <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-                <SidebarTrigger className="text-biblioteca-blue hover:text-biblioteca-red" />
+              <header className="bg-background border-b border-border px-4 py-3 flex items-center justify-between">
+                <SidebarTrigger className="text-foreground hover:text-primary" />
                 <UserProfile />
               </header>
               <div className="flex-1">
