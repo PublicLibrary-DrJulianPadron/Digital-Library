@@ -23,13 +23,13 @@ export enum MaterialType {
 export const MaterialTypeOptions = Object.values(MaterialType);
 
 export enum LanguageCode {
-  Spanish = "es",
-  English = "en",
-  French = "fr",
-  Portuguese = "pt",
-  Italian = "it",
-  German = "de",
-  Other = "other", // Or 'und'
+  Spanish = "Español",
+  English = "Inglés",
+  French = "Francés",
+  Portuguese = "Portugués",
+  Italian = "Italiano",
+  German = "Alemán",
+  Other = "Otro", 
 }
 export const LanguageOptions = Object.values(LanguageCode);
 
