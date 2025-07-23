@@ -2,18 +2,18 @@ import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast, useToast } from '@/hooks/use-toast.ts';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast, useToast } from '@/common/hooks/use-toast';
+import { Button } from '@/common/components/ui/button';
+import { Input } from '@/common/components/ui/input';
+import { Textarea } from '@/common/components/ui/textarea';
+import { Label } from '@/common/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { Save, X, Upload } from 'lucide-react';
 import { Book } from '@/types';
-import { MaterialType, LanguageCode, MaterialTypeOptions, LanguageOptions, GenreOptions } from '@/types/common/enums';
+import { MaterialType, LanguageCode, MaterialTypeOptions, LanguageOptions, GenreOptions } from '@/common/common/enums';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
-import { BookRow } from '@/types/models/books';
+import { BookRow } from '@/features/books/types/books';
 
 interface BookFormProps {
   book?: BookRow | null;

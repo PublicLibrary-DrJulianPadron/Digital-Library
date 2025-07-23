@@ -1,21 +1,21 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/common/components/ui/toaster";
+import { Toaster as Sonner } from "@/common/components/ui/sonner";
+import { TooltipProvider } from "@/common/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "../components/layout/Sidebar";
-import { UserProfile } from "../components/UserProfile";
-import Index from "../pages/Index";
-import Catalog from "../pages/Catalog";
-import Coleccion from "../pages/Coleccion";
-import PrestamoSala from "../pages/PrestamoSala";
-import Estadisticas from "../pages/Estadisticas";
-import Gestion from "../pages/Gestion";
-import DetallesUsuario from "../pages/DetallesUsuario";
-import UserProfilePage from "../pages/UserProfile";
-import MisPrestamos from "../pages/MisPrestamos";
+import { SidebarProvider, SidebarTrigger } from "@/common/components/ui/sidebar";
+import { AppSidebar } from "../common/components/layout/Sidebar";
+import { UserProfile } from "../features/users/components/UserProfile";
+import Index from "../features/homepage/pages/Index";
+import Catalog from "../features/books/pages/CatalogPage";
+import Coleccion from "../features/books/pages/ColeccionPage";
+import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
+import Estadisticas from "../features/statistics/pages/StatisticsDashboardPage";
+import Gestion from "../features/users/pages/UserManagementPage";
+import DetallesUsuario from "../features/users/pages/UserDetailsPage";
+import UserProfilePage from "../features/users/pages/UserProfilePage";
+import MisPrestamos from "../features/loans/pages/MyLoansPage";
 import NotFound from "../pages/NotFound";
 
 const queryClient = new QueryClient();

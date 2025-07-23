@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookCard } from './BookCard';
-import { BookUpdate, Book } from '@/types/models/books';
+import { BookUpdate, Book } from '@/features/books/types/books';
 import { BookOpen } from 'lucide-react';
 
 interface BookListProps {

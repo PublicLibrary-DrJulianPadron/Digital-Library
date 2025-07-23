@@ -1,4 +1,4 @@
-import { Book } from '@/types/models/books'; // Adjust path based on actual location
+import { Book } from '@/features/books/types/books'; // Adjust path based on actual location
 
 export const defaultBookFormValues = {
   title: '', 

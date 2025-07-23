@@ -1,7 +1,7 @@
 import React, { useState, useId } from 'react';
-import { Book } from '@/types/models/books';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Book } from '@/features/books/types/books';
+import { Button } from '@/common/components/ui/button';
+import { Badge } from '@/common/components/ui/badge';
 import { Edit, Trash2, MapPin, Calendar, BookOpen, User } from 'lucide-react';
 import {
   AlertDialog,
@@ -13,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from '@/common/components/ui/alert-dialog';
 
 interface BookCardProps {
   book: Book;
