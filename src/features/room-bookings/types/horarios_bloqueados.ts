@@ -10,6 +10,7 @@ export type HorariosBloqueados = {
 
 export type HorariosBloqueadosRow = HorariosBloqueados & {
   created_at: string;
+  updated_at: string;
 };
 
 export type HorariosBloqueadosInsert = Partial<HorariosBloqueados>;

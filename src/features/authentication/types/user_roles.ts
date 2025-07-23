@@ -9,7 +9,8 @@ export type UserRole = {
 }
 
 export type UserRolesRow = UserRole & {
-  created_at?: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type UserRolesInsert = Partial<UserRole>;

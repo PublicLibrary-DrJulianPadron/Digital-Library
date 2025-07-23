@@ -21,6 +21,7 @@ export type SolicitudesPrestamoSala = {
 
 export type SolicitudesPrestamoSalaRow = SolicitudesPrestamoSala & {
   created_at: string;
+  updated_at: string;
 };
 
 export type SolicitudesPrestamoSalaInsert = Partial<SolicitudesPrestamoSala>;
