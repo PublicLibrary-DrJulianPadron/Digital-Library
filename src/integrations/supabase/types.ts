@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
       horarios_bloqueados: {
@@ -125,6 +130,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profile: {
+        Row: {
+          active_loans: number | null
+          address: string | null
+          age: number | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_activity: string | null
+          phone: string | null
+          total_books_loaned: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_loans?: number | null
+          address?: string | null
+          age?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_activity?: string | null
+          phone?: string | null
+          total_books_loaned?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_loans?: number | null
+          address?: string | null
+          age?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_activity?: string | null
+          phone?: string | null
+          total_books_loaned?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -275,47 +319,64 @@ export type Database = {
           },
         ]
       }
-      usuarios: {
+      users: {
         Row: {
-          activo: boolean
-          cedula: string
-          created_at: string
+          created_at: string | null
+          date_joined: string | null
           email: string
-          fecha_registro: string
+          first_name: string | null
           id: string
-          nombre_completo: string
-          prestamos_activos: number
-          telefono: string | null
-          ultima_actividad: string | null
-          updated_at: string
+          is_active: boolean
+          is_staff: boolean
+          is_superuser: boolean
+          last_login: string | null
+          last_name: string | null
+          password: string
+          profile_id: string | null
+          updated_at: string | null
+          username: string
         }
         Insert: {
-          activo?: boolean
-          cedula: string
-          created_at?: string
+          created_at?: string | null
+          date_joined?: string | null
           email: string
-          fecha_registro?: string
+          first_name?: string | null
           id?: string
-          nombre_completo: string
-          prestamos_activos?: number
-          telefono?: string | null
-          ultima_actividad?: string | null
-          updated_at?: string
+          is_active?: boolean
+          is_staff?: boolean
+          is_superuser?: boolean
+          last_login?: string | null
+          last_name?: string | null
+          password: string
+          profile_id?: string | null
+          updated_at?: string | null
+          username: string
         }
         Update: {
-          activo?: boolean
-          cedula?: string
-          created_at?: string
+          created_at?: string | null
+          date_joined?: string | null
           email?: string
-          fecha_registro?: string
+          first_name?: string | null
           id?: string
-          nombre_completo?: string
-          prestamos_activos?: number
-          telefono?: string | null
-          ultima_actividad?: string | null
-          updated_at?: string
+          is_active?: boolean
+          is_staff?: boolean
+          is_superuser?: boolean
+          last_login?: string | null
+          last_name?: string | null
+          password?: string
+          profile_id?: string | null
+          updated_at?: string | null
+          username?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -375,8 +436,8 @@ export type Tables<
         DefaultSchema["Views"])
     ? (DefaultSchema["Tables"] &
         DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-          Row: infer R
-        }
+        Row: infer R
+      }
       ? R
       : never
     : never
@@ -477,4 +538,4 @@ export const Constants = {
       ],
     },
   },
-} as const;
+} as const
