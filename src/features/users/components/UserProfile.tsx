@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogOut, LogIn } from "lucide-react";
+import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ interface CurrentUser {
 
 export function UserProfile() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,17 +43,13 @@ export function UserProfile() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('id, nombre_completo, email')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        if (profile) {
-          setCurrentUser(profile);
-        } else {
-          setCurrentUser(null); // No profile found for authenticated user
-        }
+        // For now, we'll use user email and create a display name from it
+        // Later this can be updated to use the custom users table
+        setCurrentUser({
+          id: user.id,
+          nombre_completo: user.email?.split('@')[0] || 'Usuario',
+          email: user.email || ''
+        });
       } else {
         setCurrentUser(null);
       }
@@ -85,7 +83,7 @@ export function UserProfile() {
   };
 
   const handleSignInClick = () => {
-    navigate('/login');
+    setShowLoginDialog(true);
   };
 
   const getInitials = (name: string) => {
@@ -150,13 +148,20 @@ export function UserProfile() {
     );
   } else {
     return (
-      <button
-        onClick={handleSignInClick}
-        className="flex items-center space-x-2 px-4 py-2 rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
-      >
-        <LogIn className="h-4 w-4" />
-        <span>Iniciar Sesión</span>
-      </button>
+      <>
+        <button
+          onClick={handleSignInClick}
+          className="flex items-center space-x-2 px-4 py-2 rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
+        >
+          <LogIn className="h-4 w-4" />
+          <span>Iniciar Sesión</span>
+        </button>
+        
+        <LoginDialog 
+          open={showLoginDialog} 
+          onOpenChange={setShowLoginDialog} 
+        />
+      </>
     );
   }
 }
