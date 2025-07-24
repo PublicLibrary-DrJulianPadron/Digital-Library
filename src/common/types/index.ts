@@ -43,7 +43,7 @@ export type {
     UsuariosRow,
     UsuariosInsert,
     UsuariosUpdate,
-} from '@/features/users/types/usuarios';
+} from '@/features/users/types/users';
 
 export type {
     Database,

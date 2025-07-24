@@ -1,24 +1,20 @@
-export type Profiles = {
+export type Profile = {
   id: string;
-  activo: boolean;
-  cedula: string;
-  direccion: string | null;
-  edad: number | null;
-  email: string;
-  fecha_registro: string;
-  nombre_completo: string;
-  ocupacion: string | null;
-  prestamos_activos: number;
-  telefono: string | null;
-  total_libros_prestados: number;
-  ultima_actividad: string | null;
-}
+  is_active: boolean;
+  address?: string | null;
+  age?: number | null;
+  phone?: string | null;
+  active_loans?: number;
+  total_books_loaned?: number;
+  last_activity?: string | null;
+};
 
-export type ProfilesRow = Profiles &{
+
+export type ProfilesRow = Profile &{
   created_at: string;
   updated_at: string;
 };
 
-export type ProfilesInsert = Partial<Profiles>;
+export type ProfilesInsert = Partial<Profile>;
 
-export type ProfilesUpdate = Partial<Profiles>;
+export type ProfilesUpdate = Partial<Profile>;

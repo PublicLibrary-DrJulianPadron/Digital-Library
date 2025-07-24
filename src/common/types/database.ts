@@ -24,7 +24,7 @@ import {
 } from '@/features/authentication/types/user_roles';
 import {
   UsuariosRow, UsuariosInsert, UsuariosUpdate,
-} from '@/features/users/types/usuarios';
+} from '@/features/users/types/users';
 
 export type Database = {
   __InternalSupabase: {
