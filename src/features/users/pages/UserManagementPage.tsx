@@ -14,24 +14,26 @@ import { AddUserDialog } from '@/features/users/components/AddUserDialog';
 
 interface Usuario {
   id: string;
-  nombre_completo: string;
-  cedula: string;
-  email: string;
-  telefono: string | null;
-  activo: boolean;
-  prestamos_activos: number;
-  fecha_registro: string;
-  ultima_actividad: string | null;
+  national_document: string | null;
+  phone: string | null;
+  address: string | null;
+  is_active: boolean;
+  active_loans: number;
+  total_books_loaned: number;
+  last_activity: string | null;
+  created_at: string;
+  updated_at: string;
+  age: number | null;
 }
 
-type SortField = 'nombre_completo' | 'cedula' | 'prestamos_activos';
+type SortField = 'national_document' | 'active_loans' | 'created_at';
 type SortOrder = 'asc' | 'desc';
 
 export default function Gestion() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState<Usuario[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortField, setSortField] = useState<SortField>('nombre_completo');
+  const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -68,17 +70,17 @@ export default function Gestion() {
 
   const filterAndSortUsuarios = () => {
     let filtered = usuarios.filter(usuario =>
-      usuario.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      usuario.cedula.includes(searchTerm)
+      (usuario.national_document?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (usuario.phone || '').includes(searchTerm)
     );
 
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
-      if (typeof aValue === 'string') {
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
         aValue = aValue.toLowerCase();
-        bValue = (bValue as string).toLowerCase();
+        bValue = bValue.toLowerCase();
       }
 
       if (sortOrder === 'asc') {
@@ -104,14 +106,14 @@ export default function Gestion() {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ activo: !currentStatus })
+        .update({ is_active: !currentStatus })
         .eq('id', usuarioId);
 
       if (error) throw error;
 
       setUsuarios(usuarios.map(usuario =>
         usuario.id === usuarioId
-          ? { ...usuario, activo: !currentStatus }
+          ? { ...usuario, is_active: !currentStatus }
           : usuario
       ));
 
@@ -182,34 +184,32 @@ export default function Gestion() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    <SortButton field="nombre_completo">Nombre</SortButton>
-                  </TableHead>
-                  <TableHead>
-                    <SortButton field="cedula">Cédula</SortButton>
-                  </TableHead>
-                  <TableHead>
-                    <SortButton field="prestamos_activos">Préstamos Activos</SortButton>
-                  </TableHead>
+                   <TableHead>
+                     <SortButton field="national_document">Cédula</SortButton>
+                   </TableHead>
+                   <TableHead>Teléfono</TableHead>
+                   <TableHead>
+                     <SortButton field="active_loans">Préstamos Activos</SortButton>
+                   </TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsuarios.map((usuario) => (
-                  <TableRow key={usuario.id}>
-                    <TableCell className="font-medium">{usuario.nombre_completo}</TableCell>
-                    <TableCell>{usuario.cedula}</TableCell>
-                    <TableCell>
-                      <Badge variant={usuario.prestamos_activos > 0 ? "default" : "secondary"}>
-                        {usuario.prestamos_activos}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={usuario.activo ? "default" : "destructive"}>
-                        {usuario.activo ? "Activo" : "Inactivo"}
-                      </Badge>
-                    </TableCell>
+                 {filteredUsuarios.map((usuario) => (
+                   <TableRow key={usuario.id}>
+                     <TableCell className="font-medium">{usuario.national_document || 'N/A'}</TableCell>
+                     <TableCell>{usuario.phone || 'N/A'}</TableCell>
+                     <TableCell>
+                       <Badge variant={(usuario.active_loans || 0) > 0 ? "default" : "secondary"}>
+                         {usuario.active_loans || 0}
+                       </Badge>
+                     </TableCell>
+                     <TableCell>
+                       <Badge variant={usuario.is_active ? "default" : "destructive"}>
+                         {usuario.is_active ? "Activo" : "Inactivo"}
+                       </Badge>
+                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Button
@@ -221,26 +221,26 @@ export default function Gestion() {
                         </Button>
                         <AlertDialog aria-labelledby="dialog-title">
                           <AlertDialogTrigger asChild>
-                            <div>
-                              <Switch
-                                checked={usuario.activo}
-                                className="data-[state=checked]:bg-biblioteca-blue"
-                              />
-                            </div>
+                             <div>
+                               <Switch
+                                 checked={usuario.is_active}
+                                 className="data-[state=checked]:bg-biblioteca-blue"
+                               />
+                             </div>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle id="dialog-title">Confirmar cambio de estado</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                ¿Está seguro de que desea {usuario.activo ? 'desactivar' : 'activar'} al usuario {usuario.nombre_completo}?
-                              </AlertDialogDescription>
+                               <AlertDialogDescription>
+                                 ¿Está seguro de que desea {usuario.is_active ? 'desactivar' : 'activar'} al usuario con cédula {usuario.national_document || 'N/A'}?
+                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => toggleUsuarioStatus(usuario.id, usuario.activo)}
-                                className="bg-biblioteca-red hover:bg-biblioteca-red/90"
-                              >
+                               <AlertDialogAction
+                                 onClick={() => toggleUsuarioStatus(usuario.id, usuario.is_active)}
+                                 className="bg-biblioteca-red hover:bg-biblioteca-red/90"
+                               >
                                 Confirmar
                               </AlertDialogAction>
                             </AlertDialogFooter>
@@ -262,23 +262,23 @@ export default function Gestion() {
           <Card key={usuario.id}>
             <CardContent className="p-4">
               <div className="flex flex-col space-y-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold text-lg">{usuario.nombre_completo}</h3>
-                    <p className="text-muted-foreground">Cédula: {usuario.cedula}</p>
-                  </div>
-                  <Badge variant={usuario.activo ? "default" : "destructive"}>
-                    {usuario.activo ? "Activo" : "Inactivo"}
-                  </Badge>
-                </div>
+                 <div className="flex justify-between items-start">
+                   <div>
+                     <h3 className="font-semibold text-lg">{usuario.national_document || 'Usuario'}</h3>
+                     <p className="text-muted-foreground">Teléfono: {usuario.phone || 'N/A'}</p>
+                   </div>
+                   <Badge variant={usuario.is_active ? "default" : "destructive"}>
+                     {usuario.is_active ? "Activo" : "Inactivo"}
+                   </Badge>
+                 </div>
                 
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Préstamos:</span>
-                    <Badge variant={usuario.prestamos_activos > 0 ? "default" : "secondary"}>
-                      {usuario.prestamos_activos}
-                    </Badge>
-                  </div>
+                   <div className="flex items-center gap-2">
+                     <span className="text-sm text-muted-foreground">Préstamos:</span>
+                     <Badge variant={(usuario.active_loans || 0) > 0 ? "default" : "secondary"}>
+                       {usuario.active_loans || 0}
+                     </Badge>
+                   </div>
                 </div>
 
                 <div className="flex justify-between items-center pt-2 border-t">
@@ -294,27 +294,27 @@ export default function Gestion() {
                   
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm">Estado:</span>
-                        <Switch
-                          checked={usuario.activo}
-                          className="data-[state=checked]:bg-biblioteca-blue"
-                        />
-                      </div>
+                       <div className="flex items-center gap-2">
+                         <span className="text-sm">Estado:</span>
+                         <Switch
+                           checked={usuario.is_active}
+                           className="data-[state=checked]:bg-biblioteca-blue"
+                         />
+                       </div>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle id="dialog-title">Confirmar cambio de estado</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          ¿Está seguro de que desea {usuario.activo ? 'desactivar' : 'activar'} al usuario {usuario.nombre_completo}?
-                        </AlertDialogDescription>
+                         <AlertDialogDescription>
+                           ¿Está seguro de que desea {usuario.is_active ? 'desactivar' : 'activar'} al usuario con cédula {usuario.national_document || 'N/A'}?
+                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => toggleUsuarioStatus(usuario.id, usuario.activo)}
-                          className="bg-biblioteca-red hover:bg-biblioteca-red/90"
-                        >
+                         <AlertDialogAction
+                           onClick={() => toggleUsuarioStatus(usuario.id, usuario.is_active)}
+                           className="bg-biblioteca-red hover:bg-biblioteca-red/90"
+                         >
                           Confirmar
                         </AlertDialogAction>
                       </AlertDialogFooter>
