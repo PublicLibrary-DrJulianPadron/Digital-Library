@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { LogIn, Eye, EyeOff, Mail, Lock, CreditCard } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ interface LoginDialogProps {
 export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cedula, setCedula] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -53,6 +54,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
           });
           setEmail("");
           setPassword("");
+          setCedula("");
           onOpenChange(false);
         }
       } else {
@@ -92,6 +94,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     setIsSignUp(!isSignUp);
     setEmail("");
     setPassword("");
+    setCedula("");
   };
 
   return (
@@ -143,6 +146,42 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
               </button>
             </div>
           </div>
+
+          {isSignUp && (
+            <div className="space-y-2">
+              <Label htmlFor="cedula">Cédula</Label>
+              <div className="relative">
+                <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="cedula"
+                  type="text"
+                  placeholder="V12345678"
+                  value={cedula}
+                  onChange={(e) => {
+                    const value = e.target.value.toUpperCase();
+                    const cedulaRegex = /^[VEJG]?[0-9]*$/;
+                    if (cedulaRegex.test(value) && value.length <= 9) {
+                      if (value.length === 1 && /^[VEJG]$/.test(value)) {
+                        setCedula(value);
+                      } else if (value.length > 1 && /^[VEJG][0-9]*$/.test(value)) {
+                        setCedula(value);
+                      } else if (value.length === 0) {
+                        setCedula("");
+                      }
+                    }
+                  }}
+                  className="pl-10"
+                  pattern="^[VEJG][0-9]{7,8}$"
+                  required
+                />
+              </div>
+              {cedula && !/^[VEJG][0-9]{7,8}$/.test(cedula) && (
+                <p className="text-sm text-destructive">
+                  La cédula debe comenzar con V, E, J o G seguido de 7-8 dígitos
+                </p>
+              )}
+            </div>
+          )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
