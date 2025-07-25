@@ -122,16 +122,9 @@ export type Database = {
             referencedRelation: "libros"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "loans_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
-      profile: {
+      profiles: {
         Row: {
           active_loans: number | null
           address: string | null
@@ -140,6 +133,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           last_activity: string | null
+          national_document: string | null
           phone: string | null
           total_books_loaned: number | null
           updated_at: string | null
@@ -152,6 +146,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           last_activity?: string | null
+          national_document?: string | null
           phone?: string | null
           total_books_loaned?: number | null
           updated_at?: string | null
@@ -164,63 +159,10 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           last_activity?: string | null
+          national_document?: string | null
           phone?: string | null
           total_books_loaned?: number | null
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          activo: boolean
-          cedula: string
-          created_at: string
-          direccion: string | null
-          edad: number | null
-          email: string
-          fecha_registro: string
-          id: string
-          nombre_completo: string
-          ocupacion: string | null
-          prestamos_activos: number
-          telefono: string | null
-          total_libros_prestados: number
-          ultima_actividad: string | null
-          updated_at: string
-        }
-        Insert: {
-          activo?: boolean
-          cedula: string
-          created_at?: string
-          direccion?: string | null
-          edad?: number | null
-          email: string
-          fecha_registro?: string
-          id: string
-          nombre_completo: string
-          ocupacion?: string | null
-          prestamos_activos?: number
-          telefono?: string | null
-          total_libros_prestados?: number
-          ultima_actividad?: string | null
-          updated_at?: string
-        }
-        Update: {
-          activo?: boolean
-          cedula?: string
-          created_at?: string
-          direccion?: string | null
-          edad?: number | null
-          email?: string
-          fecha_registro?: string
-          id?: string
-          nombre_completo?: string
-          ocupacion?: string | null
-          prestamos_activos?: number
-          telefono?: string | null
-          total_libros_prestados?: number
-          ultima_actividad?: string | null
-          updated_at?: string
         }
         Relationships: []
       }
@@ -309,15 +251,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       users: {
         Row: {
@@ -373,7 +307,7 @@ export type Database = {
             foreignKeyName: "users_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "profile"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

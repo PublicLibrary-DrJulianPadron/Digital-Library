@@ -32,12 +32,25 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
     try {
       if (isSignUp) {
+        // Validate cedula format for signup
+        if (!/^[VEJG][0-9]{7,8}$/.test(cedula)) {
+          toast({
+            title: "Error de validación",
+            description: "La cédula debe comenzar con V, E, J o G seguido de 7-8 dígitos",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const redirectUrl = `${window.location.origin}/`;
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: redirectUrl
+            emailRedirectTo: redirectUrl,
+            data: {
+              cedula: cedula
+            }
           }
         });
 
