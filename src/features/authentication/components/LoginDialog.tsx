@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { LogIn, Eye, EyeOff, Mail, Lock, CreditCard } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,13 @@ import {
 import { Button } from "@/common/components/ui/button";
 import { Input } from "@/common/components/ui/input";
 import { Label } from "@/common/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/common/components/ui/select";
 import { useToast } from "@/common/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,6 +27,8 @@ interface LoginDialogProps {
 export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [cedulaPrefix, setCedulaPrefix] = useState<"V" | "E" | "J" | "G">("V");
+  const [cedulaNumber, setCedulaNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -31,12 +40,26 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
     try {
       if (isSignUp) {
+        // Validate cedula format for signup
+        const fullCedula = cedulaPrefix + cedulaNumber;
+        if (!/^[VEJG][0-9]{7,8}$/.test(fullCedula)) {
+          toast({
+            title: "Error de validación",
+            description: "La cédula debe tener entre 7 y 8 dígitos",
+            variant: "destructive",
+          });
+          return;
+        }
+
         const redirectUrl = `${window.location.origin}/`;
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: redirectUrl
+            emailRedirectTo: redirectUrl,
+            data: {
+              cedula: fullCedula
+            }
           }
         });
 
@@ -53,6 +76,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
           });
           setEmail("");
           setPassword("");
+          setCedulaNumber("");
           onOpenChange(false);
         }
       } else {
@@ -92,6 +116,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     setIsSignUp(!isSignUp);
     setEmail("");
     setPassword("");
+    setCedulaNumber("");
   };
 
   return (
@@ -143,6 +168,48 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
               </button>
             </div>
           </div>
+
+          {isSignUp && (
+            <div className="space-y-2">
+              <Label htmlFor="cedula">Cédula</Label>
+              <div className="flex gap-2">
+                <Select value={cedulaPrefix} onValueChange={(value: "V" | "E" | "J" | "G") => setCedulaPrefix(value)}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="V">V</SelectItem>
+                    <SelectItem value="E">E</SelectItem>
+                    <SelectItem value="J">J</SelectItem>
+                    <SelectItem value="G">G</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="relative flex-1">
+                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="cedula"
+                    type="text"
+                    placeholder="12345678"
+                    value={cedulaNumber}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numericRegex = /^[0-9]*$/;
+                      if (numericRegex.test(value) && value.length <= 8) {
+                        setCedulaNumber(value);
+                      }
+                    }}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+              {cedulaNumber && (cedulaNumber.length < 7 || cedulaNumber.length > 8) && (
+                <p className="text-sm text-destructive">
+                  La cédula debe tener entre 7 y 8 dígitos
+                </p>
+              )}
+            </div>
+          )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
