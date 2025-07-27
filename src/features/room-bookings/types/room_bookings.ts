@@ -1,21 +1,21 @@
 export type RoomBooking = {
-  cedula: string;
-  comentarios_admin: string | null;
-  descripcion: string;
+  national_document: string;
+  admin_comments: string | null;
+  description: string;
   email: string;
-  equipos_solicitados: string | null;
-  estado: string;
-  fecha_evento: string;
-  fecha_respuesta: string | null;
-  hora_fin: string;
-  hora_inicio: string;
+  requested_equipment: string | null;
+  status: string;
+  event_date: string;
+  response_date: string | null;
+  end_time: string;
+  start_time: string;
   id: string;
-  nombre_completo: string;
-  numero_participantes: number;
-  numero_solicitud: string;
-  requiere_equipos: boolean | null;
-  telefono: string;
-  tipo_evento: string;
+  full_name: string;
+  participant_count: number;
+  request_number: string;
+  requires_equipment: boolean | null;
+  phone: string;
+  event_type: string;
   updated_at: string;
 };
 

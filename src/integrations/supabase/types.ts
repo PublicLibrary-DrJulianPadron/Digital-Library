@@ -17,33 +17,33 @@ export type Database = {
       horarios_bloqueados: {
         Row: {
           created_at: string
-          descripcion: string | null
-          es_permanente: boolean | null
-          fecha: string
-          hora_fin: string
-          hora_inicio: string
+          date: string
+          description: string | null
+          end_time: string
           id: string
-          motivo: string
+          is_permanent: boolean | null
+          reason: string
+          start_time: string
         }
         Insert: {
           created_at?: string
-          descripcion?: string | null
-          es_permanente?: boolean | null
-          fecha: string
-          hora_fin: string
-          hora_inicio: string
+          date: string
+          description?: string | null
+          end_time: string
           id?: string
-          motivo: string
+          is_permanent?: boolean | null
+          reason: string
+          start_time: string
         }
         Update: {
           created_at?: string
-          descripcion?: string | null
-          es_permanente?: boolean | null
-          fecha?: string
-          hora_fin?: string
-          hora_inicio?: string
+          date?: string
+          description?: string | null
+          end_time?: string
           id?: string
-          motivo?: string
+          is_permanent?: boolean | null
+          reason?: string
+          start_time?: string
         }
         Relationships: []
       }
@@ -192,66 +192,66 @@ export type Database = {
       }
       solicitudes_prestamo_sala: {
         Row: {
-          cedula: string
-          comentarios_admin: string | null
+          admin_comments: string | null
           created_at: string
-          descripcion: string
+          description: string
           email: string
-          equipos_solicitados: string | null
-          estado: string
-          fecha_evento: string
-          fecha_respuesta: string | null
-          hora_fin: string
-          hora_inicio: string
+          end_time: string
+          event_date: string
+          event_type: string
+          full_name: string
           id: string
-          nombre_completo: string
-          numero_participantes: number
-          numero_solicitud: string
-          requiere_equipos: boolean | null
-          telefono: string
-          tipo_evento: string
+          national_document: string
+          participant_count: number
+          phone: string
+          request_number: string
+          requested_equipment: string | null
+          requires_equipment: boolean | null
+          response_date: string | null
+          start_time: string
+          status: string
           updated_at: string
         }
         Insert: {
-          cedula: string
-          comentarios_admin?: string | null
+          admin_comments?: string | null
           created_at?: string
-          descripcion: string
+          description: string
           email: string
-          equipos_solicitados?: string | null
-          estado?: string
-          fecha_evento: string
-          fecha_respuesta?: string | null
-          hora_fin: string
-          hora_inicio: string
+          end_time: string
+          event_date: string
+          event_type: string
+          full_name: string
           id?: string
-          nombre_completo: string
-          numero_participantes: number
-          numero_solicitud: string
-          requiere_equipos?: boolean | null
-          telefono: string
-          tipo_evento: string
+          national_document: string
+          participant_count: number
+          phone: string
+          request_number: string
+          requested_equipment?: string | null
+          requires_equipment?: boolean | null
+          response_date?: string | null
+          start_time: string
+          status?: string
           updated_at?: string
         }
         Update: {
-          cedula?: string
-          comentarios_admin?: string | null
+          admin_comments?: string | null
           created_at?: string
-          descripcion?: string
+          description?: string
           email?: string
-          equipos_solicitados?: string | null
-          estado?: string
-          fecha_evento?: string
-          fecha_respuesta?: string | null
-          hora_fin?: string
-          hora_inicio?: string
+          end_time?: string
+          event_date?: string
+          event_type?: string
+          full_name?: string
           id?: string
-          nombre_completo?: string
-          numero_participantes?: number
-          numero_solicitud?: string
-          requiere_equipos?: boolean | null
-          telefono?: string
-          tipo_evento?: string
+          national_document?: string
+          participant_count?: number
+          phone?: string
+          request_number?: string
+          requested_equipment?: string | null
+          requires_equipment?: boolean | null
+          response_date?: string | null
+          start_time?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
