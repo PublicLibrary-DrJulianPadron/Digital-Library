@@ -1,5 +1,7 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/common/components/ui/sidebar";
 import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 const menuItems = [{
   title: "Inicio",
   url: "/",
@@ -31,6 +33,32 @@ const adminItems = [{
   icon: LibraryBig
 }];
 export function AppSidebar() {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    fetchCurrentUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        fetchCurrentUser();
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      setCurrentUser(null);
+    }
+  };
+
   return <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
       <SidebarHeader className="border-b border-sidebar-border/20">
         <div className="flex flex-col items-center py-4">
@@ -53,7 +81,9 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map(item => <SidebarMenuItem key={item.title}>
+              {menuItems
+                .filter(item => item.url !== "/prestamo-sala" || currentUser)
+                .map(item => <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
                     <a href={item.url} className="flex items-center gap-3">
                       <item.icon size={18} />
@@ -65,23 +95,25 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-biblioteca-gold font-medium">
-            Administración
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {adminItems.map(item => <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon size={18} />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {currentUser && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-biblioteca-gold font-medium">
+              Administración
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminItems.map(item => <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
+                      <a href={item.url} className="flex items-center gap-3">
+                        <item.icon size={18} />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>)}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border/20 p-4">

@@ -11,6 +11,7 @@ import Index from "../features/homepage/pages/Index";
 import Catalog from "../features/books/pages/CatalogPage";
 import Coleccion from "../features/books/pages/ColeccionPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
+import HistoriaPage from "../features/homepage/pages/HistoriaPage";
 import Estadisticas from "../features/statistics/pages/StatisticsDashboardPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
@@ -40,6 +41,7 @@ const App = () => (
                   <Route path="/catalogo" element={<Catalog />} />
                   <Route path="/coleccion" element={<Coleccion />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
+                  <Route path="/historia" element={<HistoriaPage />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
                   <Route path="/gestion/usuario/:id" element={<UserProfilePage />} />
