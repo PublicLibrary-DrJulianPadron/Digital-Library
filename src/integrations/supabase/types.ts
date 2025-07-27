@@ -49,36 +49,60 @@ export type Database = {
       }
       libros: {
         Row: {
-          ano_publicacion: number | null
-          autor: string
-          cantidad_existencia: number
+          author: string
+          availableCopies: number | null
+          coverUrl: string | null
           created_at: string
+          description: string | null
+          genre: string | null
           id: string
           isbn: string | null
-          nombre: string
-          tipo_material: string
+          language: string | null
+          location: string | null
+          materialType: string
+          pages: number | null
+          publicationYear: number | null
+          publisher: string | null
+          quantityInStock: number
+          title: string
           updated_at: string
         }
         Insert: {
-          ano_publicacion?: number | null
-          autor: string
-          cantidad_existencia?: number
+          author: string
+          availableCopies?: number | null
+          coverUrl?: string | null
           created_at?: string
+          description?: string | null
+          genre?: string | null
           id?: string
           isbn?: string | null
-          nombre: string
-          tipo_material?: string
+          language?: string | null
+          location?: string | null
+          materialType?: string
+          pages?: number | null
+          publicationYear?: number | null
+          publisher?: string | null
+          quantityInStock?: number
+          title: string
           updated_at?: string
         }
         Update: {
-          ano_publicacion?: number | null
-          autor?: string
-          cantidad_existencia?: number
+          author?: string
+          availableCopies?: number | null
+          coverUrl?: string | null
           created_at?: string
+          description?: string | null
+          genre?: string | null
           id?: string
           isbn?: string | null
-          nombre?: string
-          tipo_material?: string
+          language?: string | null
+          location?: string | null
+          materialType?: string
+          pages?: number | null
+          publicationYear?: number | null
+          publisher?: string | null
+          quantityInStock?: number
+          title?: string
           updated_at?: string
         }
         Relationships: []
