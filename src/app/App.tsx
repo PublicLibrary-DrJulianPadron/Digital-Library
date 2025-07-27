@@ -11,7 +11,7 @@ import Index from "../features/homepage/pages/Index";
 import Catalog from "../features/books/pages/CatalogPage";
 import Coleccion from "../features/books/pages/ColeccionPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
-import HistoriaPage from "../features/homepage/pages/HistoriaPage";
+import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/statistics/pages/StatisticsDashboardPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
