@@ -31,7 +31,7 @@ export type {
     RoomBookingRow,
     RoomBookingInsert,
     RoomBookingUpdate,
-} from '@/features/room-bookings/types/room_booking';
+} from '@/features/room-bookings/types/room_bookings';
 
 export type {
     UserRolesRow,

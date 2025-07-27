@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui
 import { Save, X, Upload } from 'lucide-react';
 import { Book } from '@/common/types';
 import { MaterialType, MaterialTypeConstants } from '@/features/books/types/material-types';
-import { LanguageCode, LanguageCodeConstants } from '@/features/books/types/language-code';
+import { LanguageCode, LanguageCodeConstants } from '@/features/books/types/language-codes';
 import { GenreOptions } from '@/features/books/types/genres';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
 import { BookRow } from '@/features/books/types/books';

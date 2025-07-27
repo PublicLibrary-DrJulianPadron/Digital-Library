@@ -7,7 +7,7 @@ import { Plus, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/common/components/ui/dialog';
 import { BookRow, Book } from '@/features/books/types/books';
 import { MaterialType } from '@/features/books/types/material-types';
-import { LanguageCodeConstants } from '@/features/books/types/language-code';
+import { LanguageCodeConstants } from '@/features/books/types/language-codes';
 
 
 const Catalog = () => {

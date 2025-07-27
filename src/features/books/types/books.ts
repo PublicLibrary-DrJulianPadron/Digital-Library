@@ -1,5 +1,5 @@
 import { MaterialType } from "@/features/books/types/material-types";
-import { LanguageCode } from "@/features/books/types/language-code";
+import { LanguageCode } from "@/features/books/types/language-codes";
 import { Genre } from "@/features/books/types/genres";
 
 export interface Book {

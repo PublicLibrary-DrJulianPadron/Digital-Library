@@ -15,7 +15,7 @@ import {
 } from '@/features/users/types/profiles';
 import {
   RoomBookingRow, RoomBookingInsert, RoomBookingUpdate,
-} from '@/features/room-bookings/types/room_booking';
+} from '@/features/room-bookings/types/room_bookings';
 import {
   BlockedSchedulesRow, BlockedSchedulesInsert, BlockedSchedulesUpdate,
 } from '@/features/room-bookings/types/blocked_schedules';
