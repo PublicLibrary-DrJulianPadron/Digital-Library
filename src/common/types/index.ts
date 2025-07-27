@@ -3,10 +3,10 @@ export type { AppRole } from '@/features/authentication/types/user_roles';
 import type { LoanState } from '@/features/loans/types/loans';
 
 export type {
-    HorariosBloqueadosRow,
-    HorariosBloqueadosInsert,
-    HorariosBloqueadosUpdate,
-} from '@/features/room-bookings/types/horarios_bloqueados';
+    BlockedSchedulesRow,
+    BlockedSchedulesInsert,
+    BlockedSchedulesUpdate,
+} from '@/features/room-bookings/types/blocked_schedules';
 
 export type {
     Book,
@@ -28,9 +28,9 @@ export type {
 } from '@/features/users/types/profiles';
 
 export type {
-    SolicitudesPrestamoSalaRow,
-    SolicitudesPrestamoSalaInsert,
-    SolicitudesPrestamoSalaUpdate,
+    RoomBookingRow,
+    RoomBookingInsert,
+    RoomBookingUpdate,
 } from '@/features/room-bookings/types/room_booking';
 
 export type {

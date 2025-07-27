@@ -14,11 +14,11 @@ import {
   ProfilesRow, ProfilesInsert, ProfilesUpdate,
 } from '@/features/users/types/profiles';
 import {
-  SolicitudesPrestamoSalaRow, SolicitudesPrestamoSalaInsert, SolicitudesPrestamoSalaUpdate,
+  RoomBookingRow, RoomBookingInsert, RoomBookingUpdate,
 } from '@/features/room-bookings/types/room_booking';
 import {
-  HorariosBloqueadosRow, HorariosBloqueadosInsert, HorariosBloqueadosUpdate,
-} from '@/features/room-bookings/types/horarios_bloqueados';
+  BlockedSchedulesRow, BlockedSchedulesInsert, BlockedSchedulesUpdate,
+} from '@/features/room-bookings/types/blocked_schedules';
 import {
   UserRolesRow, UserRolesInsert, UserRolesUpdate,
 } from '@/features/authentication/types/user_roles';
@@ -33,9 +33,9 @@ export type Database = {
   public: {
     Tables: {
       horarios_bloqueados: {
-        Row: HorariosBloqueadosRow;
-        Insert: HorariosBloqueadosInsert;
-        Update: HorariosBloqueadosUpdate;
+        Row: BlockedSchedulesRow;
+        Insert: BlockedSchedulesInsert;
+        Update: BlockedSchedulesUpdate;
         Relationships: [];
       };
       libros: {
@@ -72,9 +72,9 @@ export type Database = {
         Relationships: [];
       };
       solicitudes_prestamo_sala: {
-        Row: SolicitudesPrestamoSalaRow;
-        Insert: SolicitudesPrestamoSalaInsert;
-        Update: SolicitudesPrestamoSalaUpdate;
+        Row: RoomBookingRow;
+        Insert: RoomBookingInsert;
+        Update: RoomBookingUpdate;
         Relationships: [];
       };
       user_roles: {

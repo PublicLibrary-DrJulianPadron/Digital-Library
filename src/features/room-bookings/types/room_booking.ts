@@ -1,4 +1,4 @@
-export type SolicitudesPrestamoSala = {
+export type RoomBooking = {
   cedula: string;
   comentarios_admin: string | null;
   descripcion: string;
@@ -19,11 +19,11 @@ export type SolicitudesPrestamoSala = {
   updated_at: string;
 };
 
-export type SolicitudesPrestamoSalaRow = SolicitudesPrestamoSala & {
+export type RoomBookingRow = RoomBooking & {
   created_at: string;
   updated_at: string;
 };
 
-export type SolicitudesPrestamoSalaInsert = Partial<SolicitudesPrestamoSala>;
+export type RoomBookingInsert = Partial<RoomBooking>;
 
-export type SolicitudesPrestamoSalaUpdate = Partial<SolicitudesPrestamoSala>;
+export type RoomBookingUpdate = Partial<RoomBooking>;
