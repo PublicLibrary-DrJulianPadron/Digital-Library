@@ -72,7 +72,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         } else {
           toast({
             title: "Registro exitoso",
-            description: "Revisa tu email para confirmar tu cuenta",
+            description: "Automaticamente se ha iniciado sesión", 
           });
           setEmail("");
           setPassword("");
@@ -121,7 +121,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md m">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <LogIn className="h-5 w-5" />
