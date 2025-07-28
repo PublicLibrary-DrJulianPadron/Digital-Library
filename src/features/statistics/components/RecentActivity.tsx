@@ -18,7 +18,7 @@ export const RecentActivity = () => {
     queryKey: ['recent-prestamo-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('solicitudes_prestamo_sala')
+        .from('room_bookings')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
@@ -89,15 +89,15 @@ export const RecentActivity = () => {
               {recentRequests?.slice(0, 5).map((request) => (
                 <div key={request.id} className="flex justify-between items-start p-3 border rounded-lg">
                   <div className="space-y-1">
-                    <p className="font-medium text-sm">{request.tipo_evento}</p>
-                    <p className="text-xs text-gray-600">{request.nombre_completo}</p>
+                    <p className="font-medium text-sm">{request.event_type}</p>
+                    <p className="text-xs text-gray-600">{request.full_name}</p>
                     <p className="text-xs text-gray-500">
-                      {new Date(request.fecha_evento).toLocaleDateString('es-ES')} • 
-                      {request.hora_inicio} - {request.hora_fin}
+                      {new Date(request.event_date).toLocaleDateString('es-ES')} • 
+                      {request.start_time} - {request.end_time}
                     </p>
                   </div>
-                  <Badge variant={getStatusBadge(request.estado).variant}>
-                    {getStatusBadge(request.estado).label}
+                  <Badge variant={getStatusBadge(request.status).variant}>
+                    {getStatusBadge(request.status).label}
                   </Badge>
                 </div>
               ))}

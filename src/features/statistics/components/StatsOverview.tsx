@@ -10,16 +10,40 @@ export const StatsOverview = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['library-stats'],
     queryFn: async () => {
-      // Get prestamo sala requests count
-      const { data: prestamoData } = await supabase
-        .from('solicitudes_prestamo_sala')
-        .select('id', { count: 'exact' });
-
+      // Get total books
+      const { data: booksData, error: booksError } = await supabase
+        .from('books')
+        .select('id, quantityInStock');
+      
+      // Get total loans
+      const { data: loansData, error: loansError } = await supabase
+        .from('loans')
+        .select('id, estado');
+      
+      // Get room booking requests
+      const { data: roomBookingsData, error: roomBookingsError } = await supabase
+        .from('room_bookings')
+        .select('id');
+      
+      // Get active users (profiles)
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, is_active');
+      
+      if (booksError || loansError || roomBookingsError || profilesError) {
+        throw new Error('Error fetching stats');
+      }
+      
+      const totalBooks = booksData?.reduce((sum, book) => sum + (book.quantityInStock || 0), 0) || 0;
+      const activeLoans = loansData?.filter(loan => loan.estado === 'PRESTADO').length || 0;
+      const prestamoRequests = roomBookingsData?.length || 0;
+      const activeUsers = profilesData?.filter(profile => profile.is_active).length || 0;
+      
       return {
-        activeUsers: 147,
-        totalBooks: 2845,
-        reservedBooks: 89,
-        prestamoRequests: prestamoData?.length || 0
+        activeUsers,
+        totalBooks,
+        reservedBooks: activeLoans,
+        prestamoRequests
       };
     }
   });

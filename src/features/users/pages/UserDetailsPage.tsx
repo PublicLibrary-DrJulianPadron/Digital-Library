@@ -36,14 +36,37 @@ export default function DetallesUsuario() {
 
   const fetchUsuario = async () => {
     try {
-      const { data, error } = await supabase
-        .from('usuarios')
+      // Get current user ID since this should be user's own profile
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate('/');
+        return;
+      }
+
+      // Fetch user data from profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('id', id)
+        .eq('id', user.id)
         .single();
 
-      if (error) throw error;
-      setUsuario(data);
+      if (profileError) throw profileError;
+
+      // Get user data from auth
+      const userData = {
+        id: user.id,
+        nombre_completo: user.email?.split('@')[0] || 'Usuario',
+        cedula: profileData?.national_document || '',
+        email: user.email || '',
+        telefono: profileData?.phone || null,
+        activo: profileData?.is_active || true,
+        prestamos_activos: profileData?.active_loans || 0,
+        fecha_registro: profileData?.created_at || user.created_at,
+        ultima_actividad: profileData?.last_activity || null,
+      };
+
+      setUsuario(userData);
     } catch (error) {
       console.error('Error fetching usuario:', error);
       toast({

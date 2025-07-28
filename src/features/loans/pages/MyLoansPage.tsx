@@ -12,9 +12,9 @@ interface Loan {
   fecha_inicio: string;
   fecha_fin: string;
   estado: 'PRESTADO' | 'EN ESPERA DE DEVOLUCION' | 'DEVUELTO' | 'EXTRAVIADO';
-  libros: {
-    nombre: string;
-    autor: string;
+  books: {
+    title: string;
+    author: string;
     isbn?: string;
   };
 }
@@ -45,9 +45,9 @@ export default function MisPrestamos() {
           fecha_inicio,
           fecha_fin,
           estado,
-          libros (
-            nombre,
-            autor,
+          books:book_id (
+            title,
+            author,
             isbn
           )
         `)
@@ -65,7 +65,7 @@ export default function MisPrestamos() {
         setLoans(
           (data || []).map((loan: any) => ({
             ...loan,
-            libros: Array.isArray(loan.libros) ? loan.libros[0] : loan.libros
+            books: Array.isArray(loan.books) ? loan.books[0] : loan.books
           }))
         );
       }
@@ -164,14 +164,14 @@ export default function MisPrestamos() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-lg font-semibold text-foreground mb-1">
-                      {loan.libros.nombre}
+                      {loan.books.title}
                     </CardTitle>
                     <p className="text-muted-foreground">
-                      por {loan.libros.autor}
+                      por {loan.books.author}
                     </p>
-                    {loan.libros.isbn && (
+                    {loan.books.isbn && (
                       <p className="text-sm text-muted-foreground mt-1">
-                        ISBN: {loan.libros.isbn}
+                        ISBN: {loan.books.isbn}
                       </p>
                     )}
                   </div>

@@ -32,10 +32,10 @@ const Coleccion = () => {
   const queryClient = useQueryClient();
 
   const { data: libros = [], isLoading } = useQuery({
-    queryKey: ["libros"],
+    queryKey: ["books"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("libros")
+        .from("books")
         .select("*")
         .order("title");
 
@@ -47,14 +47,14 @@ const Coleccion = () => {
   const updateQuantityMutation = useMutation({
     mutationFn: async ({ id, newQuantity }: { id: string; newQuantity: number }) => {
       const { error } = await supabase
-        .from("libros")
-        .update({ cantidad_existencia: newQuantity })
+        .from("books")
+        .update({ quantityInStock: newQuantity })
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["libros"] });
+      queryClient.invalidateQueries({ queryKey: ["books"] });
       setSelectedBook(null);
       setNewQuantity(0);
       toast({
@@ -74,14 +74,14 @@ const Coleccion = () => {
   const deleteBookMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("libros")
+        .from("books")
         .delete()
         .eq("id", id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["libros"] });
+      queryClient.invalidateQueries({ queryKey: ["books"] });
       setBookToDelete(null);
       toast({
         title: "Éxito",
