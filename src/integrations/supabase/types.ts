@@ -161,6 +161,7 @@ export type Database = {
           phone: string | null
           total_books_loaned: number | null
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           active_loans?: number | null
@@ -174,6 +175,7 @@ export type Database = {
           phone?: string | null
           total_books_loaned?: number | null
           updated_at?: string | null
+          user_id: string
         }
         Update: {
           active_loans?: number | null
@@ -187,8 +189,17 @@ export type Database = {
           phone?: string | null
           total_books_loaned?: number | null
           updated_at?: string | null
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       room_bookings: {
         Row: {
@@ -290,7 +301,6 @@ export type Database = {
           last_login: string | null
           last_name: string | null
           password: string
-          profile_id: string | null
           updated_at: string | null
           username: string
         }
@@ -306,7 +316,6 @@ export type Database = {
           last_login?: string | null
           last_name?: string | null
           password: string
-          profile_id?: string | null
           updated_at?: string | null
           username: string
         }
@@ -322,19 +331,10 @@ export type Database = {
           last_login?: string | null
           last_name?: string | null
           password?: string
-          profile_id?: string | null
           updated_at?: string | null
           username?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "users_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
