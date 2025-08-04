@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      horarios_bloqueados: {
+      blocked_schedules: {
         Row: {
           created_at: string
           date: string
@@ -47,7 +47,7 @@ export type Database = {
         }
         Relationships: []
       }
-      libros: {
+      books: {
         Row: {
           author: string
           availableCopies: number | null
@@ -143,7 +143,7 @@ export type Database = {
             foreignKeyName: "loans_book_id_fkey"
             columns: ["book_id"]
             isOneToOne: false
-            referencedRelation: "libros"
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
         ]
@@ -190,7 +190,7 @@ export type Database = {
         }
         Relationships: []
       }
-      solicitudes_prestamo_sala: {
+      room_bookings: {
         Row: {
           admin_comments: string | null
           created_at: string
