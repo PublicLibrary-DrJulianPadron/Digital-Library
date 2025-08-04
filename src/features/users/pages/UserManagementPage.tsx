@@ -215,7 +215,7 @@ export default function Gestion() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigate(`/gestion/usuario/${usuario.id}`)}
+                          onClick={() => navigate(`/gestion-usuarios/${usuario.id}`)}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -285,7 +285,7 @@ export default function Gestion() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/gestion/usuario/${usuario.id}`)}
+                    onClick={() => navigate(`/gestion-usuarios/${usuario.id}`)}
                     className="flex items-center gap-2"
                   >
                     <Eye className="h-4 w-4" />

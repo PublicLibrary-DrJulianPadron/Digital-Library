@@ -70,7 +70,7 @@ export function UserProfile() {
 
   const handleProfileClick = () => {
     if (currentUser?.id) {
-      navigate(`/usuario`);
+      navigate(`/usuario/${currentUser.id}`);
     }
   };
 

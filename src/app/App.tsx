@@ -44,8 +44,8 @@ const App = () => (
                   <Route path="/historia" element={<HistoriaPage />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
-                  <Route path="/gestion/usuario/:id" element={<UserProfilePage />} />
-                  <Route path="/usuario" element={<DetallesUsuario />} />
+                  <Route path="/gestion-usuarios/:id" element={<UserProfilePage />} />
+                  <Route path="/usuario/:id" element={<DetallesUsuario />} />
                   <Route path="/mis-prestamos" element={<MisPrestamos />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

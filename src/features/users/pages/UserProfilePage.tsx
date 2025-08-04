@@ -38,26 +38,45 @@ export default function UserProfile() {
 
   useEffect(() => {
     if (id) {
+      setProfile(null);      
+      setFormData({});       
       fetchProfile();
     }
   }, [id]);
 
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        nombre_completo: profile.nombre_completo ?? '',
+        telefono: profile.telefono ?? '',
+        edad: profile.edad ?? null,
+        direccion: profile.direccion ?? '',
+        ocupacion: profile.ocupacion ?? '',
+      });
+      console.log("Profile data loaded:", profile);
+    }
+  }, [profile]);
+
+
   const fetchProfile = async () => {
+    setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', id)
+        .from("profiles")
+        .select("*")
+        .eq("id", id)
         .maybeSingle();
 
       if (error) throw error;
-      
+
       if (data) {
         setProfile(data);
-        setFormData(data);
+      } else {
+        setProfile(null);
       }
+
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
       toast({
         title: "Error",
         description: "No se pudo cargar el perfil del usuario",
@@ -73,7 +92,7 @@ export default function UserProfile() {
 
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from("profiles")
         .update({
           nombre_completo: formData.nombre_completo,
           telefono: formData.telefono,
@@ -81,19 +100,19 @@ export default function UserProfile() {
           direccion: formData.direccion,
           ocupacion: formData.ocupacion,
         })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
 
       setProfile({ ...profile, ...formData });
       setEditing(false);
-      
+
       toast({
         title: "Éxito",
         description: "Perfil actualizado correctamente",
       });
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
       toast({
         title: "Error",
         description: "No se pudo actualizar el perfil",
@@ -103,17 +122,23 @@ export default function UserProfile() {
   };
 
   const handleCancel = () => {
-    setFormData(profile || {});
+    if (profile) {
+      setFormData({
+        nombre_completo: profile.nombre_completo ?? '',
+        telefono: profile.telefono ?? '',
+        edad: profile.edad ?? null,
+        direccion: profile.direccion ?? '',
+        ocupacion: profile.ocupacion ?? '',
+      });
+    }
     setEditing(false);
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+  const getInitials = (name?: string | null): string => {
+    if (!name || typeof name !== "string") return "U";
+    const parts = name.trim().split(" ");
+    const initials = parts.map(p => p[0]).join("");
+    return initials.toUpperCase().slice(0, 2);
   };
 
   if (loading) {
@@ -132,10 +157,7 @@ export default function UserProfile() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">Usuario no encontrado</p>
-            <Button 
-              onClick={() => navigate('/gestion')} 
-              className="w-full mt-4"
-            >
+            <Button onClick={() => navigate("/gestion")} className="w-full mt-4">
               Volver a Gestión
             </Button>
           </CardContent>
@@ -218,7 +240,7 @@ export default function UserProfile() {
                   <Input
                     id="nombre_completo"
                     value={formData.nombre_completo || ''}
-                    onChange={(e) => setFormData({...formData, nombre_completo: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, nombre_completo: e.target.value })}
                   />
                 ) : (
                   <p className="p-2 bg-muted rounded">{profile.nombre_completo}</p>
@@ -231,7 +253,7 @@ export default function UserProfile() {
                   <Input
                     id="telefono"
                     value={formData.telefono || ''}
-                    onChange={(e) => setFormData({...formData, telefono: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                     placeholder="Ingrese teléfono"
                   />
                 ) : (
@@ -249,7 +271,7 @@ export default function UserProfile() {
                     id="edad"
                     type="number"
                     value={formData.edad || ''}
-                    onChange={(e) => setFormData({...formData, edad: parseInt(e.target.value) || null})}
+                    onChange={(e) => setFormData({ ...formData, edad: parseInt(e.target.value) || null })}
                     placeholder="Ingrese edad"
                   />
                 ) : (
@@ -263,7 +285,7 @@ export default function UserProfile() {
                   <Input
                     id="ocupacion"
                     value={formData.ocupacion || ''}
-                    onChange={(e) => setFormData({...formData, ocupacion: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, ocupacion: e.target.value })}
                     placeholder="Ingrese ocupación"
                   />
                 ) : (
@@ -281,7 +303,7 @@ export default function UserProfile() {
                 <Input
                   id="direccion"
                   value={formData.direccion || ''}
-                  onChange={(e) => setFormData({...formData, direccion: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
                   placeholder="Ingrese dirección"
                 />
               ) : (
@@ -323,8 +345,8 @@ export default function UserProfile() {
       </div>
 
       <div className="mt-6">
-        <Button 
-          onClick={() => navigate('/gestion')} 
+        <Button
+          onClick={() => navigate('/gestion')}
           variant="outline"
           className="w-full md:w-auto"
         >

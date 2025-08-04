@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+const dummyReducer = () => ({});
 const store = configureStore({
   reducer: {
-    counter: counterReducer, // Aquí definimos nuestros reductores
-    // otrosSlices: otrosSlicesReducer
+    dummy: dummyReducer,
   },
 });
+
 
 export default store;
