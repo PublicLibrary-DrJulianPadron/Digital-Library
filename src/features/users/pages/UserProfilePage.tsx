@@ -62,7 +62,7 @@ export default function UserProfile() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("users")
         .select("*")
         .eq("id", id)
         .maybeSingle();
