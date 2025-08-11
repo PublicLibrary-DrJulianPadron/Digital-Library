@@ -51,6 +51,10 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         const tokens = await logIn(email, password);
         localStorage.setItem("accessToken", tokens.access);
         localStorage.setItem("refreshToken", tokens.refresh);
+        localStorage.setItem("email", email);
+        localStorage.setItem("user_id", first_name);
+        localStorage.setItem("first_name", first_name);
+        localStorage.setItem("last_name", last_name);
 
         toast({
           title: "Registro exitoso",
@@ -59,12 +63,18 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
         setEmail("");
         setPassword("");
+        setFirstName("");
+        setLastName("");
         onOpenChange(false);
 
       } else {
         const tokens = await logIn(email, password);
         localStorage.setItem("accessToken", tokens.access);
         localStorage.setItem("refreshToken", tokens.refresh);
+        localStorage.setItem("email", email);
+        localStorage.setItem("user_id", first_name);
+        localStorage.setItem("first_name", first_name);
+        localStorage.setItem("last_name", last_name);
 
         toast({
           title: "Sesión iniciada",
@@ -73,6 +83,8 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
         setEmail("");
         setPassword("");
+        setFirstName("");
+        setLastName("");
         onOpenChange(false);
       }
 
@@ -92,6 +104,8 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     setIsSignUp(!isSignUp);
     setEmail("");
     setPassword("");
+    setFirstName("");
+    setLastName("");
   };
 
   return (
@@ -105,6 +119,43 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
+          {isSignUp &&
+            <div className="space-y-2">
+              <Label htmlFor="first_name">Nombre</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="first_name"
+                  type="first_name"
+                  placeholder="Nombre"
+                  value={first_name}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+          }
+
+          {isSignUp &&
+            <div className="space-y-2">
+              <Label htmlFor="last_name">Apellido</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="last_name"
+                  type="last_name"
+                  placeholder="Apellido"
+                  value={last_name}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+            </div>
+          }
+
           <div className="space-y-2">
             <Label htmlFor="email">Correo electrónico</Label>
             <div className="relative">
@@ -143,48 +194,6 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
               </button>
             </div>
           </div>
-
-          {isSignUp && (
-            <div className="space-y-2">
-              <Label htmlFor="cedula">Cédula</Label>
-              <div className="flex gap-2">
-                <Select value={cedulaPrefix} onValueChange={(value: "V" | "E" | "J" | "G") => setCedulaPrefix(value)}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="V">V</SelectItem>
-                    <SelectItem value="E">E</SelectItem>
-                    <SelectItem value="J">J</SelectItem>
-                    <SelectItem value="G">G</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="relative flex-1">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="cedula"
-                    type="text"
-                    placeholder="12345678"
-                    value={cedulaNumber}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const numericRegex = /^[0-9]*$/;
-                      if (numericRegex.test(value) && value.length <= 8) {
-                        setCedulaNumber(value);
-                      }
-                    }}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-              {cedulaNumber && (cedulaNumber.length < 7 || cedulaNumber.length > 8) && (
-                <p className="text-sm text-destructive">
-                  La cédula debe tener entre 7 y 8 dígitos
-                </p>
-              )}
-            </div>
-          )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (

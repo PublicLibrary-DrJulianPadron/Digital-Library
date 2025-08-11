@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/common/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
-import { supabase } from "@/integrations/supabase/client";
 
 interface CurrentUser {
   id: string;
@@ -26,46 +25,32 @@ export function UserProfile() {
 
   useEffect(() => {
     fetchCurrentUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        fetchCurrentUser();
-      } else {
-        setCurrentUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const fetchCurrentUser = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
+  const fetchCurrentUser = () => {
+    const id = localStorage.getItem("user_id");
+    const firstName = localStorage.getItem("first_name");
+    const lastName = localStorage.getItem("last_name");
+    const email = localStorage.getItem("email");
 
-      if (user) {
-        // For now, we'll use user email and create a display name from it
-        // Later this can be updated to use the custom users table
-        setCurrentUser({
-          id: user.id,
-          nombre_completo: user.email?.split('@')[0] || 'Usuario',
-          email: user.email || ''
-        });
-      } else {
-        setCurrentUser(null);
-      }
-    } catch (error) {
-      console.error('Error fetching current user:', error);
+    if (id && firstName && lastName && email) {
+      setCurrentUser({
+        id,
+        nombre_completo: `${firstName} ${lastName}`,
+        email,
+      });
+    } else {
       setCurrentUser(null);
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+  const handleSignOut = () => {
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("first_name");
+    localStorage.removeItem("last_name");
+    localStorage.removeItem("email");
+    setCurrentUser(null);
+    navigate('/');
   };
 
   const handleProfileClick = () => {
@@ -95,7 +80,6 @@ export function UserProfile() {
       .slice(0, 2);
   };
 
-  // --- Conditional Rendering Logic ---
   if (currentUser) {
     return (
       <DropdownMenu>
@@ -114,31 +98,22 @@ export function UserProfile() {
             {currentUser.nombre_completo}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="cursor-pointer transition-colors"
-            onClick={handleProfileClick}
-          >
+          <DropdownMenuItem onClick={handleProfileClick}>
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer transition-colors"
-            onClick={handleMyLoansClick}
-          >
+          <DropdownMenuItem onClick={handleMyLoansClick}>
             <BookOpen className="mr-2 h-4 w-4" />
             <span>Mis Préstamos</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer transition-colors"
-            onClick={handleSettingsClick}
-          >
+          <DropdownMenuItem onClick={handleSettingsClick}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Configuración</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer hover:bg-destructive/10 text-destructive transition-colors"
             onClick={handleSignOut}
+            className="hover:bg-destructive/10 text-destructive"
           >
             <LogOut className="mr-2 h-4 w-4" />
             <span>Cerrar Sesión</span>
@@ -156,7 +131,7 @@ export function UserProfile() {
           <LogIn className="h-4 w-4" />
           <span>Iniciar Sesión</span>
         </button>
-        
+
         <LoginDialog 
           open={showLoginDialog} 
           onOpenChange={setShowLoginDialog} 
