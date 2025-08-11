@@ -8,7 +8,6 @@ import { Badge } from "@/common/components/ui/badge";
 import { Separator } from "@/common/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/common/components/ui/avatar";
 import { Edit, Save, X, User, Phone, Mail, MapPin, Briefcase, Calendar, BookOpen, Activity } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/common/hooks/use-toast";
 
 interface Profile {

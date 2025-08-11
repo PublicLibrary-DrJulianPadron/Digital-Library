@@ -12,7 +12,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowLeft, User, Mail, Phone, Hash, Calendar, Clock, Users, FileText } from 'lucide-react';
 import { DatosSolicitud } from '@/features/room-bookings/pages/RoomBookingPage';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/common/hooks/use-toast';
 
 interface FormularioSolicitudProps {

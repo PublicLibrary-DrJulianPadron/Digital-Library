@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/common/components/ui
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/common/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 // Function to get user activity data
 const getUserActivityData = async () => {

@@ -5,7 +5,6 @@ import { Badge } from '@/common/components/ui/badge';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Clock, ArrowLeft, CheckCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface SelectorHorariosProps {
   fecha: Date;

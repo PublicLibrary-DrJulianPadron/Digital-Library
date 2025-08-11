@@ -1,65 +1,52 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/common/components/ui/sidebar";
+import {
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
+  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem
+} from "@/common/components/ui/sidebar";
 import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-const menuItems = [{
-  title: "Inicio",
-  url: "/",
-  icon: Home
-}, {
-  title: "Catálogo",
-  url: "/catalogo",
-  icon: BookOpen
-}, {
-  title: "Préstamo Sala",
-  url: "/prestamo-sala",
-  icon: Calendar
-}, {
-  title: "Historia",
-  url: "/historia",
-  icon: Clock
-}];
-const adminItems = [{
-  title: "Estadísticas",
-  url: "/estadisticas",
-  icon: BarChart3
-}, {
-  title: "Gestión",
-  url: "/gestion",
-  icon: User
-},{
-  title: "Colección",
-  url: "/coleccion",
-  icon: LibraryBig
-}];
+import api from "@/common/api/apiClient"; // your configured client
+import type { paths } from '@/common/types/generated-api-types';
+
+type UserType = paths['/api/users/me/']['get']['responses']['200']['content']['application/json'];;
+
+const menuItems = [
+  { title: "Inicio", url: "/", icon: Home },
+  { title: "Catálogo", url: "/catalogo", icon: BookOpen },
+  { title: "Préstamo Sala", url: "/prestamo-sala", icon: Calendar },
+  { title: "Historia", url: "/historia", icon: Clock },
+];
+
+const adminItems = [
+  { title: "Estadísticas", url: "/estadisticas", icon: BarChart3 },
+  { title: "Gestión", url: "/gestion", icon: User },
+  { title: "Colección", url: "/coleccion", icon: LibraryBig },
+];
+
 export function AppSidebar() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      setCurrentUser(null);
+      return;
+    }
+
     fetchCurrentUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        fetchCurrentUser();
-      } else {
-        setCurrentUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const fetchCurrentUser = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
+      const res = await api.get("users/me/").json<UserType>();
+      setCurrentUser(res);
     } catch (error) {
-      console.error('Error fetching current user:', error);
+      console.error("Error fetching current user:", error);
       setCurrentUser(null);
     }
   };
 
-  return <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
+  return (
+    <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
       <SidebarHeader className="border-b border-sidebar-border/20">
         <div className="flex flex-col items-center py-4">
           <div className="w-12 h-12 bg-biblioteca-gold rounded-full flex items-center justify-center mb-2 bg-zinc-50">
@@ -73,7 +60,7 @@ export function AppSidebar() {
           </p>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent className="px-2">
         <SidebarGroup>
           <SidebarGroupLabel className="text-biblioteca-gold font-medium">
@@ -83,14 +70,19 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems
                 .filter(item => item.url !== "/prestamo-sala" || currentUser)
-                .map(item => <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon size={18} />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>)}
+                .map(item => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
+                    >
+                      <a href={item.url} className="flex items-center gap-3">
+                        <item.icon size={18} />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -102,14 +94,19 @@ export function AppSidebar() {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {adminItems.map(item => <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200">
+                {adminItems.map(item => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
+                    >
                       <a href={item.url} className="flex items-center gap-3">
                         <item.icon size={18} />
                         <span>{item.title}</span>
                       </a>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>)}
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -126,5 +123,6 @@ export function AppSidebar() {
           </p>
         </div>
       </SidebarFooter>
-    </Sidebar>;
+    </Sidebar>
+  );
 }

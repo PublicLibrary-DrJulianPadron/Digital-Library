@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { toast, useToast } from '@/common/hooks/use-toast';
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';

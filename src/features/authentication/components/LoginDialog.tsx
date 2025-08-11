@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/common/components/ui/select";
 import { useToast } from "@/common/hooks/use-toast";
-import { signUp, logIn } from "@/features/authentication/hooks/authService";
+import { signUp, logIn, storeAuthData, LoginResponse } from "@/features/authentication/api/authService";
 
 interface LoginDialogProps {
   open: boolean;
@@ -34,59 +34,40 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const { toast } = useToast();
 
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setFirstName("");
+    setLastName("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      let authData: LoginResponse;
+
       if (isSignUp) {
-
-        await signUp({
-          email,
-          password,
-          first_name,
-          last_name,
-        });
-
-        const tokens = await logIn(email, password);
-        localStorage.setItem("accessToken", tokens.access);
-        localStorage.setItem("refreshToken", tokens.refresh);
-        localStorage.setItem("email", email);
-        localStorage.setItem("user_id", first_name);
-        localStorage.setItem("first_name", first_name);
-        localStorage.setItem("last_name", last_name);
+        await signUp({ email, password, first_name, last_name });
+        authData = await logIn({ username, password });
 
         toast({
           title: "Registro exitoso",
           description: "Sesión iniciada automáticamente",
         });
-
-        setEmail("");
-        setPassword("");
-        setFirstName("");
-        setLastName("");
-        onOpenChange(false);
-
       } else {
-        const tokens = await logIn(email, password);
-        localStorage.setItem("accessToken", tokens.access);
-        localStorage.setItem("refreshToken", tokens.refresh);
-        localStorage.setItem("email", email);
-        localStorage.setItem("user_id", first_name);
-        localStorage.setItem("first_name", first_name);
-        localStorage.setItem("last_name", last_name);
+        authData = await logIn({ email, password });
 
         toast({
           title: "Sesión iniciada",
           description: "Bienvenido de vuelta",
         });
-
-        setEmail("");
-        setPassword("");
-        setFirstName("");
-        setLastName("");
-        onOpenChange(false);
       }
+
+      storeAuthData(authData);
+      resetForm();
+      onOpenChange(false);
 
     } catch (error: any) {
       toast({

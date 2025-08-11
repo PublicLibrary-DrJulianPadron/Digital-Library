@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/common/components/ui
 import { Badge } from "@/common/components/ui/badge";
 import { Users, BookOpen, Calendar, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 export const StatsOverview = () => {
   // Simulate data - in a real app, these would come from your database

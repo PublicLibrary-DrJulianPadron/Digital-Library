@@ -6,7 +6,6 @@ import { Badge } from '@/common/components/ui/badge';
 import { format, isSameDay, isAfter, isBefore, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CalendarIcon, InfoIcon } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface CalendarioDisponibilidadProps {
   fechaSeleccionada?: Date;

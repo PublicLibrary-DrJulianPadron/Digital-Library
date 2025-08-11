@@ -4,7 +4,6 @@ import { Input } from "@/common/components/ui/input";
 import { Label } from "@/common/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/common/components/ui/dialog";
 import { UserPlus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/common/hooks/use-toast";
 
 interface AddUserDialogProps {

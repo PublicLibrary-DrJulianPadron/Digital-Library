@@ -8,7 +8,8 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-api-types": "openapi-typescript http://localhost:8000/api/schema/ --output src/common/types/generated-api-types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -42,7 +43,6 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@supabase/supabase-js": "^2.50.2",
     "@tanstack/react-query": "^5.56.2",
-    "axios": "^1.11.0",
     "caniuse-lite": "^1.0.30001727",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -50,6 +50,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
+    "ky": "^1.8.2",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
@@ -81,8 +82,8 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "lovable-tagger": "^1.1.7",
+    "openapi-typescript": "^7.9.1",
     "postcss": "^8.4.47",
-    "supabase": "^2.31.8",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",

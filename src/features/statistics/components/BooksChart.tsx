@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/common/components/ui
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/common/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 // Function to get books by category data
 const getBooksData = async () => {
