@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogOut, LogIn } from "lucide-react";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
@@ -11,60 +11,33 @@ import {
   DropdownMenuTrigger,
 } from "@/common/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
-
-interface CurrentUser {
-  id: string;
-  nombre_completo: string;
-  email: string;
-}
+import { clearCredentials } from "@/features/authentication/store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/app/store";
 
 export function UserProfile() {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchCurrentUser();
-  }, []);
-
-  const fetchCurrentUser = () => {
-    const id = localStorage.getItem("user_id");
-    const firstName = localStorage.getItem("first_name");
-    const lastName = localStorage.getItem("last_name");
-    const email = localStorage.getItem("email");
-
-    if (id && firstName && lastName && email) {
-      setCurrentUser({
-        id,
-        nombre_completo: `${firstName} ${lastName}`,
-        email,
-      });
-    } else {
-      setCurrentUser(null);
-    }
-  };
-
   const handleSignOut = () => {
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("first_name");
-    localStorage.removeItem("last_name");
-    localStorage.removeItem("email");
-    setCurrentUser(null);
-    navigate('/');
+    dispatch(clearCredentials());
+    navigate("/");
   };
 
   const handleProfileClick = () => {
-    if (currentUser?.id) {
-      navigate(`/usuario/${currentUser.id}`);
+    if (currentUser) {
+      navigate(`/usuario/me`);
     }
   };
 
   const handleMyLoansClick = () => {
-    navigate('/mis-prestamos');
+    navigate("/mis-prestamos");
   };
 
   const handleSettingsClick = () => {
-    navigate('/configuracion');
+    navigate("/configuracion");
   };
 
   const handleSignInClick = () => {
@@ -73,9 +46,9 @@ export function UserProfile() {
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -88,15 +61,13 @@ export function UserProfile() {
             <Avatar className="w-8 h-8 border-2 border-accent">
               <AvatarImage src="/placeholder-user.jpg" />
               <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
-                {getInitials(currentUser.nombre_completo)}
+                {getInitials(currentUser.firstName)}
               </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
-          <DropdownMenuLabel className="text-foreground">
-            {currentUser.nombre_completo}
-          </DropdownMenuLabel>
+          <DropdownMenuLabel className="text-foreground">{currentUser.firstName + ' ' + currentUser.lastName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleProfileClick}>
             <User className="mr-2 h-4 w-4" />
@@ -111,10 +82,7 @@ export function UserProfile() {
             <span>Configuración</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleSignOut}
-            className="hover:bg-destructive/10 text-destructive"
-          >
+          <DropdownMenuItem onClick={handleSignOut} className="hover:bg-destructive/10 text-destructive">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Cerrar Sesión</span>
           </DropdownMenuItem>
@@ -132,10 +100,7 @@ export function UserProfile() {
           <span>Iniciar Sesión</span>
         </button>
 
-        <LoginDialog 
-          open={showLoginDialog} 
-          onOpenChange={setShowLoginDialog} 
-        />
+        <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
       </>
     );
   }

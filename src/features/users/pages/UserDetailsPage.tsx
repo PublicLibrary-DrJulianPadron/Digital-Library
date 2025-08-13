@@ -7,98 +7,20 @@ import { ArrowLeft, Mail, Phone, Calendar, Activity, User, CreditCard } from 'lu
 import { useToast } from '@/common/hooks/use-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-
-interface Usuario {
-  id: string;
-  nombre_completo: string;
-  cedula: string;
-  email: string;
-  telefono: string | null;
-  activo: boolean;
-  prestamos_activos: number;
-  fecha_registro: string;
-  ultima_actividad: string | null;
-}
+import { fetchUserProfile } from "@/features/users/store/profileSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/app/store";
 
 export default function DetallesUsuario() {
+  const dispatch = useDispatch();
+  const UserProfile = useSelector((state: RootState) => state.profile.profile);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (id) {
-      fetchUsuario();
-    }
-  }, [id]);
 
-  const fetchUsuario = async () => {
-    try {
-      // Get current user ID since this should be user's own profile
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        navigate('/');
-        return;
-      }
-
-      // Fetch user data from profiles table
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) throw profileError;
-
-      // Get user data from auth
-      const userData = {
-        id: user.id,
-        nombre_completo: user.email?.split('@')[0] || 'Usuario',
-        cedula: profileData?.national_document || '',
-        email: user.email || '',
-        telefono: profileData?.phone || null,
-        activo: profileData?.is_active || true,
-        prestamos_activos: profileData?.active_loans || 0,
-        fecha_registro: profileData?.created_at || user.created_at,
-        ultima_actividad: profileData?.last_activity || null,
-      };
-
-      setUsuario(userData);
-    } catch (error) {
-      console.error('Error fetching usuario:', error);
-      toast({
-        title: 'Error',
-        description: 'No se pudo cargar la información del usuario',
-        variant: 'destructive',
-      });
-      navigate('/gestion');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="container mx-auto py-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Cargando información del usuario...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!usuario) {
-    return (
-      <div className="container mx-auto py-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-lg text-muted-foreground">Usuario no encontrado</div>
-        </div>
-      </div>
-    );
-  }
-
+  
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center gap-4">
@@ -126,14 +48,14 @@ export default function DetallesUsuario() {
             <div className="grid gap-3">
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Nombre Completo</label>
-                <p className="text-lg font-semibold">{usuario.nombre_completo}</p>
+                <p className="text-lg font-semibold">{UserProfile.user.first_name + ' ' + UserProfile.user.last_name}</p>
               </div>
               
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Cédula</label>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <p className="font-mono">{usuario.cedula}</p>
+                  <p className="font-mono">{UserProfile.national_document}</p>
                 </div>
               </div>
 
@@ -141,16 +63,16 @@ export default function DetallesUsuario() {
                 <label className="text-sm font-medium text-muted-foreground">Email</label>
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <p>{usuario.email}</p>
+                  <p>{UserProfile.user.email}</p>
                 </div>
               </div>
 
-              {usuario.telefono && (
+              {UserProfile.phone && (
                 <div className="flex flex-col space-y-1">
                   <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p>{usuario.telefono}</p>
+                    <p>{UserProfile.phone}</p>
                   </div>
                 </div>
               )}
@@ -159,7 +81,7 @@ export default function DetallesUsuario() {
         </Card>
 
         {/* Estado y Actividad */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-biblioteca-blue" />
@@ -171,7 +93,7 @@ export default function DetallesUsuario() {
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Estado</label>
                 <Badge 
-                  variant={usuario.activo ? "default" : "destructive"}
+                  variant={UserProfile ? "default" : "destructive"}
                   className="w-fit"
                 >
                   {usuario.activo ? "Activo" : "Inactivo"}
@@ -211,7 +133,7 @@ export default function DetallesUsuario() {
               )}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Historial de Préstamos */}

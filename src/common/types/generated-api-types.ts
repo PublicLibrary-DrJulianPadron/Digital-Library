@@ -314,42 +314,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/token/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Takes a set of user credentials and returns an access and refresh JSON web
-         *     token pair to prove the authentication of those credentials. */
-        post: operations["api_token_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/token/refresh/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Takes a refresh type JSON web token and returns an access type JSON web
-         *     token if the refresh token is valid. */
-        post: operations["api_token_refresh_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/users/admin/profiles/": {
         parameters: {
             query?: never;
@@ -417,7 +381,7 @@ export interface paths {
         put?: never;
         /**
          * User login
-         * @description Authenticate a user using username and password, returning JWT tokens and user information.
+         * @description Authenticate a user using username and password, returning JWT access token.
          */
         post: operations["api_users_login_create"];
         delete?: never;
@@ -465,7 +429,7 @@ export interface paths {
         put?: never;
         /**
          * Update user password
-         * @description Allows an authenticated user to update their password by providing the current (old) password and the new password. Validates the old password and enforces password policies on the new one.
+         * @description Allows an authenticated user to update their password by providing the current (old) password and the new password.Validates the old password and enforces password policies on the new one.
          */
         post: operations["api_users_password_change_create"];
         delete?: never;
@@ -554,14 +518,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/token/refresh/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refresh access token
+         * @description Generates a new short-lived access token using the refresh token stored in an HttpOnly cookie.
+         */
+        post: operations["api_users_token_refresh_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        AuthTokensResponse: {
+        AccessToken: {
+            /** @description The newly issued short-lived access token. */
             access: string;
-            refresh: string;
-            user: components["schemas"]["UserInfo"];
         };
         BlockedSchedule: {
             /** Format: uuid */
@@ -632,8 +615,8 @@ export interface components {
             end_date: string;
             status?: components["schemas"]["StatusEnum"];
         };
-        LoginRequestRequest: {
-            username: string;
+        LoginRequest: {
+            email: string;
             password: string;
         };
         PasswordChange: {
@@ -837,6 +820,13 @@ export interface components {
             admin_comments?: string;
             is_active?: boolean;
         };
+        SingUpRequest: {
+            /** Format: email */
+            email: string;
+            password: string;
+            first_name?: string;
+            last_name?: string;
+        };
         /**
          * @description * `Active` - Active
          *     * `Returned` - Returned
@@ -847,20 +837,6 @@ export interface components {
         StatusOKResponse: {
             status: string;
         };
-        TokenObtainPair: {
-            readonly access: string;
-            readonly refresh: string;
-        };
-        TokenObtainPairRequest: {
-            username: string;
-            password: string;
-        };
-        TokenRefresh: {
-            readonly access: string;
-        };
-        TokenRefreshRequest: {
-            refresh: string;
-        };
         User: {
             readonly id: number;
             first_name?: string;
@@ -870,21 +846,6 @@ export interface components {
              * Format: email
              */
             email?: string;
-        };
-        UserCreateRequest: {
-            /** Format: email */
-            email: string;
-            password: string;
-            first_name?: string;
-            last_name?: string;
-        };
-        UserInfo: {
-            /** Format: uuid */
-            id: string;
-            first_name: string;
-            last_name: string;
-            /** Format: email */
-            email: string;
         };
         UserProfileCreateAdminRequest: {
             /** Format: email */
@@ -1599,56 +1560,6 @@ export interface operations {
             };
         };
     };
-    api_token_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TokenObtainPairRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["TokenObtainPairRequest"];
-                "multipart/form-data": components["schemas"]["TokenObtainPairRequest"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenObtainPair"];
-                };
-            };
-        };
-    };
-    api_token_refresh_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TokenRefreshRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["TokenRefreshRequest"];
-                "multipart/form-data": components["schemas"]["TokenRefreshRequest"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TokenRefresh"];
-                };
-            };
-        };
-    };
     api_users_admin_profiles_list: {
         parameters: {
             query?: never;
@@ -1897,19 +1808,19 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginRequestRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["LoginRequestRequest"];
-                "multipart/form-data": components["schemas"]["LoginRequestRequest"];
+                "application/json": components["schemas"]["LoginRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LoginRequest"];
+                "multipart/form-data": components["schemas"]["LoginRequest"];
             };
         };
         responses: {
-            /** @description Login successful, tokens and user data returned. */
+            /** @description Login successful, token returned. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthTokensResponse"];
+                    "application/json": components["schemas"]["AccessToken"];
                 };
             };
             /** @description Invalid credentials. */
@@ -2152,9 +2063,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserCreateRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["UserCreateRequest"];
-                "multipart/form-data": components["schemas"]["UserCreateRequest"];
+                "application/json": components["schemas"]["SingUpRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SingUpRequest"];
+                "multipart/form-data": components["schemas"]["SingUpRequest"];
             };
         };
         responses: {
@@ -2164,11 +2075,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthTokensResponse"];
+                    "application/json": components["schemas"]["AccessToken"];
                 };
             };
             /** @description Invalid input data. */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_users_token_refresh_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description New access token generated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccessToken"];
+                };
+            };
+            /** @description Refresh token missing, invalid, or expired. The client must log in again to obtain new tokens. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Eye, EyeOff, Mail, Lock, CreditCard } from "lucide-react";
+import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/common/components/ui/select";
+import { setCredentials, clearCredentials } from "@/features/authentication/store/authSlice";
 import { useToast } from "@/common/hooks/use-toast";
-import { signUp, logIn, storeAuthData, LoginResponse } from "@/features/authentication/api/authService";
+import { signUp, logIn, LoginResponse } from "@/features/authentication/api/authService";
+import { useDispatch } from "react-redux";
 
 interface LoginDialogProps {
   open: boolean;
@@ -25,6 +27,7 @@ interface LoginDialogProps {
 }
 
 export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -50,7 +53,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
       if (isSignUp) {
         await signUp({ email, password, first_name, last_name });
-        authData = await logIn({ username, password });
+        authData = await logIn({ email, password });
 
         toast({
           title: "Registro exitoso",
@@ -65,9 +68,16 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         });
       }
 
-      storeAuthData(authData);
       resetForm();
       onOpenChange(false);
+
+      dispatch(
+        setCredentials({
+          accessToken: authData.access,
+          refreshToken: authData.refresh,
+          user: { email: authData.user.email, firstName: authData.user.first_name, lastName: authData.user.last_name },
+        })
+      );
 
     } catch (error: any) {
       toast({
