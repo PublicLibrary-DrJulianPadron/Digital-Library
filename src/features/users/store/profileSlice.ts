@@ -1,10 +1,9 @@
 // src/features/profile/profileSlice.ts
-import api from '@/common/api/apiClient';
+import { createApi } from '@/common/api/apiClient';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import type { paths } from '@/common/types/generated-api-types';
+import type { components } from '@/common/types/generated-api-types';
 
-export type ProfileResponse = paths['/api/users/me/']['get']['responses']['200']['content']['application/json'];
-
+type ProfileResponse = components['schemas']['Profile'];
 
 export interface ProfileState {
   profile: ProfileResponse | null;
@@ -18,11 +17,18 @@ const initialState: ProfileState = {
   error: null,
 };
 
+
 export const fetchUserProfile = createAsyncThunk<ProfileResponse>(
   'users/loadProfile',
-  async () => {
-    const data = await api.get('users/me/').json<ProfileResponse>();
-    return data;
+  async (_, thunkAPI) => {
+    try {
+      const api = createApi();
+      const response = await api.get('users/me/'); 
+      const data = await response.json<ProfileResponse>();
+      return data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error?.message ?? 'User Fetch failed');
+    }
   }
 );
 
@@ -30,7 +36,11 @@ const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    // optional reducers if needed
+    clearUser: (state) => {
+      state.profile = null;
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -39,8 +49,8 @@ const profileSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.loading = false;
         state.profile = action.payload;
+        state.loading = false;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
@@ -48,5 +58,7 @@ const profileSlice = createSlice({
       });
   },
 });
+
+export const { clearUser } = profileSlice.actions;
 
 export default profileSlice.reducer;

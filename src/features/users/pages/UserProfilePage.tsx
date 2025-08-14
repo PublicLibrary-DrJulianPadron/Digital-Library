@@ -36,14 +36,6 @@ export default function UserProfile() {
   const [formData, setFormData] = useState<Partial<Profile>>({});
 
   useEffect(() => {
-    if (id) {
-      setProfile(null);      
-      setFormData({});       
-      fetchProfile();
-    }
-  }, [id]);
-
-  useEffect(() => {
     if (profile) {
       setFormData({
         nombre_completo: profile.nombre_completo ?? '',
@@ -57,53 +49,10 @@ export default function UserProfile() {
   }, [profile]);
 
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data) {
-        setProfile(data);
-      } else {
-        setProfile(null);
-      }
-
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      toast({
-        title: "Error",
-        description: "No se pudo cargar el perfil del usuario",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSave = async () => {
     if (!profile || !id) return;
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          nombre_completo: formData.nombre_completo,
-          telefono: formData.telefono,
-          edad: formData.edad,
-          direccion: formData.direccion,
-          ocupacion: formData.ocupacion,
-        })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      setProfile({ ...profile, ...formData });
       setEditing(false);
 
       toast({

@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@/app/store';
+import { logIn, signUp } from "@/features/authentication/store/authSlice";
+import { useToast } from "@/common/components/ui/use-toast";
 import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
   Dialog,
@@ -9,17 +13,6 @@ import {
 import { Button } from "@/common/components/ui/button";
 import { Input } from "@/common/components/ui/input";
 import { Label } from "@/common/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/common/components/ui/select";
-import { setCredentials, clearCredentials } from "@/features/authentication/store/authSlice";
-import { useToast } from "@/common/hooks/use-toast";
-import { signUp, logIn, LoginResponse } from "@/features/authentication/api/authService";
-import { useDispatch } from "react-redux";
 
 interface LoginDialogProps {
   open: boolean;
@@ -27,7 +20,7 @@ interface LoginDialogProps {
 }
 
 export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -49,18 +42,15 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     setIsLoading(true);
 
     try {
-      let authData: LoginResponse;
-
       if (isSignUp) {
-        await signUp({ email, password, first_name, last_name });
-        authData = await logIn({ email, password });
+        await dispatch(signUp({ email, password, first_name, last_name })).unwrap();
 
         toast({
           title: "Registro exitoso",
           description: "Sesión iniciada automáticamente",
         });
       } else {
-        authData = await logIn({ email, password });
+        await dispatch(logIn({ email, password })).unwrap();
 
         toast({
           title: "Sesión iniciada",
@@ -70,14 +60,6 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
       resetForm();
       onOpenChange(false);
-
-      dispatch(
-        setCredentials({
-          accessToken: authData.access,
-          refreshToken: authData.refresh,
-          user: { email: authData.user.email, firstName: authData.user.first_name, lastName: authData.user.last_name },
-        })
-      );
 
     } catch (error: any) {
       toast({

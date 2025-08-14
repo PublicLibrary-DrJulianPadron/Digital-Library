@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/common/components/ui/sidebar";
 import { AppSidebar } from "../common/components/layout/Sidebar";
-import { UserProfile } from "../features/users/components/UserProfile";
+import { UserProfile } from "../features/authentication/components/LogInButton";
 import Index from "../features/homepage/pages/Index";
 import Catalog from "../features/books/pages/CatalogPage";
 import Coleccion from "../features/books/pages/ColeccionPage";
@@ -19,9 +19,11 @@ import UserProfilePage from "../features/users/pages/UserProfilePage";
 import MisPrestamos from "../features/loans/pages/MyLoansPage";
 import NotFound from "../pages/NotFound";
 
+
 const queryClient = new QueryClient();
 
-const App = () => (
+export const App = () => {
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -57,6 +59,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+)
+}
 
-export default App;
+

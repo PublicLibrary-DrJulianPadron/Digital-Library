@@ -381,7 +381,7 @@ export interface paths {
         put?: never;
         /**
          * User login
-         * @description Authenticate a user using username and password, returning JWT access token.
+         * @description Authenticate a user, returning a success message in the body and JWT tokens via HTTP-only cookies.
          */
         post: operations["api_users_login_create"];
         delete?: never;
@@ -509,7 +509,7 @@ export interface paths {
         put?: never;
         /**
          * User registration
-         * @description Register a new user and return their JWT tokens and profile data.
+         * @description Register a new user. On successful registration, a success message is returned in the body, and JWT tokens are set in HTTP-only cookies.
          */
         post: operations["api_users_register_create"];
         delete?: never;
@@ -529,7 +529,7 @@ export interface paths {
         put?: never;
         /**
          * Refresh access token
-         * @description Generates a new short-lived access token using the refresh token stored in an HttpOnly cookie.
+         * @description Generates a new short-lived access token using the refresh token stored in an HttpOnly cookie. The new access token is also returned via an HttpOnly cookie.
          */
         post: operations["api_users_token_refresh_create"];
         delete?: never;
@@ -542,10 +542,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        AccessToken: {
-            /** @description The newly issued short-lived access token. */
-            access: string;
-        };
         BlockedSchedule: {
             /** Format: uuid */
             readonly id: string;
@@ -1814,14 +1810,19 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Login successful, token returned. */
+            /** @description Login successful. Tokens are set in HTTP-only cookies. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["AccessToken"];
+                content?: never;
+            };
+            /** @description Invalid input or missing fields (e.g., email, password). */
+            400: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
             };
             /** @description Invalid credentials. */
             401: {
@@ -2069,16 +2070,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description User registered and authenticated successfully. */
-            201: {
+            /** @description User registered successfully. Tokens are set in HTTP-only cookies. */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["AccessToken"];
-                };
+                content?: never;
             };
-            /** @description Invalid input data. */
+            /** @description Invalid input data. This could be due to missing required fields, invalid data formats, or a user with the same email already existing. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -2096,14 +2095,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description New access token generated successfully. */
+            /** @description New access token generated successfully. The new token is set in an HTTP-only cookie. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["AccessToken"];
-                };
+                content?: never;
             };
             /** @description Refresh token missing, invalid, or expired. The client must log in again to obtain new tokens. */
             401: {
