@@ -4,6 +4,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { createApi } from '@/common/api/apiClient';
 import type { AuthSuccessResponse } from '@/common/api/apiClient';
 import type { components } from '@/common/types/generated-api-types';
+import {clearUser } from "@/features/users/store/profileSlice";
+
 
 export type LoginRequest = components['schemas']['LoginRequest'];
 export type SingUpRequest = components['schemas']['SingUpRequest'];
@@ -17,8 +19,8 @@ export const logIn = createAsyncThunk<
   async (payload, thunkAPI) => {
     try {
       const api = createApi();
-      const response = await api.post('users/login/', { json: payload }); 
-      const data = await response.json<AuthSuccessResponse>(); 
+      const response = await api.post('users/login/', { json: payload });
+      const data = await response.json<AuthSuccessResponse>();
       return data;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error?.message ?? 'Login failed');
@@ -50,14 +52,15 @@ export const SingOut = createAsyncThunk<
   { rejectValue: string }
 >(
   'auth/singOut',
-  async (_, thunkAPI) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const api = createApi();
       const response = await api.post('users/logout/', {});
       const data = await response.json<AuthSuccessResponse>();
+      dispatch(clearUser());
       return data;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue(error?.message ?? 'Logout failed');
+      return rejectWithValue(error?.message ?? 'Logout failed');
     }
   }
 );
@@ -75,7 +78,16 @@ const initialState: AuthState = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setIsAuthenticated: (state) => {
+      state.isAuthenticated = true;
+      state.error = null;
+    },
+    clearIsAuthenticated: (state) => {
+      state.isAuthenticated = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(logIn.pending, (state) => {
@@ -117,5 +129,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { } = authSlice.actions;
+export const { setIsAuthenticated, clearIsAuthenticated } = authSlice.actions;
 export default authSlice.reducer;

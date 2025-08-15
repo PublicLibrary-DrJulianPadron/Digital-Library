@@ -13,8 +13,9 @@ import {
 } from "@/common/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
-import { SingOut } from "@/features/authentication/store/authSlice";
-import { fetchUserProfile, clearUser } from "@/features/users/store/profileSlice";
+import { SingOut, setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/store/authSlice";
+import { fetchUserProfile } from "@/features/users/store/profileSlice";
+import { getCookie } from '@/common/lib/utils'
 
 export function UserProfile() {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,16 +24,37 @@ export function UserProfile() {
   const loading = useSelector((state: RootState) => state.profile.loading);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const csrfToken = getCookie('csrftoken');
+      const isCurrentlyAuthenticated = !!csrfToken;
+
+      if (isAuthenticated && !isCurrentlyAuthenticated) {
+        dispatch(clearIsAuthenticated());
+      } else if (!isAuthenticated && isCurrentlyAuthenticated) {
+        dispatch(setIsAuthenticated());
+      }
+    };
+
+    checkAuthStatus();
+
+    const intervalId = setInterval(checkAuthStatus, 1000);
+
+    return () => clearInterval(intervalId);
+
+  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated && !profile && !loading) {
       dispatch(fetchUserProfile());
     }
-  }, [isAuthenticated, profile, loading, dispatch]);
+  }, [isAuthenticated, dispatch]);
 
   const handleSignOut = () => {
-    dispatch(clearUser());
     dispatch(SingOut());
+    setIsDropdownOpen(false);
   };
 
   const getInitials = (firstName = "", lastName = "") => {
@@ -55,7 +77,7 @@ export function UserProfile() {
     const lastName = profile?.user?.last_name || "";
 
     return (
-      <DropdownMenu>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <Avatar className="w-8 h-8 border-2 border-accent">
