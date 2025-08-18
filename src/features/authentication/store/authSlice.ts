@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 import { createApi } from '@/common/api/apiClient';
+import { deleteCookie } from '@/common/lib/utils'
 import type { AuthSuccessResponse } from '@/common/api/apiClient';
 import type { components } from '@/common/types/generated-api-types';
 import {clearUser } from "@/features/users/store/profileSlice";
@@ -57,6 +58,7 @@ export const SingOut = createAsyncThunk<
       const api = createApi();
       const response = await api.post('users/logout/', {});
       const data = await response.json<AuthSuccessResponse>();
+      deleteCookie('csrftoken');
       dispatch(clearUser());
       return data;
     } catch (error: any) {

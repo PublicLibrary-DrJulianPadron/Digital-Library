@@ -27,6 +27,7 @@ export function UserProfile() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
+
     const checkAuthStatus = () => {
       const csrfToken = getCookie('csrftoken');
       const isCurrentlyAuthenticated = !!csrfToken;
@@ -35,6 +36,8 @@ export function UserProfile() {
         dispatch(clearIsAuthenticated());
       } else if (!isAuthenticated && isCurrentlyAuthenticated) {
         dispatch(setIsAuthenticated());
+      } else if (isAuthenticated && isCurrentlyAuthenticated) {
+        dispatch(fetchUserProfile());
       }
     };
 
@@ -44,12 +47,6 @@ export function UserProfile() {
 
     return () => clearInterval(intervalId);
 
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    if (isAuthenticated && !profile && !loading) {
-      dispatch(fetchUserProfile());
-    }
   }, [isAuthenticated, dispatch]);
 
   const handleSignOut = () => {

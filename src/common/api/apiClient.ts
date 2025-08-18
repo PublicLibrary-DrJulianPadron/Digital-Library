@@ -62,7 +62,6 @@ export function createApi() {
             } catch (err) {
               processQueue(err, null);
               isRefreshing = false;
-              window.location.href = '/';
               throw err;
             }
           }
