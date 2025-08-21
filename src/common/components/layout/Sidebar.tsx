@@ -86,7 +86,7 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border/20 p-4">
         <div className="text-center">
           <p className="text-xs text-biblioteca-gold">
-            Av. Orinoco con Calle Libertador
+            Calle Bermúdez, Complejo Cultural de Maturín
           </p>
           <p className="text-xs text-white/80">
             Maturín, Monagas, Venezuela
