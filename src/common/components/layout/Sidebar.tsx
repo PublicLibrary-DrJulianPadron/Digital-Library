@@ -6,7 +6,7 @@ import {
 } from "@/common/components/ui/sidebar";
 import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
 import { LucideProps } from "lucide-react";
-import { Link } from 'react-router-dom'; // ⬅️ The crucial import
+import { Link } from 'react-router-dom';
 
 const allMenuItems = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },

@@ -25,7 +25,7 @@ export function createApi() {
     retry: {
       limit: 0,
       methods: ['get'],
-      statusCodes: [401],
+      statusCodes: [401, 404],
       backoffLimit: 3000
     },
     hooks: {

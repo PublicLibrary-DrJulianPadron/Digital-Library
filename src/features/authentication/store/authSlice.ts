@@ -7,7 +7,7 @@ import type { AuthSuccessResponse } from '@/common/api/apiClient';
 import type { components } from '@/common/types/generated-api-types';
 import {clearUser } from "@/features/users/store/profileSlice";
 
-
+  
 export type LoginRequest = components['schemas']['LoginRequest'];
 export type SingUpRequest = components['schemas']['SingUpRequest'];
 
@@ -38,7 +38,7 @@ export const signUp = createAsyncThunk<
   async (payload, thunkAPI) => {
     try {
       const api = createApi();
-      const response = await api.post('users/register/', { json: payload });
+      const response = await api.post('users/signup/', { json: payload });
       const data = await response.json<AuthSuccessResponse>();
       return data;
     } catch (error: any) {
@@ -56,7 +56,7 @@ export const SingOut = createAsyncThunk<
   async (_, { dispatch, rejectWithValue }) => {
     try {
       const api = createApi();
-      const response = await api.post('users/logout/', {});
+      const response = await api.post('users/signout/', {});
       const data = await response.json<AuthSuccessResponse>();
       deleteCookie('csrftoken');
       dispatch(clearUser());
@@ -97,7 +97,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(logIn.fulfilled, (state, action) => {
-        state.isAuthenticated = !!action.payload;
+        state.isAuthenticated = !!action.payload; 
         state.error = null;
       })
       .addCase(logIn.rejected, (state, action) => {

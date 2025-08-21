@@ -36,10 +36,12 @@ export function UserProfile() {
         dispatch(clearIsAuthenticated());
       } else if (!isAuthenticated && isCurrentlyAuthenticated) {
         dispatch(setIsAuthenticated());
-      } else if (isAuthenticated && isCurrentlyAuthenticated) {
-        dispatch(fetchUserProfile());
       }
     };
+
+    if (isAuthenticated) {
+      dispatch(fetchUserProfile());
+    }
 
     checkAuthStatus();
 
