@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@/app/store';
-import { logIn, signUp } from "@/features/authentication/store/authSlice";
+import { useLogInMutation, useSignUpMutation } from "@/features/authentication/api/authApiSlice.ts";
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useToast } from "@/common/components/ui/use-toast";
 import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
@@ -19,66 +18,104 @@ interface LoginDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+function isFetchBaseQueryError(error: any): error is FetchBaseQueryError {
+  return typeof error === 'object' && error !== null && 'status' in error;
+}
+
 export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
-  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+
+  // Use the mutation hooks directly
+  const [logIn, { isLoading: isLoggingIn, isSuccess: isLoginSuccess, isError: isLoginError, error: loginError }] = useLogInMutation();
+  const [signUp, { isLoading: isSigningUp, isSuccess: isSignUpSuccess, isError: isSignUpError, error: signUpError }] = useSignUpMutation();
+
   const { toast } = useToast();
 
-  const resetForm = () => {
+  const isLoading = isLoggingIn || isSigningUp;
+
+  // Use useEffect to handle side effects like toast messages
+  useEffect(() => {
+    if (isLoginSuccess) {
+      toast({
+        title: "Sesión iniciada",
+        description: "Bienvenido de vuelta",
+      });
+      resetAndClose();
+    }
+  }, [isLoginSuccess, toast]);
+
+  useEffect(() => {
+    if (isSignUpSuccess) {
+      toast({
+        title: "Registro exitoso",
+        description: "Sesión iniciada automáticamente",
+      });
+      resetAndClose();
+    }
+  }, [isSignUpSuccess, toast]);
+
+  useEffect(() => {
+    if (isLoginError) {
+      let errorMessage = "Ocurrió un error inesperado";
+
+      // Use a type guard to safely access the `data` property
+      if (isFetchBaseQueryError(loginError) && typeof loginError.data === 'object' && loginError.data !== null && 'detail' in loginError.data) {
+        errorMessage = (loginError.data as { detail: string }).detail;
+      }
+
+      toast({
+        title: "Error de inicio de sesión",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [isLoginError, loginError, toast]);
+
+  useEffect(() => {
+    if (isSignUpError) {
+      let errorMessage = "Ocurrió un error inesperado";
+
+      if (isFetchBaseQueryError(signUpError) && typeof signUpError.data === 'object' && signUpError.data !== null && 'detail' in signUpError.data) {
+        errorMessage = (signUpError.data as { detail: string }).detail;
+      }
+
+      toast({
+        title: "Error de registro",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  }, [isSignUpError, signUpError, toast]);
+
+
+  const resetAndClose = () => {
     setEmail("");
     setPassword("");
     setFirstName("");
     setLastName("");
+    onOpenChange(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
     try {
       if (isSignUp) {
-        await dispatch(signUp({ email, password, first_name, last_name })).unwrap();
-
-        toast({
-          title: "Registro exitoso",
-          description: "Sesión iniciada automáticamente",
-        });
+        await signUp({ email, password, first_name, last_name }).unwrap();
       } else {
-        await dispatch(logIn({ email, password })).unwrap();
-
-        toast({
-          title: "Sesión iniciada",
-          description: "Bienvenido de vuelta",
-        });
+        await logIn({ email, password }).unwrap();
       }
-
-      resetForm();
-      onOpenChange(false);
-
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.response?.data?.detail || "Ocurrió un error inesperado",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
-
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
-    setEmail("");
-    setPassword("");
-    setFirstName("");
-    setLastName("");
+    resetAndClose();
   };
 
   return (
@@ -92,42 +129,41 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
-          {isSignUp &&
-            <div className="space-y-2">
-              <Label htmlFor="first_name">Nombre</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="first_name"
-                  type="first_name"
-                  placeholder="Nombre"
-                  value={first_name}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="pl-10"
-                  required
-                />
+          {isSignUp && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="first_name">Nombre</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="first_name"
+                    type="text" // Correct type for first name
+                    placeholder="Nombre"
+                    value={first_name}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
-            </div>
-          }
 
-          {isSignUp &&
-            <div className="space-y-2">
-              <Label htmlFor="last_name">Apellido</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="last_name"
-                  type="last_name"
-                  placeholder="Apellido"
-                  value={last_name}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="pl-10"
-                  required
-                />
+              <div className="space-y-2">
+                <Label htmlFor="last_name">Apellido</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="last_name"
+                    type="text" // Correct type for last name
+                    placeholder="Apellido"
+                    value={last_name}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
-            </div>
-          }
+            </>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="email">Correo electrónico</Label>

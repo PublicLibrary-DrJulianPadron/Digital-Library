@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "@/app/store";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "@/app/store";
+import { getCookie } from '@/common/lib/utils'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,18 +14,22 @@ import {
 } from "@/common/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
-import { SingOut, setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/store/authSlice";
-import { fetchUserProfile } from "@/features/users/store/profileSlice";
-import { getCookie } from '@/common/lib/utils'
+import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
+import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
+import { useGetUserProfileQuery } from "@/features/users/api/profileApiSlice";
 
 export function UserProfile() {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const profile = useSelector((state: RootState) => state.profile.profile);
-  const loading = useSelector((state: RootState) => state.profile.loading);
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
+  const { data: profile, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserProfileQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
 
   useEffect(() => {
 
@@ -39,10 +44,6 @@ export function UserProfile() {
       }
     };
 
-    if (isAuthenticated) {
-      dispatch(fetchUserProfile());
-    }
-
     checkAuthStatus();
 
     const intervalId = setInterval(checkAuthStatus, 1000);
@@ -51,9 +52,15 @@ export function UserProfile() {
 
   }, [isAuthenticated, dispatch]);
 
-  const handleSignOut = () => {
-    dispatch(SingOut());
-    setIsDropdownOpen(false);
+  const handleSignOut = async () => {
+    try {
+      setShowLoginDialog(false)
+      setIsDropdownOpen(false);
+      await signOut().unwrap();
+      console.log('Successfully signed out.');
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
   };
 
   const getInitials = (firstName = "", lastName = "") => {
@@ -67,7 +74,7 @@ export function UserProfile() {
     return name.length > 0 ? name : "User Profile";
   };
 
-  if (loading) {
+  if (isProfileLoading) {
     return <div>Loading...</div>;
   }
 

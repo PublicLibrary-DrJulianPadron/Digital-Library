@@ -7,7 +7,7 @@ import { ArrowLeft, Mail, Phone, Calendar, Activity, User, CreditCard } from 'lu
 import { useToast } from '@/common/hooks/use-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { fetchUserProfile } from "@/features/users/store/profileSlice";
+import { fetchUserProfile } from "@/features/users/api/profileSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/app/store";
 

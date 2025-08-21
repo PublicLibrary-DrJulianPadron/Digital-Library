@@ -1,28 +1,50 @@
-import { configureStore } from '@reduxjs/toolkit';
-import storage from "redux-persist/lib/storage"; 
-import { persistReducer, persistStore } from "redux-persist";
-import authReducer from "@/features/authentication/store/authSlice";
-import profileReducer from "@/features/users/store/profileSlice";
+// src/app/store/index.ts
+import {
+  configureStore,
+  combineReducers,
+  Tuple,
+  ThunkMiddleware,
+} from '@reduxjs/toolkit';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { apiSlice } from '@/common/api/apiSlice';
+import authReducer from '@/features/authentication/api/authSlice';
 
-const persistConfig = {
-  key: "root",
-  storage,
-  whitelist: ['auth', 'profile'],
-};
-
-const persistedAuthReducer = persistReducer(persistConfig, authReducer);
-const persistedProfileReducer = persistReducer(persistConfig, profileReducer);
-
-
-export const store = configureStore({
-  reducer: {
-    auth: persistedAuthReducer,
-    profile: persistedProfileReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+const rootReducer = combineReducers({
+  auth: authReducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['auth'],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(apiSlice.middleware as any),
+});
+
+
 export const persistor = persistStore(store);
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
