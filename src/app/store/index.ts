@@ -17,7 +17,10 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { apiSlice } from '@/common/api/apiSlice';
+import { profileApiSlice }from '@/features/users/api/profileApiSlice';
+import { booksApiSlice }from '@/features/books/api/booksApiSlice';
 import authReducer from '@/features/authentication/api/authSlice';
+
 
 const rootReducer = combineReducers({
   auth: authReducer,
