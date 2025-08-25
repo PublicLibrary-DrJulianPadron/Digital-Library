@@ -9,7 +9,7 @@ import { AppSidebar } from "../common/components/layout/Sidebar";
 import { UserProfile } from "../features/authentication/components/LogInButton";
 import Index from "../features/homepage/pages/Index";
 import Catalog from "../features/content/pages/CatalogPage";
-import Coleccion from "../features/content-management/pages/ColeccionManagementPage";
+import ColeccionManagementPage from "../features/content-management/pages/ColeccionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";
@@ -49,7 +49,7 @@ export const App = () => {
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
                   <Route path="/gestion-contenido" element={<Gestion />} />
-                  <Route path="/gestion-contenido/coleccion" element={<Coleccion />} />
+                  <Route path="/gestion-contenido/coleccion" element={<ColeccionManagementPage />} />
                   <Route path="/gestion-contenido/generos" element={<GenresManagementPage />} />
                   <Route path="/gestion-contenido/lenguajes" element={<LanguageManagementPage />} />
                   <Route path="/gestion-contenido/materiales" element={<MaterialManagementPage />} />

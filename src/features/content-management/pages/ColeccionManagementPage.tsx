@@ -1,4 +1,4 @@
-// src/features/books/pages/Coleccion.tsx
+// src/features/books/pages/ColeccionManagementPage.tsx
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/common/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/common/components/ui/table";
@@ -13,7 +13,7 @@ import { BookForm } from "@/features/content-management/components/BookForm/Book
 import { Book, BookRequest, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/content-management/api/booksApiSlice';
 
 
-const Coleccion = () => {
+const ColeccionManagementPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isBookFormOpen, setIsBookFormOpen] = useState(false);
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
@@ -316,4 +316,4 @@ const Coleccion = () => {
   );
 };
 
-export default Coleccion;
+export default ColeccionManagementPage;
