@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useToast } from '@/common/hooks/use-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast, useToast } from '@/common/hooks/use-toast';
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
 import { Textarea } from '@/common/components/ui/textarea';
@@ -8,12 +9,11 @@ import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { Save, X, Upload } from 'lucide-react';
-import { useGetMaterialTypesQuery } from '@/features/metadata/api/materialTypesApiSlice';
-import { useGetGenresQuery } from '@/features/metadata/api/genresApiSlice';
-import { useGetLanguagesQuery } from '@/features/metadata/api/languagesApiSlice';
+import { MaterialType, MaterialTypeConstants } from '@/features/books/types/material-types';
+import { LanguageCodeConstants } from '@/features/books/types/language-codes';
+import { GenreOptions } from '@/features/books/types/genres';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
-import type { Book } from '@/features/books/api/booksApiSlice';
-import { useCreateBookMutation, useUpdateBookMutation } from '@/features/books/api/booksApiSlice';
+import type { BooksList, Book } from '@/features/books/api/booksApiSlice';
 
 
 interface BookFormProps {
@@ -23,6 +23,7 @@ interface BookFormProps {
 }
 
 export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue, control } = useForm<BookFormData>({
     defaultValues: mapBookToFormValues(book)
@@ -31,49 +32,75 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
   const watchedAvailableCopies = watch('available_copies');
   const watchedQuantityInStock = watch('quantity_in_stock');
 
-  // Load option lists from the metadata API slices
-  const { data: materialTypesData, isLoading: materialTypesLoading } = useGetMaterialTypesQuery();
-  const { data: genresData, isLoading: genresLoading } = useGetGenresQuery();
-  const { data: languagesData, isLoading: languagesLoading } = useGetLanguagesQuery();
-
-  // Map API results to simple string arrays used by the Select components.
-  const MaterialTypeOptions: string[] = materialTypesData ? materialTypesData.map((m) => m.name) : [];
-  const GenreOptions: string[] = genresData ? genresData.map((g) => g.name) : [];
-  const LanguageCodeOptions: string[] = languagesData ? languagesData.map((l) => l.name) : [];
-
-  const [addBook, { isLoading: isAdding }] = useCreateBookMutation();
-  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
-
-  const onFormSubmit = async (data: BookFormData) => {
-    try {
-      const bookData = {
-        ...data,
-        publication_date: data.publication_date ? Number(data.publication_date) : undefined,
-        pages: data.pages ? Number(data.pages) : undefined,
-        quantity_in_stock: Number(data.quantity_in_stock),
-        available_copies: Number(data.available_copies),
-        material_type: data.material_type,
-        // If genre_names is not an array, ensure it becomes one for the API
-        genre_names: Array.isArray(data.genres) ? data.genres : [data.genres].filter(Boolean),
-      };
-
-      if (book && book.id) {
-        await updateBook({ id: book.id, body: bookData }).unwrap(); toast({ title: 'Éxito', description: 'Libro actualizado correctamente.' });
+  const addBookMutation = useMutation({
+    mutationFn: async (newBookData: BookFormData) => {
+      const { data, error } = await supabase.from('libros').insert([{
+        ...newBookData,
+        publication_date: newBookData.publication_date ? Number(newBookData.publication_date) : undefined,
+        pages: newBookData.pages ? Number(newBookData.pages) : undefined,
+        quantity_in_stock: Number(newBookData.quantity_in_stock),
+        available_copies: Number(newBookData.available_copies),
+        material_type: newBookData.material_type as MaterialType,
+      } as Partial<Book>]).select();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['libros'] });
+      toast({ title: 'Éxito', description: 'Libro agregado correctamente.' });
+      if (data && data.length > 0) {
+        const newBookRow = data[0] as BooksList;
+        const { id, created_at, updated_at, ...bookDataWithoutIdTimestamps } = newBookRow;
+        onSubmit(bookDataWithoutIdTimestamps);
       } else {
-        await addBook(bookData as Omit<Book, "id" | "created_at" | "updated_at">).unwrap();
-        toast({ title: 'Éxito', description: 'Libro agregado correctamente.' });
+        onSubmit({} as Omit<BooksList, "id" | "created_at" | "updated_at">);
       }
-      onSubmit(bookData as Omit<Book, "id" | "created_at" | "updated_at">);
-    } catch (error) {
-      toast({ title: 'Error', description: `Error al procesar libro: ${error.message}`, variant: 'destructive' });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: `Error al agregar libro: ${error.message}`, variant: 'destructive' });
+    },
+  });
+
+  const updateBookMutation = useMutation({
+    mutationFn: async (updatedBookData: BookFormData & { id: string }) => {
+      const { data, error } = await supabase.from('libros').update({
+        ...updatedBookData,
+        publication_date: updatedBookData.publication_date ? Number(updatedBookData.publication_date) : undefined,
+        pages: updatedBookData.pages ? Number(updatedBookData.pages) : undefined,
+        quantity_in_stock: Number(updatedBookData.quantity_in_stock),
+        available_copies: Number(updatedBookData.available_copies),
+        material_type: updatedBookData.material_type as MaterialType,
+      } as Partial<Book>).eq('id', updatedBookData.id).select();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['libros'] });
+      toast({ title: 'Éxito', description: 'Libro actualizado correctamente.' });
+      if (data && data.length > 0) {
+        const updatedBookRow = data[0] as BooksList;
+        const { id, created_at, updated_at, ...bookDataWithoutIdTimestamps } = updatedBookRow;
+        onSubmit(bookDataWithoutIdTimestamps);
+      } else {
+        onSubmit({} as Omit<BooksList, "id" | "created_at" | "updated_at">);
+      }
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: `Error al actualizar libro: ${error.message}`, variant: 'destructive' });
+    },
+  });
+
+  const onFormSubmit = (data: BookFormData) => {
+    if (book && book.id) {
+      updateBookMutation.mutate({ ...data, id: book.id });
+    } else {
+      addBookMutation.mutate(data);
     }
   };
 
   useEffect(() => {
     reset(mapBookToFormValues(book));
   }, [book, reset]);
-
-  const isSubmitting = isAdding || isUpdating;
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
@@ -163,7 +190,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                   <Controller
                     name="material_type"
                     control={control}
-                    defaultValue={book?.material_type || MaterialTypeOptions[0]}
+                    defaultValue={book?.material_type || MaterialTypeConstants[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -173,7 +200,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                           <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(materialTypesLoading ? ['Cargando...'] : MaterialTypeOptions).map((type) => (
+                          {MaterialTypeConstants.map((type) => (
                             <SelectItem key={type} value={type}>
                               {type}
                             </SelectItem>
@@ -188,23 +215,23 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="genres">Género (s)</Label>
+                  <Label htmlFor="genre_names">Género (s)</Label>
                   {/* NOTE: You should use a multi-select component here for genre_names to align with the string[] type. */}
                   {/* The current implementation is a single select for demonstration. */}
                   <Controller
-                    name="genres"
+                    name="genre_names"
                     control={control}
-                    defaultValue={book?.genres || []}
+                    defaultValue={book?.genre_names || []}
                     render={({ field }) => (
                       <Select
                         onValueChange={(value) => field.onChange([value])} // Cast to array for single select
-                        defaultValue={field.value?.[0]}
+                        defaultValue={field.value[0]}
                       >
-                        <SelectTrigger className={errors.genres ? 'border-red-500' : ''}>
+                        <SelectTrigger className={errors.genre_names ? 'border-red-500' : ''}>
                           <SelectValue placeholder="Seleccionar género" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(genresLoading ? ['Cargando...'] : GenreOptions).map((genre) => (
+                          {GenreOptions.map((genre) => (
                             <SelectItem key={genre} value={genre}>
                               {genre}
                             </SelectItem>
@@ -213,8 +240,8 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                       </Select>
                     )}
                   />
-                  {errors.genres?.message && (
-                    <p className="text-red-500 text-sm">{String(errors.genres.message)}</p>
+                  {errors.genre_names?.message && (
+                    <p className="text-red-500 text-sm">{String(errors.genre_names.message)}</p>
                   )}
                 </div>
               </div>
@@ -269,7 +296,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                   <Controller
                     name="language"
                     control={control}
-                    defaultValue={book?.language || LanguageCodeOptions[0]}
+                    defaultValue={book?.language || LanguageCodeConstants[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -279,7 +306,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                           <SelectValue placeholder="Seleccionar idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(languagesLoading ? ['Cargando...'] : LanguageCodeOptions).map((language) => (
+                          {LanguageCodeConstants.map((language) => (
                             <SelectItem key={language} value={language}>
                               {language}
                             </SelectItem>
@@ -358,7 +385,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
           variant="outline"
           onClick={onCancel}
           className="border-biblioteca-blue text-biblioteca-blue hover:bg-biblioteca-blue hover:text-white"
-          disabled={isSubmitting}
+          disabled={addBookMutation.isPending || updateBookMutation.isPending}
         >
           <X className="w-4 h-4 mr-2" />
           Cancelar
@@ -366,7 +393,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
         <Button
           type="submit"
           className="bg-biblioteca-blue hover:bg-biblioteca-blue/90 text-white"
-          disabled={isSubmitting}
+          disabled={addBookMutation.isPending || updateBookMutation.isPending}
         >
           <Save className="w-4 h-4 mr-2" />
           {book ? 'Actualizar' : 'Guardar'} Libro

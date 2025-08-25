@@ -314,6 +314,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/library/languages/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_languages_list"];
+        put?: never;
+        post: operations["api_library_languages_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/languages/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_languages_retrieve"];
+        put: operations["api_library_languages_update"];
+        post?: never;
+        delete: operations["api_library_languages_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["api_library_languages_partial_update"];
+        trace?: never;
+    };
+    "/api/library/loans/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_loans_list"];
+        put?: never;
+        post: operations["api_library_loans_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/loans/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_loans_retrieve"];
+        put: operations["api_library_loans_update"];
+        post?: never;
+        delete: operations["api_library_loans_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["api_library_loans_partial_update"];
+        trace?: never;
+    };
+    "/api/library/material-types/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_material_types_list"];
+        put?: never;
+        post: operations["api_library_material_types_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/material-types/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_library_material_types_retrieve"];
+        put: operations["api_library_material_types_update"];
+        post?: never;
+        delete: operations["api_library_material_types_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["api_library_material_types_partial_update"];
+        trace?: never;
+    };
     "/api/users/admin/profiles/": {
         parameters: {
             query?: never;
@@ -498,7 +594,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/users/register/": {
+    "/api/users/signout/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * User signout
+         * @description Logs a user out by deleting their authentication tokens (access and refresh) and CSRF token from HTTP-only cookies.
+         */
+        post: operations["api_users_signout_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/signup/": {
         parameters: {
             query?: never;
             header?: never;
@@ -511,7 +627,7 @@ export interface paths {
          * User registration
          * @description Register a new user. On successful registration, a success message is returned in the body, and JWT tokens are set in HTTP-only cookies.
          */
-        post: operations["api_users_register_create"];
+        post: operations["api_users_signup_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -568,40 +684,85 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
+        /** @description Serializer for the Book model. */
         Book: {
             /** Format: uuid */
             readonly id: string;
             title: string;
-            author: string;
-            readonly genre_names: string[];
+            author?: string;
+            isbn?: string;
+            material_type: string | null;
             publication_date?: number | null;
+            pages?: number | null;
+            quantity_in_stock?: number | null;
             readonly available_copies: number | null;
+            language: string | null;
+            publisher?: string;
+            genres: (string | null)[];
+            description?: string;
+            /** Format: uri */
+            cover_url?: string;
         };
+        /** @description Serializer for the Book model. */
         BookRequest: {
             title: string;
-            author: string;
-            genres: string[];
+            author?: string;
+            isbn?: string;
+            material_type: string | null;
             publication_date?: number | null;
+            pages?: number | null;
+            quantity_in_stock?: number | null;
+            language: string | null;
+            publisher?: string;
+            genres: (string | null)[];
+            description?: string;
+            /** Format: uri */
+            cover_url?: string;
         };
         EmailRequest: {
             /** Format: email */
             email: string;
         };
+        /** @description Serializer for the Genre model. */
         Genre: {
             readonly id: number;
             name: string;
-            readonly label: string;
-            /** Format: uuid */
-            readonly value: string;
+            description?: string;
         };
+        /** @description Serializer for a genre with a list of its books. */
         GenreBooks: {
             readonly id: number;
             name: string;
-            readonly books: components["schemas"]["Book"][];
+            description?: string;
+            readonly books: string[];
         };
+        /** @description Serializer for the Language model. */
+        Language: {
+            readonly id: number;
+            name: string;
+        };
+        /** @description Serializer for the Language model. */
+        LanguageRequest: {
+            name: string;
+        };
+        /** @description Serializer for the Loan model. */
         Loan: {
             /** Format: uuid */
             readonly id: string;
+            user: number;
+            /** Format: uuid */
+            book: string;
+            /** Format: email */
+            readonly user_email: string;
+            readonly book_title: string;
+            /** Format: date */
+            start_date: string;
+            /** Format: date */
+            end_date: string;
+            readonly status: components["schemas"]["StatusEnum"];
+        };
+        /** @description Serializer for the Loan model. */
+        LoanRequest: {
             user: number;
             /** Format: uuid */
             book: string;
@@ -609,11 +770,19 @@ export interface components {
             start_date: string;
             /** Format: date */
             end_date: string;
-            status?: components["schemas"]["StatusEnum"];
         };
         LoginRequest: {
             email: string;
             password: string;
+        };
+        /** @description Serializer for the MaterialType model. */
+        MaterialType: {
+            readonly id: number;
+            name: string;
+        };
+        /** @description Serializer for the MaterialType model. */
+        MaterialTypeRequest: {
+            name: string;
         };
         PasswordChange: {
             old_password: string;
@@ -639,11 +808,39 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
+        /** @description Serializer for the Book model. */
         PatchedBookRequest: {
             title?: string;
             author?: string;
-            genres?: string[];
+            isbn?: string;
+            material_type?: string | null;
             publication_date?: number | null;
+            pages?: number | null;
+            quantity_in_stock?: number | null;
+            language?: string | null;
+            publisher?: string;
+            genres?: (string | null)[];
+            description?: string;
+            /** Format: uri */
+            cover_url?: string;
+        };
+        /** @description Serializer for the Language model. */
+        PatchedLanguageRequest: {
+            name?: string;
+        };
+        /** @description Serializer for the Loan model. */
+        PatchedLoanRequest: {
+            user?: number;
+            /** Format: uuid */
+            book?: string;
+            /** Format: date */
+            start_date?: string;
+            /** Format: date */
+            end_date?: string;
+        };
+        /** @description Serializer for the MaterialType model. */
+        PatchedMaterialTypeRequest: {
+            name?: string;
         };
         PatchedProfileAdminRequest: {
             /** @description ID of the user associated with this profile */
@@ -1496,6 +1693,8 @@ export interface operations {
         parameters: {
             query?: {
                 book?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
                 /** @description * `Active` - Active
                  *     * `Returned` - Returned
                  *     * `Overdue` - Overdue */
@@ -1552,6 +1751,435 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenreBooks"];
+                };
+            };
+        };
+    };
+    api_library_languages_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Language"][];
+                };
+            };
+        };
+    };
+    api_library_languages_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LanguageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LanguageRequest"];
+                "multipart/form-data": components["schemas"]["LanguageRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Language"];
+                };
+            };
+        };
+    };
+    api_library_languages_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this language. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Language"];
+                };
+            };
+        };
+    };
+    api_library_languages_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this language. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LanguageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LanguageRequest"];
+                "multipart/form-data": components["schemas"]["LanguageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Language"];
+                };
+            };
+        };
+    };
+    api_library_languages_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this language. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_languages_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this language. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedLanguageRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedLanguageRequest"];
+                "multipart/form-data": components["schemas"]["PatchedLanguageRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Language"];
+                };
+            };
+        };
+    };
+    api_library_loans_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Loan"][];
+                };
+            };
+        };
+    };
+    api_library_loans_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LoanRequest"];
+                "multipart/form-data": components["schemas"]["LoanRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Loan"];
+                };
+            };
+        };
+    };
+    api_library_loans_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this loan. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Loan"];
+                };
+            };
+        };
+    };
+    api_library_loans_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this loan. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["LoanRequest"];
+                "multipart/form-data": components["schemas"]["LoanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Loan"];
+                };
+            };
+        };
+    };
+    api_library_loans_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this loan. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_loans_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this loan. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedLoanRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedLoanRequest"];
+                "multipart/form-data": components["schemas"]["PatchedLoanRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Loan"];
+                };
+            };
+        };
+    };
+    api_library_material_types_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialType"][];
+                };
+            };
+        };
+    };
+    api_library_material_types_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialTypeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MaterialTypeRequest"];
+                "multipart/form-data": components["schemas"]["MaterialTypeRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialType"];
+                };
+            };
+        };
+    };
+    api_library_material_types_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this material type. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialType"];
+                };
+            };
+        };
+    };
+    api_library_material_types_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this material type. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaterialTypeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MaterialTypeRequest"];
+                "multipart/form-data": components["schemas"]["MaterialTypeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialType"];
+                };
+            };
+        };
+    };
+    api_library_material_types_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this material type. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_material_types_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this material type. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedMaterialTypeRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMaterialTypeRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMaterialTypeRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialType"];
                 };
             };
         };
@@ -2055,7 +2683,25 @@ export interface operations {
             };
         };
     };
-    api_users_register_create: {
+    api_users_signout_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Signout successful. All authentication cookies have been deleted. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_users_signup_create: {
         parameters: {
             query?: never;
             header?: never;

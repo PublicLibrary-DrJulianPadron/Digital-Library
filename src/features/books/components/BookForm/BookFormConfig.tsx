@@ -1,20 +1,21 @@
-import { Book } from '@/features/books/types/books'; // Adjust path based on actual location
+// Correcting the import statement based on the file structure
+import { Book } from '@/features/books/api/booksApiSlice';
 
+// Correcting the default form values to match the Book type structure
 export const defaultBookFormValues = {
-  title: '', 
-  author: '', 
+  title: '',
+  author: '',
   isbn: '',
-  publicationYear: null, 
-  quantityInStock: 0,
-  materialType: 'Book', 
-  genre: '',
+  publication_date: undefined as number | undefined,
+  pages: undefined as number | undefined,
+  available_copies: undefined as number | undefined,
+  quantity_in_stock: undefined as number | undefined,
+  language: 'es',
   publisher: '',
-  availableCopies: 0,
+  genres: [] as string[],
   description: '',
-  coverUrl: '',
-  language: 'es', 
-  pages: 0,
-  location: '',
+  cover_url: '',
+  material_type: '',
 };
 
 /**
@@ -28,20 +29,19 @@ export const mapBookToFormValues = (book: Book | null | undefined) => {
   }
 
   return {
-    title: book.title ?? '', 
-    author: book.author ?? '', 
+    title: book.title ?? '',
+    author: book.author ?? '',
     isbn: book.isbn ?? '',
-    publicationYear: book.publicationYear ?? null, 
-    quantityInStock: book.quantityInStock ?? 0, 
-    materialType: book.materialType ?? 'Book', 
-    genre: book.genre ?? '',
+    publication_date: book.publication_date ?? undefined,
+    pages: book.pages ?? undefined,
+    available_copies: book.available_copies ?? undefined,
+    quantity_in_stock: book.quantity_in_stock ?? undefined,
+    language: book.language ?? 'es',
     publisher: book.publisher ?? '',
-    availableCopies: book.availableCopies ?? 0,
+    genres: book.genres ?? [],
     description: book.description ?? '',
-    coverUrl: book.coverUrl ?? '',
-    language: book.language ?? 'es', 
-    pages: book.pages ?? 0,
-    location: book.location ?? '',
+    cover_url: book.cover_url ?? '',
+    material_type: book.material_type ?? '',
   };
 };
 
