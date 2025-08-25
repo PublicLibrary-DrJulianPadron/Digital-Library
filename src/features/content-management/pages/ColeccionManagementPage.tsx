@@ -9,8 +9,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from "@/common/components/ui/badge";
 import { Eye, Trash2, Plus, Edit } from "lucide-react";
 import { useToast } from "@/common/hooks/use-toast";
-import { BookForm } from "@/features/books/components/BookForm/BookForm";
-import { Book, BookRequest, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/books/api/booksApiSlice';
+import { BookForm } from "@/features/content-management/components/BookForm/BookForm";
+import { Book, BookRequest, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/content-management/api/booksApiSlice';
 
 
 const Coleccion = () => {

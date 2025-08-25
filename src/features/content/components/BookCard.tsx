@@ -1,5 +1,5 @@
 import React, { useState, useId } from 'react';
-import { Book } from '@/features/books/types/books';
+import { Book } from '@/features/content-management/api/booksApiSlice';
 import { Button } from '@/common/components/ui/button';
 import { Badge } from '@/common/components/ui/badge';
 import { Edit, Trash2, MapPin, Calendar, BookOpen, User } from 'lucide-react';
@@ -14,7 +14,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/common/components/ui/alert-dialog';
-
 interface BookCardProps {
   book: Book;
   onEdit: (book: Book) => void;
@@ -26,15 +25,15 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
   const dialogTitleId = useId();
 
   const getAvailabilityColor = () => {
-    if (book.availableCopies === 0) return 'bg-red-100 text-red-800';
-    if (book.availableCopies <= 2) return 'bg-yellow-100 text-yellow-800';
+    if (book.available_copies === 0) return 'bg-red-100 text-red-800';
+    if (book.available_copies <= 2) return 'bg-yellow-100 text-yellow-800';
     return 'bg-green-100 text-green-800';
   };
 
   const getAvailabilityText = () => {
-    if (book.availableCopies === 0) return 'No disponible';
-    if (book.availableCopies === 1) return '1 disponible';
-    return `${book.availableCopies} disponibles`;
+    if (book.available_copies === 0) return 'No disponible';
+    if (book.available_copies === 1) return '1 disponible';
+    return `${book.available_copies} disponibles`;
   };
 
   return (
@@ -46,7 +45,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
       {/* Book Cover */}
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
-          src={book.coverUrl}
+          src={book.cover_url}
           alt={book.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -109,8 +108,8 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
         <p className="text-biblioteca-gray text-xs mb-2">{book.author}</p>
 
         <div className="flex items-center justify-between text-xs text-biblioteca-gray">
-          <span>{book.quantityInStock} ejemplares</span>
-          <span>{book.publicationYear}</span>
+          <span>{book.quantity_in_stock} ejemplares</span>
+          <span>{book.publication_date}</span>
         </div>
       </div>
 
@@ -130,17 +129,12 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
 
               <div className="flex items-center text-biblioteca-gray">
                 <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.genre}</span>
+                <span>{book.genres}</span>
               </div>
 
               <div className="flex items-center text-biblioteca-gray">
                 <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.publicationYear}</span>
-              </div>
-
-              <div className="flex items-center text-biblioteca-gray">
-                <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.location}</span>
+                <span>{book.publication_date}</span>
               </div>
             </div>
 
@@ -153,7 +147,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
             <div className="flex justify-between items-center text-xs">
               <span className="text-biblioteca-gray">Disponibles:</span>
               <Badge className={`${getAvailabilityColor()} text-xs`}>
-                {book.availableCopies}/{book.quantityInStock}
+                {book.available_copies}/{book.quantity_in_stock}
               </Badge>
             </div>
           </div>

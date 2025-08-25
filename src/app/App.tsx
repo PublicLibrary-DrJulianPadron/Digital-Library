@@ -8,8 +8,8 @@ import { SidebarProvider, SidebarTrigger } from "@/common/components/ui/sidebar"
 import { AppSidebar } from "../common/components/layout/Sidebar";
 import { UserProfile } from "../features/authentication/components/LogInButton";
 import Index from "../features/homepage/pages/Index";
-import Catalog from "../features/books/pages/CatalogPage";
-import Coleccion from "../features/books/pages/ColeccionPage";
+import Catalog from "../features/content/pages/CatalogPage";
+import Coleccion from "../features/content-management/pages/ColeccionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";

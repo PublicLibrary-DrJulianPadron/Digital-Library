@@ -1,5 +1,5 @@
 // Correcting the import statement based on the file structure
-import { Book } from '@/features/books/api/booksApiSlice';
+import { Book } from '@/features/content-management/api/booksApiSlice';
 
 // Correcting the default form values to match the Book type structure
 export const defaultBookFormValues = {

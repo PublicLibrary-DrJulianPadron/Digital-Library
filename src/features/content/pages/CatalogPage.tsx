@@ -1,15 +1,13 @@
 // src/features/books/pages/Catalog.tsx
 import React, { useState } from 'react';
-import { BookList } from '@/features/books/components/BookList';
-import { BookForm } from '@/features/books/components/BookForm/BookForm';
-import { BookSearch } from '@/features/books/components/BookSearch';
+import { BookList } from '@/features/content/components/BookList';
+import { BookForm } from '@/features/content-management/components/BookForm/BookForm';
+import { BookSearch } from '@/features/content/components/BookSearch';
 import { Button } from '@/common/components/ui/button';
 import { Plus, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/common/components/ui/dialog';
-import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
-import { Book, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/books/api/booksApiSlice';
+import { Book, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/content-management/api/booksApiSlice';
 import { toast } from '@/common/components/ui/use-toast';
-
 
 const Catalog = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,20 +17,20 @@ const Catalog = () => {
 
     const { data: books, error, isLoading, isFetching } = useGetBooksQuery({
         search: searchTerm,
-        genre_names: selectedGenre,
+        genres__name: selectedGenre,
     });
 
     const [createBook, { isLoading: isCreating }] = useCreateBookMutation();
     const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
     const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation();
 
-    const allGenres = books ? Array.from(new Set(books.flatMap(book => book.genre_names || []))) : [];
+    const allGenres = books ? Array.from(new Set(books.flatMap(book => book.genres || []))) : [];
 
     const handleGenreChange = (value: string) => {
         setSelectedGenre(value === 'all-genres' ? '' : value);
     };
 
-    const handleAddBook = async (bookData: BooksCreate) => {
+    const handleAddBook = async (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => {
         try {
             await createBook(bookData).unwrap();
             toast({
@@ -49,7 +47,7 @@ const Catalog = () => {
         }
     };
 
-    const handleEditBook = async (bookData: BooksUpdate) => {
+    const handleEditBook = async (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => {
         if (!editingBook) return;
         try {
             await updateBook({ id: editingBook.id, body: bookData }).unwrap();
@@ -159,6 +157,7 @@ const Catalog = () => {
                                     book={editingBook}
                                     onSubmit={editingBook ? handleEditBook : handleAddBook}
                                     onCancel={() => setIsFormOpen(false)}
+                                    isUpdatingBook={!!editingBook}
                                     isSubmitting={isCreating || isUpdating}
                                 />
                             </DialogContent>
@@ -171,7 +170,7 @@ const Catalog = () => {
                         onSearchChange={setSearchTerm}
                         selectedGenre={selectedGenre || 'all-genres'}
                         onGenreChange={handleGenreChange}
-                        genre_names={allGenres}
+                        genres={allGenres}
                     />
 
                     {/* Stats */}

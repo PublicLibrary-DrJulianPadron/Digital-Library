@@ -1,11 +1,11 @@
 import React from 'react';
 import { BookCard } from './BookCard';
-import { BookUpdate, Book } from '@/features/books/types/books';
+import { Book } from '@/features/content-management/api/booksApiSlice';
 import { BookOpen } from 'lucide-react';
 
 interface BookListProps {
   books: Book[];
-  onEdit: (book: BookUpdate) => void;
+  onEdit: (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => void;
   onDelete: (bookId: string) => void;
 }
 
