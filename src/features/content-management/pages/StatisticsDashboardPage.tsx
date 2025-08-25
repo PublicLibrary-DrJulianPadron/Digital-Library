@@ -1,9 +1,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/common/components/ui/card";
-import { StatsOverview } from "@/features/statistics/components/StatsOverview";
-import { BooksChart } from "@/features/statistics/components/BooksChart";
-import { UsersChart } from "@/features/statistics/components/UsersChart";
-import { RecentActivity } from "@/features/statistics/components/RecentActivity";
+import { StatsOverview } from "@/features/content-management/components/StatsOverview";
+import { BooksChart } from "@/features/content-management/components/BooksChart";
+import { UsersChart } from "@/features/content-management/components/UsersChart";
+import { RecentActivity } from "@/features/content-management/components/RecentActivity";
 
 const Estadisticas = () => {
   return (

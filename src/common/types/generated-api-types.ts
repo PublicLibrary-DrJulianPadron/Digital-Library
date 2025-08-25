@@ -692,7 +692,8 @@ export interface components {
             author?: string;
             isbn?: string;
             material_type: string | null;
-            publication_date?: number | null;
+            /** Format: date */
+            publication_date?: string | null;
             pages?: number | null;
             quantity_in_stock?: number | null;
             readonly available_copies: number | null;
@@ -709,7 +710,8 @@ export interface components {
             author?: string;
             isbn?: string;
             material_type: string | null;
-            publication_date?: number | null;
+            /** Format: date */
+            publication_date?: string | null;
             pages?: number | null;
             quantity_in_stock?: number | null;
             language: string | null;
@@ -814,7 +816,8 @@ export interface components {
             author?: string;
             isbn?: string;
             material_type?: string | null;
-            publication_date?: number | null;
+            /** Format: date */
+            publication_date?: string | null;
             pages?: number | null;
             quantity_in_stock?: number | null;
             language?: string | null;
@@ -1524,7 +1527,7 @@ export interface operations {
             query?: {
                 author?: string;
                 genres__name?: string;
-                publication_date?: number;
+                publication_date?: string;
                 /** @description A search term. */
                 search?: string;
             };

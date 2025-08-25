@@ -6,7 +6,7 @@ export const defaultBookFormValues = {
   title: '',
   author: '',
   isbn: '',
-  publication_date: undefined as number | undefined,
+  publication_date: undefined as string | undefined,
   pages: undefined as number | undefined,
   available_copies: undefined as number | undefined,
   quantity_in_stock: undefined as number | undefined,

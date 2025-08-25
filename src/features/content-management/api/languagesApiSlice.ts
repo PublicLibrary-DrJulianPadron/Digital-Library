@@ -10,7 +10,7 @@ export type LanguagesList = Language[];
 export const languagesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getLanguages: builder.query<LanguagesList, void>({
-      query: () => `/api/library/languages/`,
+      query: () => `/library/languages/`,
       providesTags: (result) =>
         result
           ? [...result.map(({ id }) => ({ type: 'Languages' as const, id })), { type: 'Languages', id: 'LIST' }]
@@ -18,19 +18,19 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
     }),
     createLanguage: builder.mutation<Language, LanguageRequest>({
       query: (newLanguage) => ({
-        url: `/api/library/languages/`,
+        url: `/library/languages/`,
         method: 'POST',
         body: newLanguage,
       }),
       invalidatesTags: [{ type: 'Languages', id: 'LIST' }],
     }),
     getLanguageById: builder.query<Language, number>({
-      query: (id) => `/api/library/languages/${id}/`,
+      query: (id) => `/library/languages/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Languages', id }],
     }),
     updateLanguage: builder.mutation<Language, { id: number; body: LanguageRequest }>({
       query: (languageData) => ({
-        url: `/api/library/languages/${languageData.id}/`,
+        url: `/library/languages/${languageData.id}/`,
         method: 'PUT',
         body: languageData.body,
       }),
@@ -38,7 +38,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateLanguage: builder.mutation<Language, { id: number; body: PatchedLanguageRequest }>({
       query: (languageData) => ({
-        url: `/api/library/languages/${languageData.id}/`,
+        url: `/library/languages/${languageData.id}/`,
         method: 'PATCH',
         body: languageData.body,
       }),
@@ -46,7 +46,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
     }),
     deleteLanguage: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/api/library/languages/${id}/`,
+        url: `/library/languages/${id}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Languages', id }, { type: 'Languages', id: 'LIST' }],

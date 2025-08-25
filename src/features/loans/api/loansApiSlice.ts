@@ -10,7 +10,7 @@ export type LoansList = Loan[];
 export const loansApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBookLoanHistory: builder.query<LoansList, string>({
-      query: (id) => `/api/library/books/${id}/loan-history/`,
+      query: (id) => `/library/books/${id}/loan-history/`,
     }),
     getAllLoanHistory: builder.query<LoansList, { book?: string; ordering?: string; status?: 'Active' | 'Overdue' | 'Returned'; user?: number } | void>({
       query: (arg) => {
@@ -23,13 +23,13 @@ export const loansApiSlice = apiSlice.injectEndpoints({
           });
         }
         return {
-          url: `/api/library/books/loan-history/`,
+          url: `/library/books/loan-history/`,
           params,
         };
       },
     }),
     getLoans: builder.query<LoansList, void>({
-      query: () => `/api/library/loans/`,
+      query: () => `/library/loans/`,
       providesTags: (result) =>
         result
           ? [...result.map(({ id }) => ({ type: 'Loans' as const, id })), { type: 'Loans', id: 'LIST' }]
@@ -37,19 +37,19 @@ export const loansApiSlice = apiSlice.injectEndpoints({
     }),
     createLoan: builder.mutation<Loan, LoanRequest>({
       query: (newLoan) => ({
-        url: `/api/library/loans/`,
+        url: `/library/loans/`,
         method: 'POST',
         body: newLoan,
       }),
       invalidatesTags: [{ type: 'Loans', id: 'LIST' }],
     }),
     getLoanById: builder.query<Loan, string>({
-      query: (id) => `/api/library/loans/${id}/`,
+      query: (id) => `/library/loans/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Loans', id }],
     }),
     updateLoan: builder.mutation<Loan, { id: string; body: LoanRequest }>({
       query: (loanData) => ({
-        url: `/api/library/loans/${loanData.id}/`,
+        url: `/library/loans/${loanData.id}/`,
         method: 'PUT',
         body: loanData.body,
       }),
@@ -57,7 +57,7 @@ export const loansApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateLoan: builder.mutation<Loan, { id: string; body: PatchedLoanRequest }>({
       query: (loanData) => ({
-        url: `/api/library/loans/${loanData.id}/`,
+        url: `/library/loans/${loanData.id}/`,
         method: 'PATCH',
         body: loanData.body,
       }),
@@ -65,7 +65,7 @@ export const loansApiSlice = apiSlice.injectEndpoints({
     }),
     deleteLoan: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/library/loans/${id}/`,
+        url: `/library/loans/${id}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Loans', id }, { type: 'Loans', id: 'LIST' }],

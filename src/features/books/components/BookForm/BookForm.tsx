@@ -7,22 +7,28 @@ import { Textarea } from '@/common/components/ui/textarea';
 import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
-import { Save, X, Upload } from 'lucide-react';
-import { useGetMaterialTypesQuery } from '@/features/metadata/api/materialTypesApiSlice';
-import { useGetGenresQuery } from '@/features/metadata/api/genresApiSlice';
-import { useGetLanguagesQuery } from '@/features/metadata/api/languagesApiSlice';
+import { Save, X, Upload, CalendarIcon } from 'lucide-react';
+import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice';
+import { useGetGenresQuery } from '@/features/content-management/api/genresApiSlice';
+import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
 import { mapBookToFormValues, BookFormData } from '@/features/books/components/BookForm/BookFormConfig';
 import type { Book } from '@/features/books/api/booksApiSlice';
-import { useCreateBookMutation, useUpdateBookMutation } from '@/features/books/api/booksApiSlice';
-
+import { Popover, PopoverContent, PopoverTrigger } from '@/common/components/ui/popover';
+import { cn } from '@/common/lib/utils';
+import { Calendar } from '@/common/components/ui/calendar';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { stringify } from 'querystring';
 
 interface BookFormProps {
   book?: Book | null;
   onSubmit: (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => void;
   onCancel: () => void;
+  isUpdatingBook: boolean | null;
+  isSubmitting: boolean;
 }
 
-export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
+export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmitting }: BookFormProps) {
   const { toast } = useToast();
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue, control } = useForm<BookFormData>({
     defaultValues: mapBookToFormValues(book)
@@ -30,6 +36,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
   const watchedCoverUrl = watch('cover_url');
   const watchedAvailableCopies = watch('available_copies');
   const watchedQuantityInStock = watch('quantity_in_stock');
+  const watchedPublicationDate = watch('publication_date');
 
   // Load option lists from the metadata API slices
   const { data: materialTypesData, isLoading: materialTypesLoading } = useGetMaterialTypesQuery();
@@ -41,39 +48,31 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
   const GenreOptions: string[] = genresData ? genresData.map((g) => g.name) : [];
   const LanguageCodeOptions: string[] = languagesData ? languagesData.map((l) => l.name) : [];
 
-  const [addBook, { isLoading: isAdding }] = useCreateBookMutation();
-  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
-
   const onFormSubmit = async (data: BookFormData) => {
     try {
       const bookData = {
         ...data,
-        publication_date: data.publication_date ? Number(data.publication_date) : undefined,
+        publication_date: data.publication_date ? String(data.publication_date) : undefined,
         pages: data.pages ? Number(data.pages) : undefined,
         quantity_in_stock: Number(data.quantity_in_stock),
         available_copies: Number(data.available_copies),
         material_type: data.material_type,
-        // If genre_names is not an array, ensure it becomes one for the API
         genre_names: Array.isArray(data.genres) ? data.genres : [data.genres].filter(Boolean),
       };
 
-      if (book && book.id) {
-        await updateBook({ id: book.id, body: bookData }).unwrap(); toast({ title: 'Éxito', description: 'Libro actualizado correctamente.' });
-      } else {
-        await addBook(bookData as Omit<Book, "id" | "created_at" | "updated_at">).unwrap();
-        toast({ title: 'Éxito', description: 'Libro agregado correctamente.' });
-      }
       onSubmit(bookData as Omit<Book, "id" | "created_at" | "updated_at">);
     } catch (error) {
-      toast({ title: 'Error', description: `Error al procesar libro: ${error.message}`, variant: 'destructive' });
+      toast({ title: 'Error', description: `Error al procesar libro.`, variant: 'destructive' });
     }
   };
 
   useEffect(() => {
-    reset(mapBookToFormValues(book));
+    const initialValues = mapBookToFormValues(book);
+    if (initialValues.publication_date) {
+      initialValues.publication_date = initialValues.publication_date.toString();
+    }
+    reset(initialValues);
   }, [book, reset]);
-
-  const isSubmitting = isAdding || isUpdating;
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
@@ -247,17 +246,41 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="publication_date">Año de Publicación</Label>
-                  <Input
-                    id="publication_date"
-                    type="number"
-                    min="1000"
-                    max={new Date().getFullYear()}
-                    {...register('publication_date', {
-                      valueAsNumber: true,
-                      validate: value => value === null || (value >= 1000 && value <= new Date().getFullYear()) || "Año de publicación inválido"
-                    })}
-                    className={errors.publication_date ? 'border-red-500' : ''}
+                  <Label htmlFor="publication_date">Fecha de Publicación</Label>
+                  <Controller
+                    name="publication_date"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            id="publication_date"
+                            variant={'outline'}
+                            className={cn(
+                              'w-full justify-start text-left font-normal',
+                              !value && 'text-muted-foreground',
+                              errors.publication_date && 'border-red-500'
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {value ? (
+                              format(new Date(value), 'PPP', { locale: es })
+                            ) : (
+                              <span>Elige una fecha</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={value ? new Date(value) : undefined}
+                            onSelect={(date) => onChange(date ? date.toISOString().split('T')[0] : undefined)}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
                   />
                   {errors.publication_date?.message && (
                     <p className="text-red-500 text-sm">{String(errors.publication_date.message)}</p>
@@ -302,52 +325,52 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
                     {...register('pages', { valueAsNumber: true })}
                   />
                 </div>
-
               </div>
             </CardContent>
           </Card>
 
           {/* Inventory */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-biblioteca-blue">Inventario</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="quantity_in_stock">Total de Ejemplares</Label>
-                  <Input
-                    id="quantity_in_stock"
-                    type="number"
-                    readOnly={true} // Marked as read-only to match the Book type
-                    {...register('quantity_in_stock', {
-                      valueAsNumber: true,
-                    })}
-                    className="bg-gray-100 cursor-not-allowed"
-                  />
-                </div>
+          {isUpdatingBook &&
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-biblioteca-blue">Inventario</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity_in_stock">Total de Ejemplares</Label>
+                    <Input
+                      id="quantity_in_stock"
+                      type="number"
+                      readOnly={true}
+                      {...register('quantity_in_stock', {
+                        valueAsNumber: true,
+                      })}
+                      className="bg-gray-100 cursor-not-allowed"
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="available_copies">Ejemplares Disponibles</Label>
-                  <Input
-                    id="available_copies"
-                    type="number"
-                    min="0"
-                    {...register('available_copies', {
-                      valueAsNumber: true,
-                      min: { value: 0, message: 'La cantidad disponible no puede ser negativa' },
-                      validate: (value) =>
-                        value <= watchedQuantityInStock || 'Los ejemplares disponibles no pueden ser más que el total'
-                    })}
-                    className={errors.available_copies ? 'border-red-500' : ''}
-                  />
-                  {errors.available_copies?.message && (
-                    <p className="text-red-500 text-sm">{String(errors.available_copies.message)}</p>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="available_copies">Ejemplares Disponibles</Label>
+                    <Input
+                      id="available_copies"
+                      type="number"
+                      min="0"
+                      {...register('available_copies', {
+                        valueAsNumber: true,
+                        min: { value: 0, message: 'La cantidad disponible no puede ser negativa' },
+                        validate: (value) =>
+                          value <= watchedQuantityInStock || 'Los ejemplares disponibles no pueden ser más que el total'
+                      })}
+                    />
+                    {errors.available_copies?.message && (
+                      <p className="text-red-500 text-sm">{String(errors.available_copies.message)}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          }
         </div>
       </div>
 
@@ -369,7 +392,7 @@ export function BookForm({ book, onSubmit, onCancel }: BookFormProps) {
           disabled={isSubmitting}
         >
           <Save className="w-4 h-4 mr-2" />
-          {book ? 'Actualizar' : 'Guardar'} Libro
+          {isUpdatingBook ? 'Actualizar' : 'Guardar'} Libro
         </Button>
       </div>
     </form>

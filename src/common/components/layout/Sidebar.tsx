@@ -1,30 +1,38 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import {
-  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
-  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem
+  MenuItem, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
+  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
-import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
-import { LucideProps } from "lucide-react";
+import {
+  Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User, Book,
+  BookType, Languages, ScrollText
+} from "lucide-react";
 import { Link } from 'react-router-dom';
 
-const allMenuItems = [
+
+const allMenuItems: MenuItem[] = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
   { group: "Navegación", title: "Catálogo", url: "/catalogo", icon: BookOpen, requiresAuth: false },
   { group: "Navegación", title: "Historia", url: "/historia", icon: Clock, requiresAuth: false },
   { group: "Navegación", title: "Préstamo Sala", url: "/prestamo-sala", icon: Calendar, requiresAuth: true },
+  {
+    group: "Administración",
+    title: "Gestión de Contenido",
+    url: "/gestion-contenido",
+    icon: Book,
+    requiresAuth: true,
+    children: [
+      { title: "Colección", url: "/gestion-contenido/coleccion", icon: LibraryBig, requiresAuth: true },
+      { title: "Géneros", url: "/gestion-contenido/generos", icon: BookType, requiresAuth: true },
+      { title: "Lenguajes", url: "/gestion-contenido/lenguajes", icon: Languages, requiresAuth: true },
+      { title: "Materiales", url: "/gestion-contenido/materiales", icon: ScrollText, requiresAuth: true },
+    ]
+  },
   { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
   { group: "Administración", title: "Gestión", url: "/gestion", icon: User, requiresAuth: true },
-  { group: "Administración", title: "Colección", url: "/coleccion", icon: LibraryBig, requiresAuth: true },
 ];
-
-interface MenuItem {
-  group: string;
-  title: string;
-  url: string;
-  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
-  requiresAuth: boolean;
-}
 
 type GroupedMenuItems = {
   [key: string]: MenuItem[];
@@ -65,17 +73,35 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map(item => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
-                    >
-                      <Link to={item.url} className="flex items-center gap-3"> {/* ⬅️ The fix */}
-                        <item.icon size={18} />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <div key={item.title}>
+                    {item.children ? (
+                      <SidebarMenuDropdown
+                        label={item.title}
+                        icon={<item.icon size={18} />}
+                      >
+                        {item.children.map(child => (
+                          <SidebarMenuDropdownItem key={child.title}>
+                            <Link to={child.url} className="flex items-center gap-3 w-full h-full">
+                              <child.icon size={18} />
+                              <span>{child.title}</span>
+                            </Link>
+                          </SidebarMenuDropdownItem>
+                        ))}
+                      </SidebarMenuDropdown>
+                    ) : (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          asChild
+                          className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
+                        >
+                          <Link to={item.url} className="flex items-center gap-3">
+                            <item.icon size={18} />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+                  </div>
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>

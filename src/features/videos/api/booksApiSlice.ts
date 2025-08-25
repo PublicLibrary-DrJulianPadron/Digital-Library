@@ -30,7 +30,7 @@ export type LoansList = Loan[];
 
 export const libraryApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getBooks: builder.query<BooksList, { search?: string; author?: string; genres__name?: string; publication_date?: number; material_type?: string; language?: string } | void>({
+    getBooks: builder.query<BooksList, { search?: string; author?: string; genres__name?: string; publication_date?: string; material_type?: string; language?: string } | void>({
       query: (arg) => {
         const params = new URLSearchParams();
         if (arg) {

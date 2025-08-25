@@ -11,7 +11,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query<
       BooksList,
-      { search?: string; author?: string; genres__name?: string; publication_date?: number; material_type?: string; language?: string } | void
+      { search?: string; author?: string; genres__name?: string; publication_date?: string; material_type?: string; language?: string } | void
     >({
       query: (arg) => {
         const params = new URLSearchParams();
@@ -23,7 +23,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
           });
         }
         return {
-          url: `/api/library/books/`,
+          url: `/library/books/`,
           params,
         };
       },
@@ -34,19 +34,19 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     createBook: builder.mutation<Book, BookRequest>({
       query: (newBook) => ({
-        url: `/api/library/books/`,
+        url: `/library/books/`,
         method: "POST",
         body: newBook,
       }),
       invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
     getBookById: builder.query<Book, string>({
-      query: (id) => `/api/library/books/${id}/`,
+      query: (id) => `/library/books/${id}/`,
       providesTags: (result, error, id) => [{ type: "Books", id }],
     }),
     updateBook: builder.mutation<Book, { id: string; body: BookRequest }>({
       query: ({ id, body }) => ({
-        url: `/api/library/books/${id}/`,
+        url: `/library/books/${id}/`,
         method: "PUT",
         body: body,
       }),
@@ -54,7 +54,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateBook: builder.mutation<Book, { id: string; body: PatchedBookRequest }>({
       query: ({ id, body }) => ({
-        url: `/api/library/books/${id}/`,
+        url: `/library/books/${id}/`,
         method: "PATCH",
         body: body,
       }),
@@ -62,7 +62,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     deleteBook: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/library/books/${id}/`,
+        url: `/library/books/${id}/`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Books', id }, { type: 'Books', id: 'LIST' }],

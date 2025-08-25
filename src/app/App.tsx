@@ -12,7 +12,8 @@ import Catalog from "../features/books/pages/CatalogPage";
 import Coleccion from "../features/books/pages/ColeccionPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
-import Estadisticas from "../features/statistics/pages/StatisticsDashboardPage";
+import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";
+import GenresManagementPage from "../features/content-management/pages/GenresManagementPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/users/pages/UserProfilePage";
@@ -41,11 +42,15 @@ export const App = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/catalogo" element={<Catalog />} />
-                  <Route path="/coleccion" element={<Coleccion />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
                   <Route path="/historia" element={<HistoriaPage />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />
                   <Route path="/gestion" element={<Gestion />} />
+                  <Route path="/gestion-contenido" element={<Gestion />} />
+                  <Route path="/gestion-contenido/coleccion" element={<Coleccion />} />
+                  <Route path="/gestion-contenido/generos" element={<GenresManagementPage />} />
+                  <Route path="/gestion-contenido/lenguajes" element={<GenresManagementPage />} />
+                  <Route path="/gestion-contenido/materiales" element={<GenresManagementPage />} />
                   <Route path="/gestion-usuarios/:id" element={<UserProfilePage />} />
                   <Route path="/usuario/me" element={<DetallesUsuario />} />
                   <Route path="/mis-prestamos" element={<MisPrestamos />} />

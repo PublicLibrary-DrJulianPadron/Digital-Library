@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// src/features/books/pages/Coleccion.tsx
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/common/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/common/components/ui/table";
 import { Input } from "@/common/components/ui/input";
@@ -7,138 +7,74 @@ import { Button } from "@/common/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/common/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/common/components/ui/alert-dialog";
 import { Badge } from "@/common/components/ui/badge";
-import { Eye, Trash2, Plus, Minus, Edit } from "lucide-react";
+import { Eye, Trash2, Plus, Edit } from "lucide-react";
 import { useToast } from "@/common/hooks/use-toast";
 import { BookForm } from "@/features/books/components/BookForm/BookForm";
-import { BookRow as Book } from "@/common/types";
+import { Book, BookRequest, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/books/api/booksApiSlice';
 
-interface BookFormProps {
-  book?: Book | null;
-  onSave: () => void;
-  onCancel: () => void;
-}
 
 const Coleccion = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredLibros, setFilteredLibros] = useState<Book[]>([]);
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null); // Kept for future potential quantity changes, though not used in new delete dialog
-  const [newQuantity, setNewQuantity] = useState(0); // Kept for future potential quantity changes
   const [isBookFormOpen, setIsBookFormOpen] = useState(false);
   const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
-  const [bookToDelete, setBookToDelete] = useState<Book | null>(null); // New state for book to delete
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: libros = [], isLoading } = useQuery({
-    queryKey: ["books"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("books")
-        .select("*")
-        .order("title");
+  const { data: libros, isLoading, isFetching, error } = useGetBooksQuery({ search: searchTerm });
+  const [createBook, { isLoading: isCreating }] = useCreateBookMutation();
+  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
+  const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation();
 
-      if (error) throw error;
-      return data as Book[];
-    },
-  });
 
-  const updateQuantityMutation = useMutation({
-    mutationFn: async ({ id, newQuantity }: { id: string; newQuantity: number }) => {
-      const { error } = await supabase
-        .from("books")
-        .update({ quantityInStock: newQuantity })
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["books"] });
-      setSelectedBook(null);
-      setNewQuantity(0);
-      toast({
-        title: "Cantidad actualizada",
-        description: "La cantidad en existencia ha sido actualizada correctamente.",
-      });
-    },
-    onError: () => {
+  const handleBookFormSubmit = async (bookData: BookRequest) => {
+    try {
+      if (bookToEdit) {
+        await updateBook({ id: bookToEdit.id, body: bookData }).unwrap();
+        toast({
+          title: "Libro actualizado",
+          description: "Los detalles del libro han sido actualizados exitosamente.",
+        });
+      } else {
+        await createBook(bookData).unwrap();
+        toast({
+          title: "Libro agregado",
+          description: "El nuevo libro ha sido agregado al catálogo exitosamente.",
+        });
+      }
+      setIsBookFormOpen(false);
+      setBookToEdit(null);
+    } catch (err) {
       toast({
         title: "Error",
-        description: "No se pudo actualizar la cantidad.",
+        description: `No se pudo ${bookToEdit ? 'actualizar' : 'agregar'} el libro. Inténtalo de nuevo.`,
         variant: "destructive",
       });
-    },
-  });
-
-  const deleteBookMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("books")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["books"] });
-      setBookToDelete(null);
-      toast({
-        title: "Éxito",
-        description: "Libro eliminado correctamente.",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: `No se pudo eliminar el libro: ${error.message}`,
-        variant: "destructive",
-      });
-    },
-  });
-
-  useEffect(() => {
-    if (libros) {
-      const filtered = libros.filter((libro) =>
-        libro.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        libro.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (libro.isbn && libro.isbn.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-      setFilteredLibros(filtered);
     }
-  }, [libros, searchTerm]);
+  };
 
-  const handleQuantityChange = (operation: "increase" | "decrease") => {
-    if (selectedBook) {
-      if (operation === "increase") {
-        setNewQuantity(prev => prev + 1);
-      } else if (operation === "decrease" && newQuantity > 0) {
-        setNewQuantity(prev => prev - 1);
+  const handleDeleteBook = async () => {
+    if (bookToDelete) {
+      try {
+        await deleteBook(bookToDelete.id).unwrap();
+        toast({
+          title: "Libro eliminado",
+          description: "El libro ha sido eliminado del catálogo.",
+        });
+        setBookToDelete(null);
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: "No se pudo eliminar el libro. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
       }
     }
   };
 
-  const handleUpdateQuantity = () => {
-    if (selectedBook) {
-      updateQuantityMutation.mutate({
-        id: selectedBook.id,
-        newQuantity: newQuantity,
-      });
-    }
-  };
-
-  const openQuantityDialog = (book: Book) => {
-    setSelectedBook(book);
-    setNewQuantity(book.quantityInStock);
-  };
 
   const openDeleteDialog = (book: Book) => {
     setBookToDelete(book);
-  };
-
-  const handleDeleteBook = () => {
-    if (bookToDelete) {
-      deleteBookMutation.mutate(bookToDelete.id);
-    }
   };
 
   const openAddBookForm = () => {
@@ -151,18 +87,12 @@ const Coleccion = () => {
     setIsBookFormOpen(true);
   };
 
-  const handleBookFormSave = () => {
-    setIsBookFormOpen(false);
-    setBookToEdit(null);
-  };
-
   const handleBookFormCancel = () => {
     setIsBookFormOpen(false);
     setBookToEdit(null);
   };
 
-
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
@@ -173,6 +103,16 @@ const Coleccion = () => {
               <div key={i} className="h-12 bg-muted rounded"></div>
             ))}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+        <div className="text-xl font-medium text-red-500">
+          Error al cargar los libros.
         </div>
       </div>
     );
@@ -208,7 +148,13 @@ const Coleccion = () => {
                   {bookToEdit ? 'Editar Libro' : 'Agregar Nuevo Libro'}
                 </DialogTitle>
               </DialogHeader>
-              <BookForm book={bookToEdit} onSubmit={handleBookFormSave} onCancel={handleBookFormCancel} />
+              <BookForm
+                book={bookToEdit}
+                onSubmit={handleBookFormSubmit}
+                onCancel={handleBookFormCancel}
+                isUpdatingBook={!!bookToEdit}
+                isSubmitting={isCreating || isUpdating}
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -229,23 +175,85 @@ const Coleccion = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLibros.map((libro) => (
-                <TableRow key={libro.id}>
-                  <TableCell className="font-medium">{libro.title}</TableCell>
-                  <TableCell>{libro.author}</TableCell>
-                  <TableCell>{libro.publicationYear}</TableCell>
-                  <TableCell>
-                    <Badge variant={libro.quantityInStock > 0 ? "default" : "destructive"}>
-                      {libro.quantityInStock}
-                    </Badge>
+              {libros?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    No se encontraron materiales.
                   </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {libro.materialType}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                </TableRow>
+              ) : (
+                libros?.map((libro) => (
+                  <TableRow key={libro.id}>
+                    <TableCell className="font-medium">{libro.title}</TableCell>
+                    <TableCell>{libro.author}</TableCell>
+                    <TableCell>{libro.publication_date}</TableCell>
+                    <TableCell>
+                      <Badge variant={libro.quantity_in_stock > 0 ? "default" : "destructive"}>
+                        {libro.quantity_in_stock}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {libro.material_type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => openEditBookForm(libro)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog open={!!bookToDelete && bookToDelete.id === libro.id} onOpenChange={(open) => !open && setBookToDelete(null)}>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openDeleteDialog(libro)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                ¿Estás seguro de que quieres eliminar "{bookToDelete?.title}" de la colección? Esta acción no se puede deshacer.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={handleDeleteBook} className="bg-red-600 hover:bg-red-700">
+                                Eliminar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden grid gap-4">
+        {libros?.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No se encontraron materiales.</p>
+          </div>
+        ) : (
+          libros?.map((libro) => (
+            <Card key={libro.id}>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-semibold text-sm">{libro.title}</h3>
+                    <div className="flex gap-1">
                       <Button variant="ghost" size="sm" onClick={() => openEditBookForm(libro)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -278,87 +286,32 @@ const Coleccion = () => {
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+                  </div>
 
-      {/* Mobile Card View */}
-      <div className="md:hidden grid gap-4">
-        {filteredLibros.map((libro) => (
-          <Card key={libro.id}>
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-sm">{libro.title}</h3>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => openEditBookForm(libro)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    {/* --- MODIFIED: Delete Confirmation Dialog (Mobile) --- */}
-                    <AlertDialog open={!!bookToDelete && bookToDelete.id === libro.id} onOpenChange={(open) => !open && setBookToDelete(null)}>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openDeleteDialog(libro)} // Call the new function
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            ¿Estás seguro de que quieres eliminar "{bookToDelete?.title}" de la colección? Esta acción no se puede deshacer.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleDeleteBook} className="bg-red-600 hover:bg-red-700">
-                            Eliminar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p><span className="font-medium">Autor:</span> {libro.author}</p>
+                    <p><span className="font-medium">Año:</span> {libro.publication_date || "N/A"}</p>
+                    {libro.isbn && (
+                      <p><span className="font-medium">ISBN:</span> {libro.isbn}</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-2">
+                      <Badge variant={libro.quantity_in_stock > 0 ? "default" : "destructive"}>
+                        {libro.quantity_in_stock} disponibles
+                      </Badge>
+                      <Badge variant="outline">
+                        {libro.material_type}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <p><span className="font-medium">Autor:</span> {libro.author}</p>
-                  <p><span className="font-medium">Año:</span> {libro.publicationYear || "N/A"}</p>
-                  {libro.isbn && (
-                    <p><span className="font-medium">ISBN:</span> {libro.isbn}</p>
-                  )}
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-2">
-                    <Badge variant={libro.quantityInStock > 0 ? "default" : "destructive"}>
-                      {libro.quantityInStock} disponibles
-                    </Badge>
-                    <Badge variant="outline">
-                      {libro.materialType}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
-
-      {filteredLibros.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">No se encontraron materiales.</p>
-        </div>
-      )}
     </div>
   );
 };
