@@ -119,7 +119,7 @@ const GenresManagementPage = () => {
     return (
         <div className="p-6 space-y-6">
             <div className="flex flex-col gap-4">
-                <h1 className="text-3xl font-bold text-foreground">Gestión de Géneros</h1>
+                <h1 className="text-3xl font-bold text-foreground">Géneros</h1>
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
                     <div className="flex-1 w-full">
                         <Input
@@ -180,7 +180,7 @@ const GenresManagementPage = () => {
                                         <TableCell className="font-medium">{genres_with_books.name}</TableCell>
                                         <TableCell>
                                             <Badge variant="outline">
-                                                {genres_with_books.books}
+                                                {genres_with_books.books?.length || 0}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">

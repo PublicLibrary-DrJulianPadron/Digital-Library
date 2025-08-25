@@ -14,6 +14,8 @@ import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";
 import GenresManagementPage from "../features/content-management/pages/GenresManagementPage";
+import LanguageManagementPage from "../features/content-management/pages/LanguageManagementPage";
+import MaterialManagementPage from "../features/content-management/pages/MaterialManagementPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/users/pages/UserProfilePage";
@@ -49,8 +51,8 @@ export const App = () => {
                   <Route path="/gestion-contenido" element={<Gestion />} />
                   <Route path="/gestion-contenido/coleccion" element={<Coleccion />} />
                   <Route path="/gestion-contenido/generos" element={<GenresManagementPage />} />
-                  <Route path="/gestion-contenido/lenguajes" element={<GenresManagementPage />} />
-                  <Route path="/gestion-contenido/materiales" element={<GenresManagementPage />} />
+                  <Route path="/gestion-contenido/lenguajes" element={<LanguageManagementPage />} />
+                  <Route path="/gestion-contenido/materiales" element={<MaterialManagementPage />} />
                   <Route path="/gestion-usuarios/:id" element={<UserProfilePage />} />
                   <Route path="/usuario/me" element={<DetallesUsuario />} />
                   <Route path="/mis-prestamos" element={<MisPrestamos />} />

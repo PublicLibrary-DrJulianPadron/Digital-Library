@@ -6,9 +6,8 @@ import { BookSearch } from '@/features/books/components/BookSearch';
 import { Button } from '@/common/components/ui/button';
 import { Plus, BookOpen } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/common/components/ui/dialog';
-import type { BooksList, Book, BooksCreate, BooksUpdate } from '@/features/books/api/booksApiSlice';
-import { LanguageCodeConstants } from '@/features/books/types/language-codes';
-import { useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/books/api/booksApiSlice';
+import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
+import { Book, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/books/api/booksApiSlice';
 import { toast } from '@/common/components/ui/use-toast';
 
 
@@ -131,7 +130,7 @@ const Catalog = () => {
                             </div>
                             <div>
                                 <h1 className="font-display text-3xl font-bold text-biblioteca-blue">
-                                    Gestión de Catálogo
+                                    Catálogo
                                 </h1>
                                 <p className="text-biblioteca-gray">
                                     Administra la colección de libros de la biblioteca

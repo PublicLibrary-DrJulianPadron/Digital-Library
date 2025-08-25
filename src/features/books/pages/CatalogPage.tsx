@@ -128,7 +128,7 @@ const Catalog = () => {
                             </div>
                             <div>
                                 <h1 className="font-display text-3xl font-bold text-biblioteca-blue">
-                                    Gestión de Catálogo
+                                    Catálogo
                                 </h1>
                                 <p className="text-biblioteca-gray">
                                     Administra la colección de libros de la biblioteca
