@@ -1,15 +1,11 @@
-import React from 'react';
-import { BookCard } from './BookCard';
-import { Book } from '@/features/content-management/api/booksApiSlice';
+import { BookCard, MinimalBook } from './BookCard';
 import { BookOpen } from 'lucide-react';
 
 interface BookListProps {
-  books: Book[];
-  onEdit: (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => void;
-  onDelete: (bookId: string) => void;
+  books: MinimalBook[];
 }
 
-export function BookList({ books, onEdit, onDelete }: BookListProps) {
+export function BookList({ books }: BookListProps) {
   if (books.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
@@ -25,14 +21,22 @@ export function BookList({ books, onEdit, onDelete }: BookListProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {books.map((book) => (
-          <BookCard
-            key={book.title}
-            book={book}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        ))}
+        {books.map((book) => {
+          const bookUrl = `/books/${book.title.replace(/ /g, '-').toLowerCase()}`;
+          const minimalBook = {
+            id: book.id,
+            title: book.title,
+            cover: book.cover,
+            authors: book.authors,
+            url: bookUrl
+          };
+          return (
+            <BookCard
+              key={book.title}
+              book={minimalBook}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ import { Badge } from "@/common/components/ui/badge";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/common/hooks/use-toast";
 import { GenreForm } from "@/features/content-management/components/GenreForm/GenreForm";
-import { Genre, GenreRequest, useGetGenresQuery, useGetGenresWithBooksQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from '@/features/content-management/api/genresApiSlice';
+import { Genre, GenreRequest, useGetGenresQuery, useGetBooksByGenreSlugQuery, useCreateGenreMutation, useUpdateGenreMutation, useDeleteGenreMutation } from '@/features/content-management/api/genresApiSlice';
 
 const GenresManagementPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -20,8 +20,18 @@ const GenresManagementPage = () => {
 
     const { toast } = useToast();
 
+    const [selectedGenreSlug, setSelectedGenreSlug] = useState('');
     const { data: genres, isLoading, isFetching, error } = useGetGenresQuery();
-    const { data: genres_with_books, isLoading: isLoadingWithBooks, isFetching: isFetchingWithBooks, error: errorWithBooks } = useGetGenresWithBooksQuery();
+    const {
+        data: genres_with_books,
+        isLoading: isLoadingWithBooks,
+        isFetching: isFetchingWithBooks,
+        error: errorWithBooks
+    } = useGetBooksByGenreSlugQuery(
+        { slug: selectedGenreSlug, search: searchTerm },
+        { skip: !selectedGenreSlug }
+    );
+
     const [createGenre, { isLoading: isCreating }] = useCreateGenreMutation();
     const [updateGenre, { isLoading: isUpdating }] = useUpdateGenreMutation();
     const [deleteGenre, { isLoading: isDeleting }] = useDeleteGenreMutation();
@@ -29,7 +39,7 @@ const GenresManagementPage = () => {
     const handleGenreFormSubmit = async (genreData: GenreRequest) => {
         try {
             if (genreToEdit) {
-                await updateGenre({ id: genreToEdit.id, data: genreData }).unwrap();
+                await updateGenre({ slug: genreToEdit.slug, data: genreData }).unwrap();
                 toast({
                     title: "Género actualizado",
                     description: "Los detalles del género han sido actualizados exitosamente.",
@@ -55,7 +65,7 @@ const GenresManagementPage = () => {
     const handleDeleteGenre = async () => {
         if (genreToDelete) {
             try {
-                await deleteGenre(genreToDelete.id).unwrap();
+                await deleteGenre(genreToDelete.slug).unwrap();
                 toast({
                     title: "Género eliminado",
                     description: "El género ha sido eliminado del catálogo.",

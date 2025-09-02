@@ -10,7 +10,7 @@ export type BooksList = Book[];
 export const booksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query<
-      BooksList,
+      { results: BooksList; count: number },
       { search?: string; author?: string; genres__name?: string; publication_date?: string; material_type?: string; language?: string } | void
     >({
       query: (arg) => {
@@ -27,9 +27,10 @@ export const booksApiSlice = apiSlice.injectEndpoints({
           params,
         };
       },
+      transformResponse: (response: { results: BooksList; count: number }) => response,
       providesTags: (result) =>
-        result
-          ? [...result.map(({ title }) => ({ type: 'Books' as const, title })), { type: 'Books', id: 'LIST' }]
+        result?.results
+          ? [...result.results.map(({ id }) => ({ type: 'Books' as const, id })), { type: 'Books', id: 'LIST' }]
           : [{ type: 'Books', id: 'LIST' }],
     }),
     createBook: builder.mutation<Book, BookRequest>({
@@ -40,32 +41,32 @@ export const booksApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
-    getBookById: builder.query<Book, string>({
-      query: (id) => `/library/books/${id}/`,
-      providesTags: (result, error, id) => [{ type: "Books", id }],
+    getBookBySlug: builder.query<Book, string>({
+      query: (slug) => `/library/books/${slug}/`,
+      providesTags: (result, error, slug) => [{ type: "Books", id: slug }],
     }),
-    updateBook: builder.mutation<Book, { id: string; body: BookRequest }>({
-      query: ({ id, body }) => ({
-        url: `/library/books/${id}/`,
+    updateBook: builder.mutation<Book, { slug: string; body: BookRequest }>({
+      query: ({ slug, body }) => ({
+        url: `/library/books/${slug}/`,
         method: "PUT",
         body: body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Books", id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: slug }],
     }),
-    partialUpdateBook: builder.mutation<Book, { id: string; body: PatchedBookRequest }>({
-      query: ({ id, body }) => ({
-        url: `/library/books/${id}/`,
+    partialUpdateBook: builder.mutation<Book, { slug: string; body: PatchedBookRequest }>({
+      query: ({ slug, body }) => ({
+        url: `/library/books/${slug}/`,
         method: "PATCH",
         body: body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Books", id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: slug }],
     }),
     deleteBook: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `/library/books/${id}/`,
+      query: (slug) => ({
+        url: `/library/books/${slug}/`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Books', id }, { type: 'Books', id: 'LIST' }],
+      invalidatesTags: (result, error, slug) => [{ type: 'Books', id: slug }, { type: 'Books', id: 'LIST' }],
     }),
   }),
   overrideExisting: false,
@@ -74,7 +75,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetBooksQuery,
   useCreateBookMutation,
-  useGetBookByIdQuery,
+  useGetBookBySlugQuery,
   useUpdateBookMutation,
   usePartialUpdateBookMutation,
   useDeleteBookMutation,

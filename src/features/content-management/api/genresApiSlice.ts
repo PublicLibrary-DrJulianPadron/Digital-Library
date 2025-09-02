@@ -6,35 +6,46 @@ export type Genre = components['schemas']['Genre'];
 export type GenresList = Genre[];
 export type GenreRequest = Omit<Genre, "id">;
 
-export type GenreBooks = components['schemas']['GenreBooks'];
-export type GenresWithBooksList = GenreBooks[];
+export type PaginatedBookList = {
+  results: components['schemas']['MinimalBook'][];
+  count: number;
+};
+
+// Assuming the API returns a list of genres where each genre has an associated list of books.
+export type GenreWithBooks = Genre & { books: components['schemas']['MinimalBook'][] };
+export type GenresWithBooksList = GenreWithBooks[];
 
 
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getGenres: builder.query<GenresList, void>({
+    getGenres: builder.query<{ results: GenresList; count: number }, void>({
       query: () => `/library/genres/`,
       providesTags: (result) =>
-        result
+        result?.results
           ? [
-              ...result.map(({ name }) => ({ type: 'Genres', name } as const)),
+              ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
               { type: 'Genres', id: 'LIST' },
             ]
           : [{ type: 'Genres', id: 'LIST' }],
     }),
-    getGenresWithBooks: builder.query<GenresWithBooksList, void>({
-      query: () => `/library/genres-with-books/`,
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Genres', id } as const)),
-              { type: 'Genres', id: 'LIST' },
-            ]
-          : [{ type: 'Genres', id: 'LIST' }],
+    getBooksByGenreSlug: builder.query<PaginatedBookList, { slug: string; search?: string }>({
+      query: ({ slug, search }) =>
+        `/library/genres/${slug}/list/${search ? `?search=${search}` : ''}`,
+      providesTags: (_result, _error, { slug }) => [{ type: 'Genres', slug }],
     }),
-    getGenreById: builder.query<Genre, number>({
-      query: (id) => `/library/genres/${id}/`,
-      providesTags: (_result, _error, id) => [{ type: 'Genres', id }],
+    getGenreBySlug: builder.query<Genre, string>({
+      query: (slug) => `/library/genres/${slug}/`,
+      providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
+    }),
+    getGenresWithBooks: builder.query<GenresWithBooksList, Record<string, number>>({
+      query: (params) => {
+        const searchParams = new URLSearchParams();
+        for (const key in params) {
+          searchParams.append(key, String(params[key]));
+        }
+        const queryString = searchParams.toString();
+        return `/library/genres/with-books/${queryString ? `?${queryString}` : ''}`;
+      },
     }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({
@@ -44,20 +55,28 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Genres', id: 'LIST' }],
     }),
-    updateGenre: builder.mutation<Genre, { id: number; data: Partial<Genre> }>({
-      query: ({ id, data }) => ({
-        url: `/library/genres/${id}/`,
+    updateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
+      query: ({ slug, data }) => ({
+        url: `/library/genres/${slug}/`,
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: 'Genres', id }, { type: 'Genres', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { slug }) => [{ type: 'Genres', slug }, { type: 'Genres', id: 'LIST' }],
     }),
-    deleteGenre: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/library/genres/${id}/`,
+    partialUpdateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
+      query: ({ slug, data }) => ({
+        url: `/library/genres/${slug}/`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { slug }) => [{ type: 'Genres', slug }],
+    }),
+    deleteGenre: builder.mutation<void, string>({
+      query: (slug) => ({
+        url: `/library/genres/${slug}/`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, id) => [{ type: 'Genres', id }, { type: 'Genres', id: 'LIST' }],
+      invalidatesTags: (_result, _error, slug) => [{ type: 'Genres', slug }, { type: 'Genres', id: 'LIST' }],
     }),
   }),
   overrideExisting: false,
@@ -65,9 +84,11 @@ export const genresApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetGenresQuery,
+  useGetBooksByGenreSlugQuery,
+  useGetGenreBySlugQuery,
   useGetGenresWithBooksQuery,
-  useGetGenreByIdQuery,
   useCreateGenreMutation,
   useUpdateGenreMutation,
+  usePartialUpdateGenreMutation,
   useDeleteGenreMutation,
 } = genresApiSlice;

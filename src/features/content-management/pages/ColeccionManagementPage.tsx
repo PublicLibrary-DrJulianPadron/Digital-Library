@@ -30,7 +30,7 @@ const ColeccionManagementPage = () => {
   const handleBookFormSubmit = async (bookData: BookRequest) => {
     try {
       if (bookToEdit) {
-        await updateBook({ id: bookToEdit.id, body: bookData }).unwrap();
+        await updateBook({ slug: bookToEdit.slug, body: bookData }).unwrap();
         toast({
           title: "Libro actualizado",
           description: "Los detalles del libro han sido actualizados exitosamente.",
@@ -175,17 +175,17 @@ const ColeccionManagementPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {libros?.length === 0 ? (
+              {libros?.results.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                     No se encontraron materiales.
                   </TableCell>
                 </TableRow>
               ) : (
-                libros?.map((libro) => (
+                libros?.results.map((libro) => (
                   <TableRow key={libro.id}>
                     <TableCell className="font-medium">{libro.title}</TableCell>
-                    <TableCell>{libro.author}</TableCell>
+                    <TableCell>{libro.authors_detail?.map(author => author.name).join(', ')}</TableCell>
                     <TableCell>{libro.publication_date}</TableCell>
                     <TableCell>
                       <Badge variant={libro.quantity_in_stock > 0 ? "default" : "destructive"}>
@@ -194,7 +194,7 @@ const ColeccionManagementPage = () => {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">
-                        {libro.material_type}
+                        {libro.material_type_detail.name}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -242,12 +242,12 @@ const ColeccionManagementPage = () => {
 
       {/* Mobile Card View */}
       <div className="md:hidden grid gap-4">
-        {libros?.length === 0 ? (
+        {libros?.results.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No se encontraron materiales.</p>
           </div>
         ) : (
-          libros?.map((libro) => (
+          libros?.results.map((libro) => (
             <Card key={libro.id}>
               <CardContent className="p-4">
                 <div className="space-y-3">
@@ -289,7 +289,12 @@ const ColeccionManagementPage = () => {
                   </div>
 
                   <div className="space-y-1 text-sm text-muted-foreground">
-                    <p><span className="font-medium">Autor:</span> {libro.author}</p>
+                    <p>
+                      <span className="font-medium">
+                      {libro.authors_detail?.length === 1 ? 'Autor:' : 'Autores:'}
+                      </span>{' '}
+                      {libro.authors_detail?.map(author => author.name).join(', ')}
+                    </p>
                     <p><span className="font-medium">Año:</span> {libro.publication_date || "N/A"}</p>
                     {libro.isbn && (
                       <p><span className="font-medium">ISBN:</span> {libro.isbn}</p>
@@ -302,7 +307,7 @@ const ColeccionManagementPage = () => {
                         {libro.quantity_in_stock} disponibles
                       </Badge>
                       <Badge variant="outline">
-                        {libro.material_type}
+                        {libro.material_type_detail.name}
                       </Badge>
                     </div>
                   </div>

@@ -2,13 +2,14 @@ import React from 'react';
 import { Input } from '@/common/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Search, Filter } from 'lucide-react';
+import { Genre } from '@/features/content-management/api/genresApiSlice';
 
 interface BookSearchProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   selectedGenre: string;
   onGenreChange: (value: string) => void;
-  genres: string[];
+  genres: Genre[];
 }
 
 export function BookSearch({ 
@@ -41,8 +42,8 @@ export function BookSearch({
           <SelectContent>
             <SelectItem value="all-genres">Todos los géneros</SelectItem>
             {genres.map((genre) => (
-              <SelectItem key={genre} value={genre}>
-                {genre}
+              <SelectItem key={genre.name} value={genre.name}>
+                {genre.name}
               </SelectItem>
             ))}
           </SelectContent>

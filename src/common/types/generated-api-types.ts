@@ -280,7 +280,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/books/{id}/": {
+    "/api/library/books/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -319,16 +319,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_genres_list"];
         put?: never;
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         post: operations["api_library_genres_create"];
         delete?: never;
         options?: never;
@@ -336,47 +328,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/genres/{id}/": {
+    "/api/library/genres/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_genres_retrieve"];
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         put: operations["api_library_genres_update"];
         post?: never;
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         delete: operations["api_library_genres_destroy"];
         options?: never;
         head?: never;
-        /** @description A ViewSet for managing genres.
-         *     - list: List all genres.
-         *     - retrieve: Retrieve a single genre.
-         *     - create, update, destroy: For authenticated users with write permissions. */
         patch: operations["api_library_genres_partial_update"];
         trace?: never;
     };
-    "/api/library/genres/list_with_books/": {
+    "/api/library/genres/{slug}/list/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description Retrieves a list of all genres with their associated books. */
-        get: operations["api_library_genres_list_with_books_retrieve"];
+        /** @description Returns a paginated list of books for this genre.
+         *     Supports filtering, sorting, and default DRF pagination via ?page=
+         *     Query params:
+         *     - author=<id>      : filter by author ID
+         *     - category=<id>    : filter by category ID
+         *     - year=<year>      : filter by publication year
+         *     - available=<bool> : filter by availability
+         *     - ordering=<field> : sort by any Book model field */
+        get: operations["api_library_genres_list_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/genres/with-books/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Returns all genres with paginated books per genre. */
+        get: operations["api_library_genres_with_books_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -856,7 +856,12 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
+        /** @description Full serializer for CRUD operations on a book.
+         *     Handles both input (write) and output (read) for all fields. */
         Book: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly slug: string;
             title: string;
             isbn?: string;
             /** Format: date */
@@ -876,46 +881,19 @@ export interface components {
              * @description Upload a PDF file for the digital version.
              */
             digital_file?: string | null;
-            readonly authors_detail: components["schemas"]["Author"][];
-            readonly genres_detail: components["schemas"]["Genre"][];
-            readonly material_type_detail: components["schemas"]["MaterialType"];
-            readonly language_detail: components["schemas"]["Language"];
+            readonly authors_detail: components["schemas"]["MinimalAuthor"][];
+            readonly genres_detail: components["schemas"]["MinimalGenre"][];
+            readonly material_type_detail: components["schemas"]["MinimalMaterialType"];
+            readonly language_detail: components["schemas"]["MinimalLanguage"];
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+            /** Format: uri */
+            readonly url: string;
         };
-        /** @description Detailed serializer for a single book.
-         *     Embeds nested serializers to provide full details of related objects for read-only views. */
-        BookDetail: {
-            readonly title: string;
-            readonly authors: components["schemas"]["Author"][];
-            readonly isbn: string;
-            /** Format: date */
-            readonly publication_date: string | null;
-            readonly pages: number | null;
-            readonly quantity_in_stock: number;
-            readonly available_copies: number;
-            readonly material_type: components["schemas"]["MaterialType"];
-            readonly language: components["schemas"]["Language"];
-            readonly publisher: string;
-            readonly genres: components["schemas"]["Genre"][];
-            readonly description: string;
-            /**
-             * Format: uri
-             * @description Upload book cover (PNG format only)
-             */
-            readonly cover: string | null;
-            /**
-             * Format: uri
-             * @description Upload a PDF file for the digital version.
-             */
-            readonly digital_file: string | null;
-            /** Format: date-time */
-            readonly created_at: string;
-            /** Format: date-time */
-            readonly updated_at: string;
-        };
+        /** @description Full serializer for CRUD operations on a book.
+         *     Handles both input (write) and output (read) for all fields. */
         BookRequest: {
             title: string;
             isbn?: string;
@@ -947,19 +925,14 @@ export interface components {
         /** @description Serializer for the Genre model. */
         Genre: {
             name: string;
+            readonly slug: string;
             description?: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
-        };
-        /** @description Serializer for a genre with a list of its books.
-         *     Embeds the detailed book serializer for a rich representation. */
-        GenreBooks: {
-            readonly id: number;
-            name: string;
-            description?: string;
-            readonly books: components["schemas"]["BookDetail"][];
+            /** Format: uri */
+            readonly url: string;
         };
         /** @description Serializer for the Genre model. */
         GenreRequest: {
@@ -999,7 +972,7 @@ export interface components {
          *     Embeds the full book details for a comprehensive view of the loan. */
         LoanDetail: {
             readonly user: string;
-            readonly book: components["schemas"]["Book"];
+            readonly book: components["schemas"]["MinimalBook"];
             /** Format: date */
             readonly start_date: string;
             /** Format: date */
@@ -1032,6 +1005,48 @@ export interface components {
         };
         /** @description Serializer for the MaterialType model. */
         MaterialTypeRequest: {
+            name: string;
+        };
+        MinimalAuthor: {
+            name: string;
+        };
+        MinimalAuthorRequest: {
+            name: string;
+        };
+        /** @description Minimal serializer for listing books.
+         *     Shows only essential information. */
+        MinimalBook: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            readonly authors: components["schemas"]["MinimalAuthor"][];
+            /**
+             * Format: uri
+             * @description Upload book cover (PNG format only)
+             */
+            readonly cover: string | null;
+            /** Format: uri */
+            readonly url: string;
+        };
+        MinimalGenre: {
+            name: string;
+            readonly slug: string;
+            /** Format: uri */
+            readonly url: string;
+        };
+        MinimalGenreRequest: {
+            name: string;
+        };
+        MinimalLanguage: {
+            name: string;
+        };
+        MinimalLanguageRequest: {
+            name: string;
+        };
+        MinimalMaterialType: {
+            name: string;
+        };
+        MinimalMaterialTypeRequest: {
             name: string;
         };
         PaginatedAuthorList: {
@@ -1079,21 +1094,6 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["Book"][];
         };
-        PaginatedGenreList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Genre"][];
-        };
         PaginatedLanguageList: {
             /** @example 123 */
             count: number;
@@ -1138,6 +1138,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MaterialType"][];
+        };
+        PaginatedMinimalBookList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalBook"][];
+        };
+        PaginatedMinimalGenreList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalGenre"][];
         };
         PaginatedProfileAdminList: {
             /** @example 123 */
@@ -1213,6 +1243,8 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
+        /** @description Full serializer for CRUD operations on a book.
+         *     Handles both input (write) and output (read) for all fields. */
         PatchedBookRequest: {
             title?: string;
             isbn?: string;
@@ -2193,7 +2225,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedBookList"];
+                    "application/json": components["schemas"]["PaginatedMinimalBookList"];
                 };
             };
         };
@@ -2226,8 +2258,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this book. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2238,7 +2269,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BookDetail"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
@@ -2248,8 +2279,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this book. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2274,8 +2304,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this book. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2295,8 +2324,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this book. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2339,7 +2367,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedGenreList"];
+                    "application/json": components["schemas"]["PaginatedMinimalGenreList"];
                 };
             };
         };
@@ -2374,8 +2402,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this genre. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2396,8 +2423,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this genre. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2424,8 +2450,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this genre. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2445,8 +2470,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this genre. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2468,7 +2492,37 @@ export interface operations {
             };
         };
     };
-    api_library_genres_list_with_books_retrieve: {
+    api_library_genres_list_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBookList"];
+                };
+            };
+        };
+    };
+    api_library_genres_with_books_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2482,7 +2536,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["GenreBooks"];
+                    "application/json": components["schemas"]["Genre"];
                 };
             };
         };
