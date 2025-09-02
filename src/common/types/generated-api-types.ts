@@ -218,6 +218,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/library/author/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for managing authors. */
+        get: operations["api_library_author_list"];
+        put?: never;
+        /** @description A ViewSet for managing authors. */
+        post: operations["api_library_author_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/author/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for managing authors. */
+        get: operations["api_library_author_retrieve"];
+        /** @description A ViewSet for managing authors. */
+        put: operations["api_library_author_update"];
+        post?: never;
+        /** @description A ViewSet for managing authors. */
+        delete: operations["api_library_author_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A ViewSet for managing authors. */
+        patch: operations["api_library_author_partial_update"];
+        trace?: never;
+    };
     "/api/library/books/": {
         parameters: {
             query?: never;
@@ -225,8 +263,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_books_list"];
         put?: never;
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         post: operations["api_library_books_create"];
         delete?: never;
         options?: never;
@@ -241,45 +287,29 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_books_retrieve"];
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         put: operations["api_library_books_update"];
         post?: never;
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         delete: operations["api_library_books_destroy"];
         options?: never;
         head?: never;
+        /** @description A ViewSet for managing books.
+         *     - list: List and search for books.
+         *     - retrieve: Get detailed information for a single book.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         patch: operations["api_library_books_partial_update"];
-        trace?: never;
-    };
-    "/api/library/books/{id}/loan-history/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["BookLoanHistoryList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/library/books/loan-history/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["api_library_books_loan_history_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/library/genres/": {
@@ -289,23 +319,64 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_genres_list"];
         put?: never;
-        post?: never;
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
+        post: operations["api_library_genres_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/genres-with-books/": {
+    "/api/library/genres/{id}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_library_genres_with_books_retrieve"];
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
+        get: operations["api_library_genres_retrieve"];
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
+        put: operations["api_library_genres_update"];
+        post?: never;
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
+        delete: operations["api_library_genres_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A ViewSet for managing genres.
+         *     - list: List all genres.
+         *     - retrieve: Retrieve a single genre.
+         *     - create, update, destroy: For authenticated users with write permissions. */
+        patch: operations["api_library_genres_partial_update"];
+        trace?: never;
+    };
+    "/api/library/genres/list_with_books/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Retrieves a list of all genres with their associated books. */
+        get: operations["api_library_genres_list_with_books_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -321,8 +392,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing languages. */
         get: operations["api_library_languages_list"];
         put?: never;
+        /** @description A ViewSet for managing languages. */
         post: operations["api_library_languages_create"];
         delete?: never;
         options?: never;
@@ -337,12 +410,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing languages. */
         get: operations["api_library_languages_retrieve"];
+        /** @description A ViewSet for managing languages. */
         put: operations["api_library_languages_update"];
         post?: never;
+        /** @description A ViewSet for managing languages. */
         delete: operations["api_library_languages_destroy"];
         options?: never;
         head?: never;
+        /** @description A ViewSet for managing languages. */
         patch: operations["api_library_languages_partial_update"];
         trace?: never;
     };
@@ -353,8 +430,14 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         get: operations["api_library_loans_list"];
         put?: never;
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         post: operations["api_library_loans_create"];
         delete?: never;
         options?: never;
@@ -369,13 +452,42 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         get: operations["api_library_loans_retrieve"];
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         put: operations["api_library_loans_update"];
         post?: never;
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         delete: operations["api_library_loans_destroy"];
         options?: never;
         head?: never;
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
         patch: operations["api_library_loans_partial_update"];
+        trace?: never;
+    };
+    "/api/library/loans/history_admin/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Retrieves a complete loan history (for admins only). */
+        get: operations["api_library_loans_history_admin_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/library/material-types/": {
@@ -385,8 +497,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing material types. */
         get: operations["api_library_material_types_list"];
         put?: never;
+        /** @description A ViewSet for managing material types. */
         post: operations["api_library_material_types_create"];
         delete?: never;
         options?: never;
@@ -401,13 +515,55 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description A ViewSet for managing material types. */
         get: operations["api_library_material_types_retrieve"];
+        /** @description A ViewSet for managing material types. */
         put: operations["api_library_material_types_update"];
         post?: never;
+        /** @description A ViewSet for managing material types. */
         delete: operations["api_library_material_types_destroy"];
         options?: never;
         head?: never;
+        /** @description A ViewSet for managing material types. */
         patch: operations["api_library_material_types_partial_update"];
+        trace?: never;
+    };
+    "/api/library/videos/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for viewing and editing video instances. */
+        get: operations["api_library_videos_list"];
+        put?: never;
+        /** @description Handles the creation of a new video with file uploads. */
+        post: operations["api_library_videos_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library/videos/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for viewing and editing video instances. */
+        get: operations["api_library_videos_retrieve"];
+        /** @description Handles the update of an existing video, including file uploads. */
+        put: operations["api_library_videos_update"];
+        post?: never;
+        /** @description A ViewSet for viewing and editing video instances. */
+        delete: operations["api_library_videos_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A ViewSet for viewing and editing video instances. */
+        patch: operations["api_library_videos_partial_update"];
         trace?: never;
     };
     "/api/users/admin/profiles/": {
@@ -658,6 +814,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Serializer for the Author model. */
+        Author: {
+            name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /** @description Serializer for the Author model. */
+        AuthorRequest: {
+            name: string;
+        };
         BlockedSchedule: {
             /** Format: uuid */
             readonly id: string;
@@ -671,6 +839,10 @@ export interface components {
             description?: string;
             is_permanent?: boolean;
             is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         BlockedScheduleRequest: {
             /** Format: date */
@@ -684,42 +856,89 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
-        /** @description Serializer for the Book model. */
         Book: {
-            /** Format: uuid */
-            readonly id: string;
             title: string;
-            author?: string;
             isbn?: string;
-            material_type: string | null;
             /** Format: date */
             publication_date?: string | null;
             pages?: number | null;
-            quantity_in_stock?: number | null;
-            readonly available_copies: number | null;
-            language: string | null;
+            quantity_in_stock?: number;
+            readonly available_copies: number;
             publisher?: string;
-            genres: (string | null)[];
             description?: string;
-            /** Format: uri */
-            cover_url?: string;
+            /**
+             * Format: uri
+             * @description Upload book cover (PNG format only)
+             */
+            cover?: string | null;
+            /**
+             * Format: uri
+             * @description Upload a PDF file for the digital version.
+             */
+            digital_file?: string | null;
+            readonly authors_detail: components["schemas"]["Author"][];
+            readonly genres_detail: components["schemas"]["Genre"][];
+            readonly material_type_detail: components["schemas"]["MaterialType"];
+            readonly language_detail: components["schemas"]["Language"];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
-        /** @description Serializer for the Book model. */
+        /** @description Detailed serializer for a single book.
+         *     Embeds nested serializers to provide full details of related objects for read-only views. */
+        BookDetail: {
+            readonly title: string;
+            readonly authors: components["schemas"]["Author"][];
+            readonly isbn: string;
+            /** Format: date */
+            readonly publication_date: string | null;
+            readonly pages: number | null;
+            readonly quantity_in_stock: number;
+            readonly available_copies: number;
+            readonly material_type: components["schemas"]["MaterialType"];
+            readonly language: components["schemas"]["Language"];
+            readonly publisher: string;
+            readonly genres: components["schemas"]["Genre"][];
+            readonly description: string;
+            /**
+             * Format: uri
+             * @description Upload book cover (PNG format only)
+             */
+            readonly cover: string | null;
+            /**
+             * Format: uri
+             * @description Upload a PDF file for the digital version.
+             */
+            readonly digital_file: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
         BookRequest: {
             title: string;
-            author?: string;
             isbn?: string;
-            material_type: string | null;
             /** Format: date */
             publication_date?: string | null;
             pages?: number | null;
-            quantity_in_stock?: number | null;
-            language: string | null;
+            quantity_in_stock?: number;
             publisher?: string;
-            genres: (string | null)[];
             description?: string;
-            /** Format: uri */
-            cover_url?: string;
+            /**
+             * Format: binary
+             * @description Upload book cover (PNG format only)
+             */
+            cover?: string | null;
+            /**
+             * Format: binary
+             * @description Upload a PDF file for the digital version.
+             */
+            digital_file?: string | null;
+            authors?: string[];
+            genres?: string[];
+            material_type?: string;
+            language?: string;
         };
         EmailRequest: {
             /** Format: email */
@@ -727,51 +946,77 @@ export interface components {
         };
         /** @description Serializer for the Genre model. */
         Genre: {
-            readonly id: number;
             name: string;
             description?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
-        /** @description Serializer for a genre with a list of its books. */
+        /** @description Serializer for a genre with a list of its books.
+         *     Embeds the detailed book serializer for a rich representation. */
         GenreBooks: {
             readonly id: number;
             name: string;
             description?: string;
-            readonly books: string[];
+            readonly books: components["schemas"]["BookDetail"][];
+        };
+        /** @description Serializer for the Genre model. */
+        GenreRequest: {
+            name: string;
+            description?: string;
         };
         /** @description Serializer for the Language model. */
         Language: {
-            readonly id: number;
             name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         /** @description Serializer for the Language model. */
         LanguageRequest: {
             name: string;
         };
-        /** @description Serializer for the Loan model. */
+        /** @description Serializer for a loan, showing only essential IDs and dates. */
         Loan: {
             /** Format: uuid */
             readonly id: string;
-            user: number;
+            readonly user: number;
             /** Format: uuid */
-            book: string;
-            /** Format: email */
-            readonly user_email: string;
-            readonly book_title: string;
+            readonly book: string;
             /** Format: date */
             start_date: string;
             /** Format: date */
             end_date: string;
-            readonly status: components["schemas"]["StatusEnum"];
+            status?: components["schemas"]["StatusEnum"];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
-        /** @description Serializer for the Loan model. */
+        /** @description Detailed serializer for a loan.
+         *     Embeds the full book details for a comprehensive view of the loan. */
+        LoanDetail: {
+            readonly user: string;
+            readonly book: components["schemas"]["Book"];
+            /** Format: date */
+            readonly start_date: string;
+            /** Format: date */
+            readonly end_date: string;
+            readonly status: components["schemas"]["StatusEnum"];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /** @description Serializer for a loan, showing only essential IDs and dates. */
         LoanRequest: {
-            user: number;
-            /** Format: uuid */
-            book: string;
             /** Format: date */
             start_date: string;
             /** Format: date */
             end_date: string;
+            status?: components["schemas"]["StatusEnum"];
         };
         LoginRequest: {
             email: string;
@@ -779,12 +1024,165 @@ export interface components {
         };
         /** @description Serializer for the MaterialType model. */
         MaterialType: {
-            readonly id: number;
             name: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         /** @description Serializer for the MaterialType model. */
         MaterialTypeRequest: {
             name: string;
+        };
+        PaginatedAuthorList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Author"][];
+        };
+        PaginatedBlockedScheduleList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["BlockedSchedule"][];
+        };
+        PaginatedBookList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Book"][];
+        };
+        PaginatedGenreList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Genre"][];
+        };
+        PaginatedLanguageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Language"][];
+        };
+        PaginatedLoanDetailList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["LoanDetail"][];
+        };
+        PaginatedMaterialTypeList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MaterialType"][];
+        };
+        PaginatedProfileAdminList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ProfileAdmin"][];
+        };
+        PaginatedRoomBookingList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["RoomBooking"][];
+        };
+        PaginatedVideoList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Video"][];
         };
         PasswordChange: {
             old_password: string;
@@ -795,8 +1193,13 @@ export interface components {
             new_password: string;
         };
         PasswordTokenRequest: {
+            /** Contraseña */
             password: string;
             token: string;
+        };
+        /** @description Serializer for the Author model. */
+        PatchedAuthorRequest: {
+            name?: string;
         };
         PatchedBlockedScheduleRequest: {
             /** Format: date */
@@ -810,36 +1213,46 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
-        /** @description Serializer for the Book model. */
         PatchedBookRequest: {
             title?: string;
-            author?: string;
             isbn?: string;
-            material_type?: string | null;
             /** Format: date */
             publication_date?: string | null;
             pages?: number | null;
-            quantity_in_stock?: number | null;
-            language?: string | null;
+            quantity_in_stock?: number;
             publisher?: string;
-            genres?: (string | null)[];
             description?: string;
-            /** Format: uri */
-            cover_url?: string;
+            /**
+             * Format: binary
+             * @description Upload book cover (PNG format only)
+             */
+            cover?: string | null;
+            /**
+             * Format: binary
+             * @description Upload a PDF file for the digital version.
+             */
+            digital_file?: string | null;
+            authors?: string[];
+            genres?: string[];
+            material_type?: string;
+            language?: string;
+        };
+        /** @description Serializer for the Genre model. */
+        PatchedGenreRequest: {
+            name?: string;
+            description?: string;
         };
         /** @description Serializer for the Language model. */
         PatchedLanguageRequest: {
             name?: string;
         };
-        /** @description Serializer for the Loan model. */
+        /** @description Serializer for a loan, showing only essential IDs and dates. */
         PatchedLoanRequest: {
-            user?: number;
-            /** Format: uuid */
-            book?: string;
             /** Format: date */
             start_date?: string;
             /** Format: date */
             end_date?: string;
+            status?: components["schemas"]["StatusEnum"];
         };
         /** @description Serializer for the MaterialType model. */
         PatchedMaterialTypeRequest: {
@@ -850,6 +1263,8 @@ export interface components {
             user_id?: number;
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -857,12 +1272,12 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
         };
         PatchedProfileRequest: {
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -870,8 +1285,6 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
         };
         PatchedRoomBookingRequest: {
             request_number?: string;
@@ -897,6 +1310,18 @@ export interface components {
             admin_comments?: string;
             is_active?: boolean;
         };
+        /** @description Serializer for the Video model. */
+        PatchedVideoRequest: {
+            title?: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            description?: string;
+            genres_ids?: number[];
+            material_type_id?: number;
+        };
         Profile: {
             /**
              * ID único
@@ -906,6 +1331,8 @@ export interface components {
             readonly user: components["schemas"]["User"];
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -913,8 +1340,10 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         ProfileAdmin: {
             /**
@@ -925,6 +1354,8 @@ export interface components {
             readonly user: components["schemas"]["User"];
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -932,14 +1363,18 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         ProfileAdminRequest: {
             /** @description ID of the user associated with this profile */
             user_id: number;
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -947,12 +1382,12 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
         };
         ProfileRequest: {
             /** Documento nacional */
             national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
             /**
              * Fecha de nacimiento
              * Format: date
@@ -960,8 +1395,6 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
-            /** Dirección */
-            address?: string | null;
         };
         ResetTokenRequest: {
             token: string;
@@ -991,6 +1424,10 @@ export interface components {
             response_date?: string | null;
             admin_comments?: string;
             is_active?: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
         };
         RoomBookingRequest: {
             request_number: string;
@@ -1020,11 +1457,13 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+            /** Nombre */
             first_name?: string;
+            /** Apellidos */
             last_name?: string;
         };
         /**
-         * @description * `Active` - Active
+         * @description * `Active` - Activo
          *     * `Returned` - Returned
          *     * `Overdue` - Overdue
          * @enum {string}
@@ -1035,10 +1474,12 @@ export interface components {
         };
         User: {
             readonly id: number;
+            /** Nombre */
             first_name?: string;
+            /** Apellidos */
             last_name?: string;
             /**
-             * Email address
+             * Dirección de correo electrónico
              * Format: email
              */
             email?: string;
@@ -1056,13 +1497,55 @@ export interface components {
             address?: string;
         };
         UserRequest: {
+            /** Nombre */
             first_name?: string;
+            /** Apellidos */
             last_name?: string;
             /**
-             * Email address
+             * Dirección de correo electrónico
              * Format: email
              */
             email?: string;
+        };
+        /** @description Serializer for the Video model. */
+        Video: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            description?: string;
+            /**
+             * Format: uri
+             * @description Upload video cover
+             */
+            readonly cover: string | null;
+            /**
+             * Format: uri
+             * @description Upload video file (MP4, MKV, AVI, MOV)
+             */
+            readonly video_file: string | null;
+            readonly genres: components["schemas"]["Genre"][];
+            readonly material_type: components["schemas"]["MaterialType"];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        /** @description Serializer for the Video model. */
+        VideoRequest: {
+            title: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            description?: string;
+            genres_ids?: number[];
+            material_type_id?: number;
         };
     };
     responses: never;
@@ -1077,6 +1560,10 @@ export interface operations {
         parameters: {
             query?: {
                 date?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
                 reason?: string;
                 /** @description A search term. */
                 search?: string;
@@ -1092,7 +1579,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BlockedSchedule"][];
+                    "application/json": components["schemas"]["PaginatedBlockedScheduleList"];
                 };
             };
         };
@@ -1173,6 +1660,10 @@ export interface operations {
         parameters: {
             query?: {
                 date?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
                 reason?: string;
                 /** @description A search term. */
                 search?: string;
@@ -1188,7 +1679,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BlockedSchedule"][];
+                    "application/json": components["schemas"]["PaginatedBlockedScheduleList"];
                 };
             };
         };
@@ -1350,6 +1841,10 @@ export interface operations {
             query?: {
                 event_date?: string;
                 event_type?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
                 /** @description A search term. */
                 search?: string;
                 status?: string;
@@ -1365,7 +1860,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RoomBooking"][];
+                    "application/json": components["schemas"]["PaginatedRoomBookingList"];
                 };
             };
         };
@@ -1522,11 +2017,167 @@ export interface operations {
             };
         };
     };
+    api_library_author_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAuthorList"];
+                };
+            };
+        };
+    };
+    api_library_author_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
+                "multipart/form-data": components["schemas"]["AuthorRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    api_library_author_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this author. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    api_library_author_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this author. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
+                "multipart/form-data": components["schemas"]["AuthorRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
+    api_library_author_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this author. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_author_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this author. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAuthorRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAuthorRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Author"];
+                };
+            };
+        };
+    };
     api_library_books_list: {
         parameters: {
             query?: {
-                author?: string;
+                authors__name?: string;
                 genres__name?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
                 publication_date?: string;
                 /** @description A search term. */
                 search?: string;
@@ -1542,7 +2193,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Book"][];
+                    "application/json": components["schemas"]["PaginatedBookList"];
                 };
             };
         };
@@ -1556,8 +2207,6 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BookRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["BookRequest"];
                 "multipart/form-data": components["schemas"]["BookRequest"];
             };
         };
@@ -1589,7 +2238,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Book"];
+                    "application/json": components["schemas"]["BookDetail"];
                 };
             };
         };
@@ -1606,8 +2255,6 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BookRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["BookRequest"];
                 "multipart/form-data": components["schemas"]["BookRequest"];
             };
         };
@@ -1655,8 +2302,6 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedBookRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedBookRequest"];
                 "multipart/form-data": components["schemas"]["PatchedBookRequest"];
             };
         };
@@ -1671,12 +2316,66 @@ export interface operations {
             };
         };
     };
-    BookLoanHistoryList: {
+    api_library_genres_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedGenreList"];
+                };
+            };
+        };
+    };
+    api_library_genres_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenreRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GenreRequest"];
+                "multipart/form-data": components["schemas"]["GenreRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Genre"];
+                };
+            };
+        };
+    };
+    api_library_genres_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                /** @description A unique integer value identifying this genre. */
+                id: number;
             };
             cookie?: never;
         };
@@ -1687,59 +2386,89 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Loan"][];
+                    "application/json": components["schemas"]["Genre"];
                 };
             };
         };
     };
-    api_library_books_loan_history_list: {
-        parameters: {
-            query?: {
-                book?: string;
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-                /** @description * `Active` - Active
-                 *     * `Returned` - Returned
-                 *     * `Overdue` - Overdue */
-                status?: "Active" | "Overdue" | "Returned";
-                user?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Loan"][];
-                };
-            };
-        };
-    };
-    api_library_genres_list: {
+    api_library_genres_update: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description A unique integer value identifying this genre. */
+                id: number;
+            };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenreRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["GenreRequest"];
+                "multipart/form-data": components["schemas"]["GenreRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Genre"][];
+                    "application/json": components["schemas"]["Genre"];
                 };
             };
         };
     };
-    api_library_genres_with_books_retrieve: {
+    api_library_genres_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this genre. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_genres_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A unique integer value identifying this genre. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedGenreRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedGenreRequest"];
+                "multipart/form-data": components["schemas"]["PatchedGenreRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Genre"];
+                };
+            };
+        };
+    };
+    api_library_genres_list_with_books_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -1760,7 +2489,16 @@ export interface operations {
     };
     api_library_languages_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1772,7 +2510,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Language"][];
+                    "application/json": components["schemas"]["PaginatedLanguageList"];
                 };
             };
         };
@@ -1903,7 +2641,20 @@ export interface operations {
     };
     api_library_loans_list: {
         parameters: {
-            query?: never;
+            query?: {
+                book?: string;
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description * `Active` - Activo
+                 *     * `Returned` - Returned
+                 *     * `Overdue` - Overdue */
+                status?: "Active" | "Overdue" | "Returned";
+                user?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1915,7 +2666,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Loan"][];
+                    "application/json": components["schemas"]["PaginatedLoanDetailList"];
                 };
             };
         };
@@ -1962,7 +2713,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Loan"];
+                    "application/json": components["schemas"]["LoanDetail"];
                 };
             };
         };
@@ -2044,7 +2795,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_list: {
+    api_library_loans_history_admin_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2058,7 +2809,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MaterialType"][];
+                    "application/json": components["schemas"]["Loan"];
+                };
+            };
+        };
+    };
+    api_library_material_types_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedMaterialTypeList"];
                 };
             };
         };
@@ -2187,9 +2966,170 @@ export interface operations {
             };
         };
     };
-    api_users_admin_profiles_list: {
+    api_library_videos_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedVideoList"];
+                };
+            };
+        };
+    };
+    api_library_videos_create: {
         parameters: {
             query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["VideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["VideoRequest"];
+                "application/json": components["schemas"]["VideoRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Video"];
+                };
+            };
+        };
+    };
+    api_library_videos_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this video. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Video"];
+                };
+            };
+        };
+    };
+    api_library_videos_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this video. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["VideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["VideoRequest"];
+                "application/json": components["schemas"]["VideoRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Video"];
+                };
+            };
+        };
+    };
+    api_library_videos_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this video. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_library_videos_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this video. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedVideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedVideoRequest"];
+                "application/json": components["schemas"]["PatchedVideoRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Video"];
+                };
+            };
+        };
+    };
+    api_users_admin_profiles_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2202,7 +3142,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProfileAdmin"][];
+                    "application/json": components["schemas"]["PaginatedProfileAdminList"];
                 };
             };
             /** @description Forbidden - admin access required. */

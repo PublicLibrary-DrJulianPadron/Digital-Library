@@ -17,7 +17,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'Genres', id } as const)),
+              ...result.map(({ name }) => ({ type: 'Genres', name } as const)),
               { type: 'Genres', id: 'LIST' },
             ]
           : [{ type: 'Genres', id: 'LIST' }],

@@ -24,7 +24,7 @@ const Catalog = () => {
     const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
     const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation();
 
-    const allGenres = books ? Array.from(new Set(books.flatMap(book => book.genres || []))) : [];
+    // const allGenres = books ? Array.from(new Set(books.flatMap(book => book.genres || []))) : [];
 
     const handleGenreChange = (value: string) => {
         setSelectedGenre(value === 'all-genres' ? '' : value);

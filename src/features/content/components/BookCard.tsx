@@ -2,7 +2,7 @@ import React, { useState, useId } from 'react';
 import { Book } from '@/features/content-management/api/booksApiSlice';
 import { Button } from '@/common/components/ui/button';
 import { Badge } from '@/common/components/ui/badge';
-import { Edit, Trash2, MapPin, Calendar, BookOpen, User } from 'lucide-react';
+import { Edit, Trash2, MapPin, Calendar, BookOpen, User, Download, FileText, Globe, Layers, Hash } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,7 +45,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
       {/* Book Cover */}
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
-          src={book.cover_url}
+          src={book.cover}
           alt={book.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -68,7 +68,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
             <Edit className="w-3 h-3" />
           </Button>
 
-          <AlertDialog aria-labelledby={dialogTitleId}> {/* Use the generated ID here */}
+          <AlertDialog aria-labelledby={dialogTitleId}>
             <AlertDialogTrigger asChild>
               <Button
                 size="sm"
@@ -88,7 +88,7 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
               <AlertDialogFooter>
                 <AlertDialogCancel autoFocus>Cancelar</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => onDelete(book.id)}
+                  onClick={() => onDelete(book.title)}
                   className="bg-red-600 hover:bg-red-700"
                 >
                   Eliminar
@@ -96,20 +96,99 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
         </div>
       </div>
 
       {/* Book Info */}
-      <div className="p-4">
+      <div className="p-4 space-y-1">
         <h3 className="font-semibold text-biblioteca-blue text-sm mb-1 line-clamp-2">
           {book.title}
         </h3>
-        <p className="text-biblioteca-gray text-xs mb-2">{book.author}</p>
-
-        <div className="flex items-center justify-between text-xs text-biblioteca-gray">
-          <span>{book.quantity_in_stock} ejemplares</span>
-          <span>{book.publication_date}</span>
+        {book.isbn && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <Hash className="w-3 h-3 mr-1" />
+            <span>ISBN: {book.isbn}</span>
+          </div>
+        )}
+        {book.authors_detail && book.authors_detail.length > 0 && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <User className="w-3 h-3 mr-1" />
+            <span>
+              {book.authors_detail.map(a => a.name).join(', ')}
+            </span>
+          </div>
+        )}
+        {book.genres_detail && book.genres_detail.length > 0 && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <Layers className="w-3 h-3 mr-1" />
+            <span>
+              {book.genres_detail.map(g => g.name).join(', ')}
+            </span>
+          </div>
+        )}
+        {book.publisher && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <MapPin className="w-3 h-3 mr-1" />
+            <span>{book.publisher}</span>
+          </div>
+        )}
+        {book.publication_date && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <Calendar className="w-3 h-3 mr-1" />
+            <span>{book.publication_date}</span>
+          </div>
+        )}
+        {book.pages && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <FileText className="w-3 h-3 mr-1" />
+            <span>{book.pages} páginas</span>
+          </div>
+        )}
+        {book.material_type_detail && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <BookOpen className="w-3 h-3 mr-1" />
+            <span>{book.material_type_detail.name}</span>
+          </div>
+        )}
+        {book.language_detail && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <Globe className="w-3 h-3 mr-1" />
+            <span>{book.language_detail.name}</span>
+          </div>
+        )}
+        {typeof book.quantity_in_stock === 'number' && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <span>{book.quantity_in_stock} ejemplares</span>
+          </div>
+        )}
+        <div className="flex items-center text-xs text-biblioteca-gray">
+          <span>Disponibles: {book.available_copies}</span>
+        </div>
+        {book.digital_file && (
+          <div className="flex items-center text-xs text-biblioteca-gray">
+            <Download className="w-3 h-3 mr-1" />
+            <a
+              href={book.digital_file}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-biblioteca-blue"
+            >
+              Descargar archivo digital
+            </a>
+          </div>
+        )}
+        {book.description && (
+          <p className="text-xs text-biblioteca-gray mt-2 line-clamp-3">
+            {book.description}
+          </p>
+        )}
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Badge className="text-xxs" variant="outline">
+            Creado: {new Date(book.created_at).toLocaleDateString()}
+          </Badge>
+          <Badge className="text-xxs" variant="outline">
+            Actualizado: {new Date(book.updated_at).toLocaleDateString()}
+          </Badge>
         </div>
       </div>
 
@@ -120,34 +199,92 @@ export function BookCard({ book, onEdit, onDelete }: BookCardProps) {
             <h3 className="font-display font-semibold text-biblioteca-blue text-sm mb-2 line-clamp-2">
               {book.title}
             </h3>
-
             <div className="space-y-2 text-xs">
-              <div className="flex items-center text-biblioteca-gray">
-                <User className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span className="truncate">{book.author}</span>
-              </div>
-
-              <div className="flex items-center text-biblioteca-gray">
-                <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.genres}</span>
-              </div>
-
-              <div className="flex items-center text-biblioteca-gray">
-                <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
-                <span>{book.publication_date}</span>
-              </div>
+              {book.authors_detail && book.authors_detail.length > 0 && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <User className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span className="truncate">
+                    {book.authors_detail.map(a => a.name).join(', ')}
+                  </span>
+                </div>
+              )}
+              {book.genres_detail && book.genres_detail.length > 0 && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <Layers className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>
+                    {book.genres_detail.map(g => g.name).join(', ')}
+                  </span>
+                </div>
+              )}
+              {book.publisher && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>{book.publisher}</span>
+                </div>
+              )}
+              {book.publication_date && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>{book.publication_date}</span>
+                </div>
+              )}
+              {book.pages && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <FileText className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>{book.pages} páginas</span>
+                </div>
+              )}
+              {book.material_type_detail && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <BookOpen className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>{book.material_type_detail.name}</span>
+                </div>
+              )}
+              {book.language_detail && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <Globe className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>{book.language_detail.name}</span>
+                </div>
+              )}
+              {book.isbn && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <Hash className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <span>ISBN: {book.isbn}</span>
+                </div>
+              )}
+              {book.digital_file && (
+                <div className="flex items-center text-biblioteca-gray">
+                  <Download className="w-3 h-3 mr-1 flex-shrink-0" />
+                  <a
+                    href={book.digital_file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline text-biblioteca-blue"
+                  >
+                    Descargar archivo digital
+                  </a>
+                </div>
+              )}
             </div>
-
-            <p className="text-xs text-biblioteca-gray mt-3 line-clamp-3">
-              {book.description}
-            </p>
+            {book.description && (
+              <p className="text-xs text-biblioteca-gray mt-3 line-clamp-3">
+                {book.description}
+              </p>
+            )}
           </div>
-
           <div className="mt-4 pt-3 border-t border-gray-200">
             <div className="flex justify-between items-center text-xs">
               <span className="text-biblioteca-gray">Disponibles:</span>
               <Badge className={`${getAvailabilityColor()} text-xs`}>
                 {book.available_copies}/{book.quantity_in_stock}
+              </Badge>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Badge className="text-xxs" variant="outline">
+                Creado: {new Date(book.created_at).toLocaleDateString()}
+              </Badge>
+              <Badge className="text-xxs" variant="outline">
+                Actualizado: {new Date(book.updated_at).toLocaleDateString()}
               </Badge>
             </div>
           </div>

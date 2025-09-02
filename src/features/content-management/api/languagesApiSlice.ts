@@ -13,7 +13,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
       query: () => `/library/languages/`,
       providesTags: (result) =>
         result
-          ? [...result.map(({ id }) => ({ type: 'Languages' as const, id })), { type: 'Languages', id: 'LIST' }]
+          ? [...result.map(({ name }) => ({ type: 'Languages' as const, name })), { type: 'Languages', id: 'LIST' }]
           : [{ type: 'Languages', id: 'LIST' }],
     }),
     createLanguage: builder.mutation<Language, LanguageRequest>({

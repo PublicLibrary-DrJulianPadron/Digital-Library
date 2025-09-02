@@ -29,7 +29,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: (result) =>
         result
-          ? [...result.map(({ id }) => ({ type: 'Books' as const, id })), { type: 'Books', id: 'LIST' }]
+          ? [...result.map(({ title }) => ({ type: 'Books' as const, title })), { type: 'Books', id: 'LIST' }]
           : [{ type: 'Books', id: 'LIST' }],
     }),
     createBook: builder.mutation<Book, BookRequest>({
