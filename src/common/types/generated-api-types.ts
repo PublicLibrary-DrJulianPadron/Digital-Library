@@ -344,7 +344,7 @@ export interface paths {
         patch: operations["api_library_genres_partial_update"];
         trace?: never;
     };
-    "/api/library/genres/{slug}/list/": {
+    "/api/library/genres/{slug}/books/": {
         parameters: {
             query?: never;
             header?: never;
@@ -352,14 +352,8 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns a paginated list of books for this genre.
-         *     Supports filtering, sorting, and default DRF pagination via ?page=
-         *     Query params:
-         *     - author=<id>      : filter by author ID
-         *     - category=<id>    : filter by category ID
-         *     - year=<year>      : filter by publication year
-         *     - available=<bool> : filter by availability
-         *     - ordering=<field> : sort by any Book model field */
-        get: operations["api_library_genres_list_list"];
+         *     Supports filtering, sorting, and DRF pagination via ?page=. */
+        get: operations["api_library_genres_books_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -375,8 +369,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Returns all genres with paginated books per genre. */
-        get: operations["api_library_genres_with_books_list"];
+        /** @description Returns all genres grouped by 'sala', each with paginated books.
+         *     Optional query params per genre:
+         *     - page_<genre_id>=X
+         *     - page_size_<genre_id>=Y */
+        get: operations["api_library_genres_with_books_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -889,8 +886,6 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
-            /** Format: uri */
-            readonly url: string;
         };
         /** @description Full serializer for CRUD operations on a book.
          *     Handles both input (write) and output (read) for all fields. */
@@ -922,27 +917,36 @@ export interface components {
             /** Format: email */
             email: string;
         };
-        /** @description Serializer for the Genre model. */
+        /** @description Full serializer for Genre model. */
         Genre: {
-            name: string;
+            readonly id: number;
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala: string;
             readonly slug: string;
-            description?: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
         };
-        GenreBooks: {
-            readonly id: number;
-            name: string;
-            slug?: string;
-            readonly books: components["schemas"]["MinimalBook"][];
-            readonly books_count: number;
-        };
-        /** @description Serializer for the Genre model. */
+        /** @description Full serializer for Genre model. */
         GenreRequest: {
-            name: string;
-            description?: string;
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala: string;
+        };
+        GenreWithBooks: {
+            code: string;
+            label: string;
+            slug: string;
+            books_count: number;
+            books: components["schemas"]["MinimalBook"][];
         };
         /** @description Serializer for the Language model. */
         Language: {
@@ -1030,16 +1034,26 @@ export interface components {
              * @description Upload book cover (PNG format only)
              */
             readonly cover: string | null;
-            /** Format: uri */
-            readonly url: string;
         };
+        /** @description Minimal serializer for dropdowns or lightweight lists. */
         MinimalGenre: {
             readonly id: number;
-            name: string;
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala: string;
             readonly slug: string;
         };
+        /** @description Minimal serializer for dropdowns or lightweight lists. */
         MinimalGenreRequest: {
-            name: string;
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala: string;
         };
         MinimalLanguage: {
             name: string;
@@ -1097,21 +1111,6 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Book"][];
-        };
-        PaginatedGenreBooksList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["GenreBooks"][];
         };
         PaginatedLanguageList: {
             /** @example 123 */
@@ -1288,10 +1287,14 @@ export interface components {
             material_type?: string;
             language?: string;
         };
-        /** @description Serializer for the Genre model. */
+        /** @description Full serializer for Genre model. */
         PatchedGenreRequest: {
-            name?: string;
-            description?: string;
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code?: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label?: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala?: string;
         };
         /** @description Serializer for the Language model. */
         PatchedLanguageRequest: {
@@ -1503,6 +1506,10 @@ export interface components {
             response_date?: string | null;
             admin_comments?: string;
             is_active?: boolean;
+        };
+        SalaWithGenres: {
+            sala: string;
+            genres: components["schemas"]["GenreWithBooks"][];
         };
         SingUpRequest: {
             /** Format: email */
@@ -2224,7 +2231,7 @@ export interface operations {
         parameters: {
             query?: {
                 authors__name?: string;
-                genres__name?: string;
+                genres__label?: string;
                 /** @description A page number within the paginated result set. */
                 page?: number;
                 /** @description Number of results to return per page. */
@@ -2511,7 +2518,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_list_list: {
+    api_library_genres_books_list: {
         parameters: {
             query?: {
                 /** @description Which field to use when ordering the results. */
@@ -2541,30 +2548,22 @@ export interface operations {
             };
         };
     };
-    api_library_genres_with_books_list: {
+    api_library_genres_with_books_retrieve: {
         parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-                /** @description A page number within the paginated result set. */
-                page?: number;
-                /** @description Number of results to return per page. */
-                page_size?: number;
-                /** @description A search term. */
-                search?: string;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description List of salas, each containing genres with paginated books. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedGenreBooksList"];
+                    "application/json": components["schemas"]["SalaWithGenres"];
                 };
             };
         };
