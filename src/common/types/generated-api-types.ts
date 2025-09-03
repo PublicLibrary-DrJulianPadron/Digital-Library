@@ -376,7 +376,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Returns all genres with paginated books per genre. */
-        get: operations["api_library_genres_with_books_retrieve"];
+        get: operations["api_library_genres_with_books_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -931,8 +931,13 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
-            /** Format: uri */
-            readonly url: string;
+        };
+        GenreBooks: {
+            readonly id: number;
+            name: string;
+            slug?: string;
+            readonly books: components["schemas"]["MinimalBook"][];
+            readonly books_count: number;
         };
         /** @description Serializer for the Genre model. */
         GenreRequest: {
@@ -1029,10 +1034,9 @@ export interface components {
             readonly url: string;
         };
         MinimalGenre: {
+            readonly id: number;
             name: string;
             readonly slug: string;
-            /** Format: uri */
-            readonly url: string;
         };
         MinimalGenreRequest: {
             name: string;
@@ -1093,6 +1097,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["Book"][];
+        };
+        PaginatedGenreBooksList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["GenreBooks"][];
         };
         PaginatedLanguageList: {
             /** @example 123 */
@@ -2522,9 +2541,18 @@ export interface operations {
             };
         };
     };
-    api_library_genres_with_books_retrieve: {
+    api_library_genres_with_books_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2536,7 +2564,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Genre"];
+                    "application/json": components["schemas"]["PaginatedGenreBooksList"];
                 };
             };
         };

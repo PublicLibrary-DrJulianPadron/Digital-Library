@@ -12,7 +12,7 @@ export type PaginatedBookList = {
 };
 
 // Assuming the API returns a list of genres where each genre has an associated list of books.
-export type GenreWithBooks = Genre & { books: components['schemas']['MinimalBook'][] };
+export type GenreWithBooks = components['schemas']['GenreBooks']
 export type GenresWithBooksList = GenreWithBooks[];
 
 
@@ -23,9 +23,9 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       providesTags: (result) =>
         result?.results
           ? [
-              ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
-              { type: 'Genres', id: 'LIST' },
-            ]
+            ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
+            { type: 'Genres', id: 'LIST' },
+          ]
           : [{ type: 'Genres', id: 'LIST' }],
     }),
     getBooksByGenreSlug: builder.query<PaginatedBookList, { slug: string; search?: string }>({
@@ -40,9 +40,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     getGenresWithBooks: builder.query<GenresWithBooksList, Record<string, number>>({
       query: (params) => {
         const searchParams = new URLSearchParams();
-        for (const key in params) {
-          searchParams.append(key, String(params[key]));
-        }
+        for (const key in params) searchParams.append(key, String(params[key]));
         const queryString = searchParams.toString();
         return `/library/genres/with-books/${queryString ? `?${queryString}` : ''}`;
       },
