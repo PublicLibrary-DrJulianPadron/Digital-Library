@@ -37,16 +37,14 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       query: (slug) => `/library/genres/${slug}/`,
       providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
     }),
-    getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number>>({
-      query: (params) => {
-        const searchParams = new URLSearchParams();
-        for (const key in params) {
-          searchParams.append(key, String(params[key]));
-        }
-        const queryString = searchParams.toString();
-        return `/library/genres/with-books/${queryString ? `?${queryString}` : ''}`;
-      },
-      providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
+    getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number> | void>({
+      query: (params) => ({
+        url: `/library/genres/with_books`,
+        // Only send query params if they exist
+        ...(params && Object.keys(params).length > 0 ? { params } : {}),
+      }),
+      providesTags: (_result, _error, arg) =>
+        arg ? [{ type: 'Genres', slug: arg }] : [{ type: 'Genres' }],
     }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({

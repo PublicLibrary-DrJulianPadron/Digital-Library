@@ -12,12 +12,8 @@ const Catalog = () => {
   const [expandedSalas, setExpandedSalas] = useState<Record<string, boolean>>({});
   const [pageParams, setPageParams] = useState<PageParams>({});
 
-  // Build the query params for getSalaWithGenres
-  const queryParams = useMemo(() => {
-    return pageParams;
-  }, [pageParams]);
-
-  const { data: salas, isLoading, error } = useGetSalaWithGenresQuery(queryParams);
+  // No need for Object.keys checks
+  const { data: salas, isLoading, error } = useGetSalaWithGenresQuery(pageParams || undefined);
 
   const toggleSala = (salaName: string) => {
     setExpandedSalas((prev) => ({
