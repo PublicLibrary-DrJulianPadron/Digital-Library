@@ -15,7 +15,6 @@ export type PaginatedBookList = {
 export type SalaWithGenres = components['schemas']['SalaWithGenres'];
 export type SalaWithGenresList = SalaWithGenres[];
 
-
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getGenres: builder.query<{ results: GenresList; count: number }, void>({
@@ -28,10 +27,18 @@ export const genresApiSlice = apiSlice.injectEndpoints({
           ]
           : [{ type: 'Genres', id: 'LIST' }],
     }),
-    getBooksByGenreSlug: builder.query<PaginatedBookList, { slug: string; search?: string }>({
-      query: ({ slug, search }) =>
-        `/library/genres/${slug}/list/${search ? `?search=${search}` : ''}`,
-      providesTags: (_result, _error, { slug }) => [{ type: 'Genres', slug }],
+    getBooksByGenreSlug: builder.query<PaginatedBookList, { slug?: string; search?: string; page?: number; page_size?: number }>({
+      query: ({ slug, search, page, page_size }) => {
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (page) params.append('page', String(page));
+        if (page_size) params.append('page_size', String(page_size));
+
+        const url = slug ? `/library/genres/${slug}/books/?${params.toString()}` : `/library/books/?${params.toString()}`;
+        return url;
+      },
+      providesTags: (_result, _error, { slug }) =>
+        slug ? [{ type: 'Genres', slug }] : [{ type: 'Books', id: 'LIST' }],
     }),
     getGenreBySlug: builder.query<Genre, string>({
       query: (slug) => `/library/genres/${slug}/`,
@@ -40,11 +47,10 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number> | void>({
       query: (params) => ({
         url: `/library/genres/with_books`,
-        // Only send query params if they exist
         ...(params && Object.keys(params).length > 0 ? { params } : {}),
       }),
       providesTags: (_result, _error, arg) =>
-        arg ? [{ type: 'Genres', slug: arg }] : [{ type: 'Genres' }],
+        arg ? [{ type: 'Genres', slug: JSON.stringify(arg) }] : [{ type: 'Genres', slug: 'LIST' }],
     }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({
