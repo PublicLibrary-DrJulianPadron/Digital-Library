@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { components } from '@/common/types/generated-api-types';
 
 export type MinimalBook = components['schemas']['MinimalBook'];
@@ -8,8 +9,7 @@ interface MinimalBookCardProps {
 
 export function BookCard({ book }: MinimalBookCardProps) {
   return (
-    // The entire component is a hyperlink to the book's URL
-    <a href={book.url} className="group relative block w-full h-full">
+    <Link to={`/libro/${book.slug}`} className="group relative block w-full h-full">
       {/* Book Cover */}
       <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-shadow duration-300 group-hover:shadow-lg">
         <img
@@ -17,7 +17,7 @@ export function BookCard({ book }: MinimalBookCardProps) {
           alt={`Portada de ${book.title}`}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        
+
         {/* Hover overlay for title and authors */}
         <div className="absolute inset-x-0 bottom-0 bg-white/90 backdrop-blur-sm p-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <div className="text-center">
@@ -34,6 +34,6 @@ export function BookCard({ book }: MinimalBookCardProps) {
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 }

@@ -1,5 +1,6 @@
 import { BookCard, MinimalBook } from './BookCard';
 import { BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface BookListProps {
   books: MinimalBook[];
@@ -22,17 +23,18 @@ export function BookList({ books }: BookListProps) {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {books.map((book) => {
-          const bookUrl = `/books/${book.title.replace(/ /g, '-').toLowerCase()}`;
-          const minimalBook = {
+          // Use the book's slug directly for the URL
+          const minimalBook: MinimalBook = {
             id: book.id,
             title: book.title,
             cover: book.cover,
             authors: book.authors,
-            url: bookUrl
+            slug: book.slug // <- updated to use the slug
           };
+
           return (
             <BookCard
-              key={book.title}
+              key={book.id}
               book={minimalBook}
             />
           );

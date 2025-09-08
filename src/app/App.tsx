@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/common/components/ui/sidebar"
 import { AppSidebar } from "../common/components/layout/Sidebar";
 import { UserProfile } from "../features/authentication/components/LogInButton";
 import Index from "../features/homepage/pages/Index";
+import BookPage from "../features/content/pages/BookPage";
 import Catalog from "../features/content/pages/CatalogPage";
 import ColeccionManagementPage from "../features/content-management/pages/ColeccionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
@@ -44,6 +45,7 @@ export const App = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/catalogo" element={<Catalog />} />
+                  <Route path="/libro/:slug" element={<BookPage />} />
                   <Route path="/prestamo-sala" element={<PrestamoSala />} />
                   <Route path="/historia" element={<HistoriaPage />} />
                   <Route path="/estadisticas" element={<Estadisticas />} />

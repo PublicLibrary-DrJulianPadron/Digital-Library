@@ -351,8 +351,6 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Returns a paginated list of books for this genre.
-         *     Supports filtering, sorting, and DRF pagination via ?page=. */
         get: operations["api_library_genres_books_list"];
         put?: never;
         post?: never;
@@ -362,17 +360,13 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/genres/with-books/": {
+    "/api/library/genres/with_books/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description Returns all genres grouped by 'sala', each with paginated books.
-         *     Optional query params per genre:
-         *     - page_<genre_id>=X
-         *     - page_size_<genre_id>=Y */
         get: operations["api_library_genres_with_books_retrieve"];
         put?: never;
         post?: never;
@@ -1028,6 +1022,7 @@ export interface components {
             /** Format: uuid */
             readonly id: string;
             readonly title: string;
+            readonly slug: string;
             readonly authors: components["schemas"]["MinimalAuthor"][];
             /**
              * Format: uri
@@ -1096,21 +1091,6 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["BlockedSchedule"][];
-        };
-        PaginatedBookList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Book"][];
         };
         PaginatedLanguageList: {
             /** @example 123 */
@@ -2543,7 +2523,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedBookList"];
+                    "application/json": components["schemas"]["PaginatedMinimalBookList"];
                 };
             };
         };

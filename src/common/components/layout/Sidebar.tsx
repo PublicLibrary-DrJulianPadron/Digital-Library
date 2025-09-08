@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import {
@@ -7,10 +8,10 @@ import {
 } from "@/common/components/ui/sidebar";
 import {
   Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User, Book,
-  BookType, Languages, ScrollText
+  BookType, Languages, ScrollText, ChevronDown, ChevronRight
 } from "lucide-react";
 import { Link } from 'react-router-dom';
-
+import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
 
 const allMenuItems: MenuItem[] = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
@@ -40,6 +41,8 @@ type GroupedMenuItems = {
 
 export function AppSidebar() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { data: salas } = useGetSalaWithGenresQuery();
+  const [expandedSalas, setExpandedSalas] = useState<Record<string, boolean>>({});
 
   const visibleItems = allMenuItems.filter(item => !item.requiresAuth || isAuthenticated);
 
@@ -47,6 +50,10 @@ export function AppSidebar() {
     (acc[item.group] = acc[item.group] || []).push(item);
     return acc;
   }, {} as GroupedMenuItems);
+
+  const toggleSala = (salaName: string) => {
+    setExpandedSalas(prev => ({ ...prev, [salaName]: !prev[salaName] }));
+  };
 
   return (
     <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
@@ -74,7 +81,50 @@ export function AppSidebar() {
               <SidebarMenu>
                 {items.map(item => (
                   <div key={item.title}>
-                    {item.children ? (
+                    {item.title === "Catálogo" ? (
+                      <SidebarMenuDropdown
+                        label="Catálogo"
+                        icon={<BookOpen size={18} />}
+                      >
+                        <SidebarMenuDropdownItem>
+                          <Link to="/catalogo" className="flex items-center gap-3 w-full h-full">
+                            <BookOpen size={18} />
+                            <span>Todos los libros</span>
+                          </Link>
+                        </SidebarMenuDropdownItem>
+
+                        {salas?.map((sala) => (
+                          <div key={sala.sala}>
+                            <button
+                              onClick={() => toggleSala(sala.sala)}
+                              className="flex items-center justify-between w-full px-2 py-1 text-left hover:bg-biblioteca-blue/50 text-white"
+                            >
+                              <span>{sala.sala}</span>
+                              {expandedSalas[sala.sala] ? (
+                                <ChevronDown size={14} />
+                              ) : (
+                                <ChevronRight size={14} />
+                              )}
+                            </button>
+
+                            {expandedSalas[sala.sala] && (
+                              <ul className="pl-4 mt-1 space-y-1">
+                                {sala.genres.map((genre) => (
+                                  <li key={genre.slug}>
+                                    <Link
+                                      to={`/catalogo?genre=${genre.slug}`}
+                                      className="block w-full pl-6 pr-2 py-1 text-sm text-white hover:bg-biblioteca-blue/50 whitespace-normal break-words leading-snug"
+                                    >
+                                      {genre.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </SidebarMenuDropdown>
+                    ) : item.children ? (
                       <SidebarMenuDropdown
                         label={item.title}
                         icon={<item.icon size={18} />}
