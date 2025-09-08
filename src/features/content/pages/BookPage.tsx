@@ -45,7 +45,7 @@ const BookPage = () => {
             <div className="grid gap-6 mt-4 md:grid-cols-[1fr_2fr] md:grid-rows-[min-content_1fr]">
                 {/* Book Cover */}
                 {/* On larger screens, the cover and title are on the same row. On smaller screens, they stack vertically. */}
-                <div className="flex justify-center md:col-span-1 md:row-span-1 shadow-lg rounded-lg">
+                <div className="flex justify-center md:col-span-1 md:row-span-1 rounded-lg bg-glass px-2">
                     <div className="w-48 sm:w-64">
                         <AspectRatio ratio={2 / 3}>
                             <img

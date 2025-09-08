@@ -24,6 +24,7 @@ export function UserProfile() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
   const { data: profile, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserProfileQuery(undefined, {
@@ -125,9 +126,14 @@ export function UserProfile() {
     <div>
       <button
         onClick={() => setShowLoginDialog(true)}
-        className="flex items-center space-x-2 px-4 py-2 rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity">
-        <LogInIcon className="h-4 w-4" />
-        <span>Iniciar Sesión</span>
+        className="group flex items-center px-3 pr-2 py-2 w-max rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
+      >
+        <div className="flex items-center overflow-hidden transition-all duration-300 ease-in-out md:group-hover:w-[140px] md:w-[24px]">
+          <LogInIcon className="h-4 w-4 flex-shrink-0" />
+          <span className="whitespace-nowrap transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 ml-2">
+            Iniciar Sesión
+          </span>
+        </div>
       </button>
       <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
     </div>
