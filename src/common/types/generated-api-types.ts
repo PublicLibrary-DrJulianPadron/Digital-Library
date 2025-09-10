@@ -225,10 +225,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_author_list"];
         put?: never;
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         post: operations["api_library_author_create"];
         delete?: never;
         options?: never;
@@ -236,23 +242,35 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/author/{id}/": {
+    "/api/library/author/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         get: operations["api_library_author_retrieve"];
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         put: operations["api_library_author_update"];
         post?: never;
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         delete: operations["api_library_author_destroy"];
         options?: never;
         head?: never;
-        /** @description A ViewSet for managing authors. */
+        /** @description A ViewSet for managing authors.
+         *     - list: List and search for authors.
+         *     - retrieve: Get detailed information for a single author by slug.
+         *     - create, update, destroy: For authenticated users with write permissions. */
         patch: operations["api_library_author_partial_update"];
         trace?: never;
     };
@@ -813,10 +831,6 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
-        /** @description Serializer for the Author model. */
-        AuthorRequest: {
-            name: string;
-        };
         BlockedSchedule: {
             /** Format: uuid */
             readonly id: string;
@@ -880,32 +894,6 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
-        };
-        /** @description Full serializer for CRUD operations on a book.
-         *     Handles both input (write) and output (read) for all fields. */
-        BookRequest: {
-            title: string;
-            isbn?: string;
-            /** Format: date */
-            publication_date?: string | null;
-            pages?: number | null;
-            quantity_in_stock?: number;
-            publisher?: string;
-            description?: string;
-            /**
-             * Format: binary
-             * @description Upload book cover (PNG format only)
-             */
-            cover?: string | null;
-            /**
-             * Format: binary
-             * @description Upload a PDF file for the digital version.
-             */
-            digital_file?: string | null;
-            authors?: string[];
-            genres?: string[];
-            material_type?: string;
-            language?: string;
         };
         EmailRequest: {
             /** Format: email */
@@ -1012,9 +1000,11 @@ export interface components {
         };
         MinimalAuthor: {
             name: string;
+            slug?: string;
         };
         MinimalAuthorRequest: {
             name: string;
+            slug?: string;
         };
         /** @description Minimal serializer for listing books.
          *     Shows only essential information. */
@@ -1041,41 +1031,11 @@ export interface components {
             sala: string;
             readonly slug: string;
         };
-        /** @description Minimal serializer for dropdowns or lightweight lists. */
-        MinimalGenreRequest: {
-            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
-            code: string;
-            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
-            label: string;
-            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
-            sala: string;
-        };
         MinimalLanguage: {
-            name: string;
-        };
-        MinimalLanguageRequest: {
             name: string;
         };
         MinimalMaterialType: {
             name: string;
-        };
-        MinimalMaterialTypeRequest: {
-            name: string;
-        };
-        PaginatedAuthorList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Author"][];
         };
         PaginatedBlockedScheduleList: {
             /** @example 123 */
@@ -1136,6 +1096,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MaterialType"][];
+        };
+        PaginatedMinimalAuthorList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalAuthor"][];
         };
         PaginatedMinimalBookList: {
             /** @example 123 */
@@ -1225,10 +1200,6 @@ export interface components {
             password: string;
             token: string;
         };
-        /** @description Serializer for the Author model. */
-        PatchedAuthorRequest: {
-            name?: string;
-        };
         PatchedBlockedScheduleRequest: {
             /** Format: date */
             date?: string;
@@ -1240,32 +1211,6 @@ export interface components {
             description?: string;
             is_permanent?: boolean;
             is_active?: boolean;
-        };
-        /** @description Full serializer for CRUD operations on a book.
-         *     Handles both input (write) and output (read) for all fields. */
-        PatchedBookRequest: {
-            title?: string;
-            isbn?: string;
-            /** Format: date */
-            publication_date?: string | null;
-            pages?: number | null;
-            quantity_in_stock?: number;
-            publisher?: string;
-            description?: string;
-            /**
-             * Format: binary
-             * @description Upload book cover (PNG format only)
-             */
-            cover?: string | null;
-            /**
-             * Format: binary
-             * @description Upload a PDF file for the digital version.
-             */
-            digital_file?: string | null;
-            authors?: string[];
-            genres?: string[];
-            material_type?: string;
-            language?: string;
         };
         /** @description Full serializer for Genre model. */
         PatchedGenreRequest: {
@@ -1291,6 +1236,10 @@ export interface components {
         /** @description Serializer for the MaterialType model. */
         PatchedMaterialTypeRequest: {
             name?: string;
+        };
+        PatchedMinimalAuthorRequest: {
+            name?: string;
+            slug?: string;
         };
         PatchedProfileAdminRequest: {
             /** @description ID of the user associated with this profile */
@@ -2058,8 +2007,7 @@ export interface operations {
     api_library_author_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
+                name?: string;
                 /** @description A page number within the paginated result set. */
                 page?: number;
                 /** @description Number of results to return per page. */
@@ -2078,7 +2026,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedAuthorList"];
+                    "application/json": components["schemas"]["PaginatedMinimalAuthorList"];
                 };
             };
         };
@@ -2092,9 +2040,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
-                "multipart/form-data": components["schemas"]["AuthorRequest"];
+                "application/json": components["schemas"]["MinimalAuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalAuthorRequest"];
+                "multipart/form-data": components["schemas"]["MinimalAuthorRequest"];
             };
         };
         responses: {
@@ -2103,7 +2051,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Author"];
+                    "application/json": components["schemas"]["MinimalAuthor"];
                 };
             };
         };
@@ -2113,8 +2061,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this author. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2135,16 +2082,15 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this author. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
-                "multipart/form-data": components["schemas"]["AuthorRequest"];
+                "application/json": components["schemas"]["MinimalAuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalAuthorRequest"];
+                "multipart/form-data": components["schemas"]["MinimalAuthorRequest"];
             };
         };
         responses: {
@@ -2153,7 +2099,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Author"];
+                    "application/json": components["schemas"]["MinimalAuthor"];
                 };
             };
         };
@@ -2163,8 +2109,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this author. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2184,16 +2129,15 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this author. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedAuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedAuthorRequest"];
-                "multipart/form-data": components["schemas"]["PatchedAuthorRequest"];
+                "application/json": components["schemas"]["PatchedMinimalAuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMinimalAuthorRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMinimalAuthorRequest"];
             };
         };
         responses: {
@@ -2202,7 +2146,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Author"];
+                    "application/json": components["schemas"]["MinimalAuthor"];
                 };
             };
         };
@@ -2243,18 +2187,14 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["BookRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Book"];
+                    "application/json": components["schemas"]["MinimalBook"];
                 };
             };
         };
@@ -2289,18 +2229,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["BookRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Book"];
+                    "application/json": components["schemas"]["MinimalBook"];
                 };
             };
         };
@@ -2334,18 +2270,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "multipart/form-data": components["schemas"]["PatchedBookRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Book"];
+                    "application/json": components["schemas"]["MinimalBook"];
                 };
             };
         };

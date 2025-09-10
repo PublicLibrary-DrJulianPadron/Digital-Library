@@ -1,4 +1,12 @@
-import { ChangeEvent, useState, KeyboardEvent, useRef, Dispatch, SetStateAction } from "react";
+import {
+    ChangeEvent,
+    useState,
+    KeyboardEvent,
+    useRef,
+    Dispatch,
+    SetStateAction,
+    useEffect,
+} from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { cn } from "@/common/lib/utils";
 
@@ -30,6 +38,9 @@ export const SearchBar = <T,>({
     isLoading,
 }: SearchBarProps<T>) => {
     const suggestionsRef = useRef<HTMLUListElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "ArrowDown") {
@@ -46,12 +57,21 @@ export const SearchBar = <T,>({
             e.preventDefault();
             if (highlightedIndex !== null) {
                 handleSuggestionClick(filteredResults[highlightedIndex]);
+                setIsOpen(false);
             } else {
                 handleSearch();
+                setIsOpen(false);
             }
+        } else if (e.key === "Escape") {
+            e.preventDefault();
+            setIsOpen(false);
+            setHighlightedIndex(null);
         }
+
         if (highlightedIndex !== null && suggestionsRef.current) {
-            const highlightedItem = suggestionsRef.current.children[highlightedIndex] as HTMLElement;
+            const highlightedItem = suggestionsRef.current.children[
+                highlightedIndex
+            ] as HTMLElement;
             if (highlightedItem) {
                 highlightedItem.scrollIntoView({ block: "nearest" });
             }
@@ -60,14 +80,44 @@ export const SearchBar = <T,>({
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
+        if (e.target.value) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
+        }
     };
 
+    // open again when input regains focus if there's a query
+    const handleFocus = () => {
+        if (searchQuery && filteredResults.length > 0) {
+            setIsOpen(true);
+        }
+    };
+
+    // close when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="flex item-center space-between bg-white">
+        <div
+            ref={containerRef}
+            className="flex item-center space-between bg-white relative"
+        >
             <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value as any)}
-                // Use `text-sm` for smaller text and padding
                 className="border mr-3 w-content rounded px-1 py-1.5 focus:outline-none focus:ring focus:ring-biblioteca-blue text-sm"
             >
                 <option value="genre">Género</option>
@@ -79,18 +129,22 @@ export const SearchBar = <T,>({
                 <input
                     type="text"
                     placeholder={`Buscar por ${searchType === "genre"
-                        ? "Género"
-                        : searchType === "author"
-                            ? "Autor"
-                            : "Libro"
+                            ? "Género"
+                            : searchType === "author"
+                                ? "Autor"
+                                : "Libro"
                         }`}
                     value={searchQuery}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
+                    onFocus={handleFocus}
                     className="w-full md:w-96 border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-biblioteca-blue"
                 />
                 <button
-                    onClick={handleSearch}
+                    onClick={() => {
+                        handleSearch();
+                        setIsOpen(false);
+                    }}
                     disabled={isLoading}
                     className={cn(
                         "px-3 py-2 bg-biblioteca-blue text-white rounded hover:bg-biblioteca-blue/80",
@@ -100,7 +154,7 @@ export const SearchBar = <T,>({
                     <AiOutlineSearch className="h-5 w-5" />
                 </button>
 
-                {searchQuery && filteredResults.length > 0 && (
+                {isOpen && searchQuery && filteredResults.length > 0 && (
                     <ul
                         ref={suggestionsRef}
                         className="absolute top-full left-0 w-full bg-white border rounded shadow-md mt-1 z-50 max-h-60 overflow-y-auto"
@@ -108,7 +162,10 @@ export const SearchBar = <T,>({
                         {filteredResults.map((item, i) => (
                             <li
                                 key={i}
-                                onClick={() => handleSuggestionClick(item)}
+                                onClick={() => {
+                                    handleSuggestionClick(item);
+                                    setIsOpen(false);
+                                }}
                                 className={`p-2 cursor-pointer hover:bg-biblioteca-blue/10 ${highlightedIndex === i ? "bg-biblioteca-blue/20" : ""
                                     }`}
                             >

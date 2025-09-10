@@ -4,9 +4,11 @@ import { SidebarTrigger } from "@/common/components/ui/sidebar";
 import { UserProfile } from "@/features/authentication/components/LogInButton";
 import { SearchBar } from '@/common/components/ui/searchbar';
 import { useGetSalaWithGenresQuery, useGetBooksByGenreSlugQuery } from '@/features/content-management/api/genresApiSlice';
-import { IconButton } from "@/common/components/ui/icon-button"; // New component for search icon
-import { SearchIcon, XIcon } from "lucide-react"; // Icons from lucide-react
-import { useGetBooksQuery } from "@/features/content-management/api/booksApiSlice"; // Import the new query hook
+import { IconButton } from "@/common/components/ui/icon-button";
+import { SearchIcon, XIcon } from "lucide-react";
+import { useGetBooksQuery } from "@/features/content-management/api/booksApiSlice";
+import { useGetAuthorsQuery } from "@/features/content-management/api/authorsApiSlice";
+import { skipToken } from '@reduxjs/toolkit/query/react';
 
 type PageParams = Record<string, number>;
 const DEFAULT_PAGE_SIZE = 5;
@@ -21,19 +23,24 @@ export const AppHeader = () => {
     const [pageParams, setPageParams] = useState<PageParams>({});
     const [searchType, setSearchType] = useState<"genre" | "author" | "book">("book");
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedQuery, setDebouncedQuery] = useState(""); // debounced version of searchQuery
     const [filteredResults, setFilteredResults] = useState<any[]>([]);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
     const [searching, setSearching] = useState(false);
-    const [isSearchVisible, setIsSearchVisible] = useState(false); // New state for mobile search visibility
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-    const { data: salas, isLoading: salasLoading, error: salasError } = useGetSalaWithGenresQuery();
+    const { data: salas } = useGetSalaWithGenresQuery();
     const { data: allBooksData, isLoading: allBooksLoading } = useGetBooksQuery({});
     const booksQueryArg = {
         slug: selectedGenreSlug || undefined,
         page: pageParams[selectedGenreSlug || 'all'] || 1,
         page_size: DEFAULT_PAGE_SIZE,
     };
-    const { data: booksData, isLoading: booksLoading } = useGetBooksByGenreSlugQuery(booksQueryArg);
+    const { data: booksData } = useGetBooksByGenreSlugQuery(booksQueryArg);
+
+    // === use non-lazy authors query, skip when query empty ===
+    const authorsQueryArg = debouncedQuery ? { search: debouncedQuery, page_size: 5 } : skipToken;
+    const { data: authorsData, isFetching: authorsLoading } = useGetAuthorsQuery(authorsQueryArg);
 
     useEffect(() => {
         setSelectedGenreSlug(genreFromUrl);
@@ -45,18 +52,27 @@ export const AppHeader = () => {
         }
     }, [selectedGenreSlug]);
 
+    // debounce the user's typing so we don't hit the API on every keystroke
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setDebouncedQuery(searchQuery.trim());
+        }, 50);
+        return () => clearTimeout(t);
+    }, [searchQuery]);
+
+    // whenever searchQuery / authorsData / etc. change, update suggestions
     useEffect(() => {
         if (searchQuery.trim()) {
             updateSuggestions(searchQuery);
         } else {
             setFilteredResults([]);
         }
-    }, [searchQuery, searchType, salas, allBooksData]);
+        // authorsData is included so author suggestions update after debouncedQuery resolves
+    }, [searchQuery, searchType, salas, allBooksData, authorsData, debouncedQuery]);
 
     const updateSuggestions = (value: string) => {
-        let results: any[] = [];
         const lowerValue = value.toLowerCase();
-        const availableBooks = allBooksData?.results || [];
+        let results: any[] = [];
 
         if (searchType === "genre" && salas) {
             results = salas.flatMap((sala: any) =>
@@ -64,43 +80,59 @@ export const AppHeader = () => {
                     .filter((g: any) => g.label.toLowerCase().includes(lowerValue))
                     .map((g: any) => ({ ...g, sala: sala.sala }))
             );
-        } else if (searchType === "author" && availableBooks.length) {
-            results = availableBooks.filter((b: any) =>
-                b.author && b.author.toLowerCase().includes(lowerValue)
-            );
-        } else if (searchType === "book" && availableBooks.length) {
-            results = availableBooks.filter((b: any) =>
+            setFilteredResults(results.slice(0, 5));
+            return;
+        }
+
+        if (searchType === "author") {
+            // authorsData comes from the authors API (debounced). Use it directly.
+            setFilteredResults((authorsData?.results ?? []).slice(0, 5));
+            return;
+        }
+
+        if (searchType === "book" && allBooksData?.results?.length) {
+            results = allBooksData.results.filter((b: any) =>
                 b.title.toLowerCase().includes(lowerValue)
             );
+            setFilteredResults(results.slice(0, 5));
+            return;
         }
-        setFilteredResults(results.slice(0, 5));
+
+        setFilteredResults([]);
     };
 
     const handleSearch = () => {
         setSearching(true);
-        setFilteredResults([]);
-        setHighlightedIndex(null);
-
-        const resultToRedirect = highlightedIndex !== null ? filteredResults[highlightedIndex] : filteredResults[0];
+        const resultToRedirect =
+            highlightedIndex !== null ? filteredResults[highlightedIndex] : filteredResults[0];
 
         if (searchType === "genre" && resultToRedirect) {
             navigate(`/catalogo?genre=${resultToRedirect.slug}`);
             setSelectedGenreSlug(resultToRedirect.slug);
-        } else {
-            // Logic to handle non-genre search results, possibly pass to a context or state manager
+        } else if (searchType === "author" && resultToRedirect) {
+            navigate(`/autor/${resultToRedirect.slug}`);
+        } else if (searchType === "book" && resultToRedirect) {
+            navigate(`/libro/${resultToRedirect.slug}`);
         }
+
+        setFilteredResults([]);
+        setHighlightedIndex(null);
         setSearching(false);
     };
 
     const handleSuggestionClick = (item: any) => {
         if (searchType === "genre") {
             navigate(`/catalogo?genre=${item.slug}`);
-        } else {
-            // Logic to handle non-genre suggestion clicks
+        } else if (searchType === "author") {
+            navigate(`/autor/${item.slug}`);
+        } else if (searchType === "book") {
+            navigate(`/libro/${item.slug}`);
         }
         setSearchQuery("");
         setFilteredResults([]);
     };
+
+    const isLoading = searchType === "author" ? authorsLoading : allBooksLoading;
 
     return (
         <header className="bg-background border-b border-border px-3 py-3 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
@@ -131,16 +163,16 @@ export const AppHeader = () => {
                     handleSuggestionClick={handleSuggestionClick}
                     highlightedIndex={highlightedIndex}
                     setHighlightedIndex={setHighlightedIndex}
-                    isLoading={allBooksLoading}
-                    renderSuggestion={(item) => (
+                    isLoading={isLoading}
+                    renderSuggestion={(item) =>
                         searchType === "genre"
                             ? `${item.label} (${item.sala})`
-                            : item.title || item.author
-                    )}
+                            : item.name || item.title
+                    }
                 />
             </div>
 
-            {/* Mobile search bar that appears when the search icon is clicked */}
+            {/* Mobile search bar */}
             {isSearchVisible && (
                 <div className="md:hidden w-full transition-all duration-300 ease-in-out mt-2">
                     <SearchBar
@@ -153,12 +185,12 @@ export const AppHeader = () => {
                         handleSuggestionClick={handleSuggestionClick}
                         highlightedIndex={highlightedIndex}
                         setHighlightedIndex={setHighlightedIndex}
-                        isLoading={allBooksLoading}
-                        renderSuggestion={(item) => (
+                        isLoading={isLoading}
+                        renderSuggestion={(item) =>
                             searchType === "genre"
                                 ? `${item.label} (${item.sala})`
-                                : item.title || item.author
-                        )}
+                                : item.name || item.title
+                        }
                     />
                 </div>
             )}

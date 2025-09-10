@@ -1,10 +1,10 @@
 // src/features/books/api/booksApiSlice.ts
 import { apiSlice } from "@/common/api/apiSlice";
-import type { components } from "@/common/types/generated-api-types";
+import type { components, paths } from "@/common/types/generated-api-types";
 
 export type Book = components["schemas"]["Book"];
-export type BookRequest = components["schemas"]["BookRequest"];
-export type PatchedBookRequest = components["schemas"]["PatchedBookRequest"];
+export type BookRequest = paths["/api/library/books/{slug}/"]["put"]["requestBody"];
+export type PatchedBookRequest = paths["/api/library/books/{slug}/"]["patch"]["requestBody"];
 export type BooksList = Book[];
 
 export const booksApiSlice = apiSlice.injectEndpoints({
