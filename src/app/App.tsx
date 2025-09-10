@@ -40,20 +40,19 @@ export const App = () => {
                 <div className="flex-1">
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/usuario/me" element={<DetallesUsuario />} />
                     <Route path="/catalogo" element={<Catalog />} />
                     <Route path="/libro/:slug" element={<BookPage />} />
-                    <Route path="/prestamo-sala" element={<PrestamoSala />} />
                     <Route path="/historia" element={<HistoriaPage />} />
+                    <Route path="/prestamo/sala" element={<PrestamoSala />} />
+                    <Route path="/gestion/coleccion" element={<ColeccionManagementPage />} />
+                    <Route path="/gestion/generos" element={<GenresManagementPage />} />
+                    <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
+                    <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
                     <Route path="/estadisticas" element={<Estadisticas />} />
-                    <Route path="/gestion" element={<Gestion />} />
-                    <Route path="/gestion-contenido" element={<Gestion />} />
-                    <Route path="/gestion-contenido/coleccion" element={<ColeccionManagementPage />} />
-                    <Route path="/gestion-contenido/generos" element={<GenresManagementPage />} />
-                    <Route path="/gestion-contenido/lenguajes" element={<LanguageManagementPage />} />
-                    <Route path="/gestion-contenido/materiales" element={<MaterialManagementPage />} />
-                    <Route path="/gestion-usuarios/:id" element={<UserProfilePage />} />
-                    <Route path="/usuario/me" element={<DetallesUsuario />} />
-                    <Route path="/mis-prestamos" element={<MisPrestamos />} />
+                    <Route path="/gestion/usuarios" element={<Gestion />} />
+                    <Route path="/gestion/usuarios/:id" element={<UserProfilePage />} />
+                    {/* <Route path="/mis-prestamos" element={<MisPrestamos />} /> */}
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

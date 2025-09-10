@@ -7,8 +7,8 @@ import {
   SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
 import {
-  Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User, Book,
-  BookType, Languages, ScrollText, ChevronDown, ChevronRight
+  Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, Users, Book,
+  BookType, Languages, ScrollText, ChevronDown, ChevronRight, User
 } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
@@ -17,22 +17,23 @@ const allMenuItems: MenuItem[] = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
   { group: "Navegación", title: "Catálogo", url: "/catalogo", icon: BookOpen, requiresAuth: false },
   { group: "Navegación", title: "Historia", url: "/historia", icon: Clock, requiresAuth: false },
-  { group: "Navegación", title: "Préstamo Sala", url: "/prestamo-sala", icon: Calendar, requiresAuth: true },
+  { group: "Administración", title: "Préstamo Sala", url: "/prestamo/sala", icon: Calendar, requiresAuth: true },
   {
     group: "Administración",
     title: "Gestión de Contenido",
-    url: "/gestion-contenido",
+    url: "/gestion", // ✅ aligned with App routes
     icon: Book,
     requiresAuth: true,
     children: [
-      { title: "Colección", url: "/gestion-contenido/coleccion", icon: LibraryBig, requiresAuth: true },
-      { title: "Géneros", url: "/gestion-contenido/generos", icon: BookType, requiresAuth: true },
-      { title: "Lenguajes", url: "/gestion-contenido/lenguajes", icon: Languages, requiresAuth: true },
-      { title: "Materiales", url: "/gestion-contenido/materiales", icon: ScrollText, requiresAuth: true },
+      { title: "Colección", url: "/gestion/coleccion", icon: LibraryBig, requiresAuth: true },
+      { title: "Géneros", url: "/gestion/generos", icon: BookType, requiresAuth: true },
+      { title: "Lenguajes", url: "/gestion/lenguajes", icon: Languages, requiresAuth: true },
+      { title: "Materiales", url: "/gestion/materiales", icon: ScrollText, requiresAuth: true },
+      { title: "Autores", url: "/gestion/autores", icon: User, requiresAuth: true }, // ✅ fixed author icon
     ]
   },
   { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
-  { group: "Administración", title: "Gestión", url: "/gestion", icon: User, requiresAuth: true },
+  { group: "Administración", title: "Gestión de Usuarios", url: "/gestion/usuarios", icon: Users, requiresAuth: true },
 ];
 
 type GroupedMenuItems = {
