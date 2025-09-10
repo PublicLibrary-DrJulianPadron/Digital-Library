@@ -3,9 +3,10 @@ import { apiSlice } from "@/common/api/apiSlice";
 import type { components, paths } from "@/common/types/generated-api-types";
 
 export type Book = components["schemas"]["Book"];
+export type MinimalBook = components["schemas"]["MinimalBook"];
 export type BookRequest = paths["/api/library/books/{slug}/"]["put"]["requestBody"];
 export type PatchedBookRequest = paths["/api/library/books/{slug}/"]["patch"]["requestBody"];
-export type BooksList = Book[];
+export type BooksList = MinimalBook[];
 
 export const booksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

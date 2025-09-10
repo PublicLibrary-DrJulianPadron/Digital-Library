@@ -6,10 +6,8 @@ export type Genre = components['schemas']['Genre'];
 export type GenresList = Genre[];
 export type GenreRequest = Omit<Genre, "id">;
 
-export type PaginatedBookList = {
-  results: components['schemas']['MinimalBook'][];
-  count: number;
-};
+export type PaginatedBookList = components["schemas"]["PaginatedMinimalBookList"];
+
 
 // Assuming the API returns a list of genres where each genre has an associated list of books.
 export type SalaWithGenres = components['schemas']['SalaWithGenres'];

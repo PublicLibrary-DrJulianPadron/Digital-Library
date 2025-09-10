@@ -218,7 +218,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/author/": {
+    "/api/library/authors/": {
         parameters: {
             query?: never;
             header?: never;
@@ -229,20 +229,20 @@ export interface paths {
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_author_list"];
+        get: operations["api_library_authors_list"];
         put?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        post: operations["api_library_author_create"];
+        post: operations["api_library_authors_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/author/{slug}/": {
+    "/api/library/authors/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -253,25 +253,25 @@ export interface paths {
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_author_retrieve"];
+        get: operations["api_library_authors_retrieve"];
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        put: operations["api_library_author_update"];
+        put: operations["api_library_authors_update"];
         post?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        delete: operations["api_library_author_destroy"];
+        delete: operations["api_library_authors_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        patch: operations["api_library_author_partial_update"];
+        patch: operations["api_library_authors_partial_update"];
         trace?: never;
     };
     "/api/library/books/": {
@@ -1013,12 +1013,22 @@ export interface components {
             readonly id: string;
             readonly title: string;
             readonly slug: string;
-            readonly authors: components["schemas"]["MinimalAuthor"][];
             /**
              * Format: uri
              * @description Upload book cover (PNG format only)
              */
             readonly cover: string | null;
+            readonly quantity_in_stock: number;
+            readonly available_copies: number;
+            /** Format: date */
+            readonly publication_date: string | null;
+            readonly material_type_detail: components["schemas"]["MinimalMaterialType"];
+            readonly authors: components["schemas"]["MinimalAuthor"][];
+        };
+        /** @description Minimal serializer for listing books.
+         *     Shows only essential information. */
+        MinimalBookRequest: {
+            material_type?: string;
         };
         /** @description Minimal serializer for dropdowns or lightweight lists. */
         MinimalGenre: {
@@ -1035,6 +1045,9 @@ export interface components {
             name: string;
         };
         MinimalMaterialType: {
+            name: string;
+        };
+        MinimalMaterialTypeRequest: {
             name: string;
         };
         PaginatedBlockedScheduleList: {
@@ -1240,6 +1253,11 @@ export interface components {
         PatchedMinimalAuthorRequest: {
             name?: string;
             slug?: string;
+        };
+        /** @description Minimal serializer for listing books.
+         *     Shows only essential information. */
+        PatchedMinimalBookRequest: {
+            material_type?: string;
         };
         PatchedProfileAdminRequest: {
             /** @description ID of the user associated with this profile */
@@ -2004,7 +2022,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_list: {
+    api_library_authors_list: {
         parameters: {
             query?: {
                 name?: string;
@@ -2031,7 +2049,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_create: {
+    api_library_authors_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2056,7 +2074,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_retrieve: {
+    api_library_authors_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2077,7 +2095,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_update: {
+    api_library_authors_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2104,7 +2122,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_destroy: {
+    api_library_authors_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -2124,7 +2142,7 @@ export interface operations {
             };
         };
     };
-    api_library_author_partial_update: {
+    api_library_authors_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2187,7 +2205,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["MinimalBookRequest"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -2229,7 +2251,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["MinimalBookRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -2270,7 +2296,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedMinimalBookRequest"];
+            };
+        };
         responses: {
             200: {
                 headers: {

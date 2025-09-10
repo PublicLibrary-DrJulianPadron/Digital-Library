@@ -1,324 +1,174 @@
-// src/features/books/pages/ColeccionManagementPage.tsx
-import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/common/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/common/components/ui/table";
+import React, { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/common/components/ui/table";
+import { Badge } from "@/common/components/ui/badge";
 import { Input } from "@/common/components/ui/input";
 import { Button } from "@/common/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/common/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/common/components/ui/alert-dialog";
-import { Badge } from "@/common/components/ui/badge";
-import { Eye, Trash2, Plus, Edit } from "lucide-react";
-import { useToast } from "@/common/hooks/use-toast";
-import { BookForm } from "@/features/content-management/components/BookForm/BookForm";
-import { Book, BookRequest, useGetBooksQuery, useCreateBookMutation, useUpdateBookMutation, useDeleteBookMutation } from '@/features/content-management/api/booksApiSlice';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/common/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/common/components/ui/card";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/common/components/ui/popover";
+import { Filter } from "lucide-react";
+import { useGetBooksQuery } from "@/features/content-management/api/booksApiSlice";
+import { MinimalBook } from "@/features/content-management/api/booksApiSlice";
 
+const BookTable: React.FC = () => {
+  const [filters, setFilters] = useState<{
+    search?: string;
+    author?: string;
+    genres__name?: string;
+    publication_date?: string;
+    material_type?: string;
+    language?: string;
+  }>({});
 
-const ColeccionManagementPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isBookFormOpen, setIsBookFormOpen] = useState(false);
-  const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
-  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
+  const { data, isFetching } = useGetBooksQuery(filters);
 
-  const { toast } = useToast();
-
-  const { data: libros, isLoading, isFetching, error } = useGetBooksQuery({ search: searchTerm });
-  const [createBook, { isLoading: isCreating }] = useCreateBookMutation();
-  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
-  const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation();
-
-
-  const handleBookFormSubmit = async (bookData: BookRequest) => {
-    try {
-      if (bookToEdit) {
-        await updateBook({ slug: bookToEdit.slug, body: bookData }).unwrap();
-        toast({
-          title: "Libro actualizado",
-          description: "Los detalles del libro han sido actualizados exitosamente.",
-        });
-      } else {
-        await createBook(bookData).unwrap();
-        toast({
-          title: "Libro agregado",
-          description: "El nuevo libro ha sido agregado al catálogo exitosamente.",
-        });
-      }
-      setIsBookFormOpen(false);
-      setBookToEdit(null);
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: `No se pudo ${bookToEdit ? 'actualizar' : 'agregar'} el libro. Inténtalo de nuevo.`,
-        variant: "destructive",
-      });
-    }
+  const handleChange = (key: keyof typeof filters, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value || undefined,
+    }));
   };
 
-  const handleDeleteBook = async () => {
-    if (bookToDelete) {
-      try {
-        await deleteBook(bookToDelete.id).unwrap();
-        toast({
-          title: "Libro eliminado",
-          description: "El libro ha sido eliminado del catálogo.",
-        });
-        setBookToDelete(null);
-      } catch (err) {
-        toast({
-          title: "Error",
-          description: "No se pudo eliminar el libro. Inténtalo de nuevo.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
-
-
-  const openDeleteDialog = (book: Book) => {
-    setBookToDelete(book);
-  };
-
-  const openAddBookForm = () => {
-    setBookToEdit(null);
-    setIsBookFormOpen(true);
-  };
-
-  const openEditBookForm = (book: Book) => {
-    setBookToEdit(book);
-    setIsBookFormOpen(true);
-  };
-
-  const handleBookFormCancel = () => {
-    setIsBookFormOpen(false);
-    setBookToEdit(null);
-  };
-
-  if (isLoading || isFetching) {
-    return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-1/4"></div>
-          <div className="h-10 bg-muted rounded"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-muted rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-        <div className="text-xl font-medium text-red-500">
-          Error al cargar los libros.
-        </div>
-      </div>
-    );
-  }
+  const books = data?.results || [];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold text-foreground">Colección</h1>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-          <div className="flex-1 w-full">
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Listado de Materiales</CardTitle>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Filter className="w-4 h-4 mr-2" />
+              Filtros
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 space-y-3" align="end">
             <Input
-              placeholder="Buscar por titulo, autor o ISBN..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              placeholder="Buscar título..."
+              value={filters.search || ""}
+              onChange={(e) => handleChange("search", e.target.value)}
             />
+            <Input
+              placeholder="Autor"
+              value={filters.author || ""}
+              onChange={(e) => handleChange("author", e.target.value)}
+            />
+            <Input
+              placeholder="Género"
+              value={filters.genres__name || ""}
+              onChange={(e) => handleChange("genres__name", e.target.value)}
+            />
+            <Input
+              placeholder="Año de publicación"
+              value={filters.publication_date || ""}
+              onChange={(e) => handleChange("publication_date", e.target.value)}
+            />
+            <Select
+              value={filters.material_type || ""}
+              onValueChange={(val) => handleChange("material_type", val)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Tipo de material" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="book">Libro</SelectItem>
+                <SelectItem value="magazine">Revista</SelectItem>
+                <SelectItem value="digital">Digital</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              placeholder="Idioma"
+              value={filters.language || ""}
+              onChange={(e) => handleChange("language", e.target.value)}
+            />
+          </PopoverContent>
+        </Popover>
+      </CardHeader>
+
+      <CardContent>
+        {isFetching && (
+          <div className="text-center text-muted-foreground py-4">
+            Cargando...
           </div>
-          <Dialog open={isBookFormOpen} onOpenChange={setIsBookFormOpen} aria-labelledby="add-edit-book-dialog-title">
-            <DialogTrigger asChild>
-              <Button
-                onClick={openAddBookForm}
-                className="bg-biblioteca-blue hover:bg-biblioteca-blue/90 text-white w-full sm:w-auto"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Agregar Libro
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle id="add-edit-book-dialog-title" className="text-biblioteca-blue font-display text-xl">
-                  {bookToEdit ? 'Editar Libro' : 'Agregar Nuevo Libro'}
-                </DialogTitle>
-              </DialogHeader>
-              <BookForm
-                book={bookToEdit}
-                onSubmit={handleBookFormSubmit}
-                onCancel={handleBookFormCancel}
-                isUpdatingBook={!!bookToEdit}
-                isSubmitting={isCreating || isUpdating}
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+        )}
 
-      {/* Desktop Table View */}
-      <div className="hidden md:block">
-        <div className="border rounded-lg">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Titulo</TableHead>
-                <TableHead>Autor</TableHead>
-                <TableHead>Año</TableHead>
-                <TableHead>Cantidad</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {libros?.results.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    No se encontraron materiales.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                libros?.results.map((libro) => (
-                  <TableRow key={libro.id}>
-                    <TableCell className="font-medium">{libro.title}</TableCell>
-                    <TableCell>{libro.authors_detail?.map(author => author.name).join(', ')}</TableCell>
-                    <TableCell>{libro.publication_date}</TableCell>
-                    <TableCell>
-                      <Badge variant={libro.quantity_in_stock > 0 ? "default" : "destructive"}>
-                        {libro.quantity_in_stock}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {libro.material_type_detail.name}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => openEditBookForm(libro)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog open={!!bookToDelete && bookToDelete.id === libro.id} onOpenChange={(open) => !open && setBookToDelete(null)}>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => openDeleteDialog(libro)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                ¿Estás seguro de que quieres eliminar "{bookToDelete?.title}" de la colección? Esta acción no se puede deshacer.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction onClick={handleDeleteBook} className="bg-red-600 hover:bg-red-700">
-                                Eliminar
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-      {/* Mobile Card View */}
-      <div className="md:hidden grid gap-4">
-        {libros?.results.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No se encontraron materiales.</p>
+        {books.length === 0 && !isFetching ? (
+          <div className="text-center text-muted-foreground py-8">
+            No se encontraron materiales.
           </div>
         ) : (
-          libros?.results.map((libro) => (
-            <Card key={libro.id}>
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-semibold text-sm">{libro.title}</h3>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="sm" onClick={() => openEditBookForm(libro)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog open={!!bookToDelete && bookToDelete.id === libro.id} onOpenChange={(open) => !open && setBookToDelete(null)}>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openDeleteDialog(libro)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              ¿Estás seguro de que quieres eliminar "{bookToDelete?.title}" de la colección? Esta acción no se puede deshacer.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteBook} className="bg-red-600 hover:bg-red-700">
-                              Eliminar
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Titulo</TableHead>
+                  <TableHead>Autor</TableHead>
+                  <TableHead>Año</TableHead>
+                  <TableHead>Cantidad</TableHead>
+                  <TableHead>Tipo</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {books.map((book: MinimalBook) => {
+                  const authors =
+                    book.authors
+                      ?.filter((a): a is { name: string } => Boolean(a?.name))
+                      .map((a) => a.name)
+                      .join(", ") || "Sin autor";
 
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>
-                      <span className="font-medium">
-                      {libro.authors_detail?.length === 1 ? 'Autor:' : 'Autores:'}
-                      </span>{' '}
-                      {libro.authors_detail?.map(author => author.name).join(', ')}
-                    </p>
-                    <p><span className="font-medium">Año:</span> {libro.publication_date || "N/A"}</p>
-                    {libro.isbn && (
-                      <p><span className="font-medium">ISBN:</span> {libro.isbn}</p>
-                    )}
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                      <Badge variant={libro.quantity_in_stock > 0 ? "default" : "destructive"}>
-                        {libro.quantity_in_stock} disponibles
-                      </Badge>
-                      <Badge variant="outline">
-                        {libro.material_type_detail.name}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  return (
+                    <TableRow key={book.id}>
+                      <TableCell className="font-medium">{book.title}</TableCell>
+                      <TableCell>{authors}</TableCell>
+                      <TableCell>{book.publication_date || "N/A"}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            book.quantity_in_stock > 0
+                              ? "default"
+                              : "destructive"
+                          }
+                        >
+                          {book.quantity_in_stock}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {book.material_type_detail?.name || "N/A"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
-export default ColeccionManagementPage;
+export default BookTable;
