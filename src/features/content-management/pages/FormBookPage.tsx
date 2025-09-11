@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { BookForm } from "@/features/content-management/components/BookForm/BookForm";
 import {
-    Book, 
+    Book,
     BookRequest,
     useGetBookBySlugQuery,
     useUpdateBookMutation,
@@ -65,7 +65,7 @@ const FormBookPage: React.FC = () => {
 
     return (
         <Card>
-            <ReturnButton/>
+            <ReturnButton />
             <CardHeader className="px-0">
                 <CardTitle>{isEditMode ? "Editar Libro" : "Añadir Nuevo Libro"}</CardTitle>
             </CardHeader>

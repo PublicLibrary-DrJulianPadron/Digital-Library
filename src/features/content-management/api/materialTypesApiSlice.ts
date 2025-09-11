@@ -11,10 +11,18 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getMaterialTypes: builder.query<MaterialTypesList, void>({
       query: () => `/library/material-types/`,
+      transformResponse: (response: any) =>
+        Array.isArray(response) ? response : response.results ?? [],
       providesTags: (result) =>
         result
-          ? [...result.map(({ name }) => ({ type: 'MaterialTypes' as const, name })), { type: 'MaterialTypes', id: 'LIST' }]
-          : [{ type: 'MaterialTypes', id: 'LIST' }],
+          ? [
+            ...result.map(({ name }) => ({
+              type: "MaterialTypes" as const,
+              id: name, // consistent tag key
+            })),
+            { type: "MaterialTypes", id: "LIST" },
+          ]
+          : [{ type: "MaterialTypes", id: "LIST" }],
     }),
     createMaterialType: builder.mutation<MaterialType, MaterialTypeRequest>({
       query: (newMaterialType) => ({

@@ -15,14 +15,26 @@ export type SalaWithGenresList = SalaWithGenres[];
 
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getGenres: builder.query<GenresList, void>({
-      query: () => `/library/genres/`,
+    getGenres: builder.query<
+      GenresList,
+      { page?: number; page_size?: number; search?: string } // Add pagination params
+    >({
+      query: ({ page = 1, page_size = 10, search } = {}) => {
+        let params = `page=${page}&page_size=${page_size}`;
+        if (search) {
+          params += `&search=${encodeURIComponent(search)}`;
+        }
+        return `/library/genres/?${params}`; // Add params to URL
+      },
       providesTags: (result) =>
         result?.results
           ? [
-              ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
-              { type: 'Genres', id: 'LIST' },
-            ]
+            ...result.results.map(({ slug }) => ({
+              type: 'Genres' as const,
+              id: slug // Use slug as unique identifier
+            })),
+            { type: 'Genres', id: 'LIST' },
+          ]
           : [{ type: 'Genres', id: 'LIST' }],
     }),
     getBooksByGenreSlug: builder.query<PaginatedBookList, { slug?: string; search?: string; page?: number; page_size?: number }>({

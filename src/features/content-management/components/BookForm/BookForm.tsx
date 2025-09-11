@@ -1,4 +1,3 @@
-// src/features/content-management/components/BookForm/BookForm.tsx
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useToast } from '@/common/hooks/use-toast';
@@ -17,8 +16,23 @@ import { Calendar } from '@/common/components/ui/calendar';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { TagInput } from '@/common/components/ui/tag-input';
-import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice'; // Assuming this is the correct hook for fetching material types
-import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice'; // Assuming this is the correct hook for fetching languages
+import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice';
+import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
+import { useGetGenresQuery } from '@/features/content-management/api/genresApiSlice';
+import { useGetAuthorsQuery } from '@/features/content-management/api/authorsApiSlice';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/common/components/ui/command";
+import {
+  Popover as CommandPopover,
+  PopoverContent as CommandPopoverContent,
+  PopoverTrigger as CommandPopoverTrigger,
+} from "@/common/components/ui/popover";
 
 interface BookFormProps {
   initialData?: Book;
@@ -31,10 +45,12 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
   const { toast } = useToast();
   const { data: materialTypes } = useGetMaterialTypesQuery();
   const { data: languages } = useGetLanguagesQuery();
+  const { data: genresData } = useGetGenresQuery({ page_size: 1000 }); // Fetch all genres
+  const { data: authorsData } = useGetAuthorsQuery({ page_size: 1000 }); // Fetch all authors
 
   const isEditMode = !!initialData;
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, control } = useForm<BookFormData>({
+  const { register, handleSubmit, formState: { errors }, reset, watch, control, setValue } = useForm<BookFormData>({
     defaultValues: mapBookToFormValues(initialData),
   });
 
@@ -118,11 +134,57 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     name="authors"
                     control={control}
                     render={({ field }) => (
-                      <TagInput
-                        placeholder="Añadir autor..."
-                        tags={field.value.map((author: string) => ({ id: author, text: author }))}
-                        setTags={(newTags) => field.onChange(newTags.map((tag) => tag.text))}
-                      />
+                      <CommandPopover>
+                        <CommandPopoverTrigger asChild>
+                          <div className="flex flex-wrap gap-2 min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                            {field.value.length === 0 && (
+                              <span className="text-muted-foreground">Seleccionar autores...</span>
+                            )}
+                            {field.value.map((author, index) => (
+                              <div
+                                key={index}
+                                className="bg-primary text-primary-foreground rounded px-2 py-1 text-xs flex items-center"
+                              >
+                                {author}
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    const newAuthors = [...field.value];
+                                    newAuthors.splice(index, 1);
+                                    field.onChange(newAuthors);
+                                  }}
+                                  className="ml-2 hover:text-destructive"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </CommandPopoverTrigger>
+                        <CommandPopoverContent className="p-0" side="bottom" align="start">
+                          <Command>
+                            <CommandInput placeholder="Buscar autores..." />
+                            <CommandList>
+                              <CommandEmpty>No se encontraron autores.</CommandEmpty>
+                              <CommandGroup>
+                                {authorsData?.results
+                                  ?.filter(author => !field.value.includes(author.name))
+                                  .map((author) => (
+                                    <CommandItem
+                                      key={author.name}
+                                      onSelect={() => {
+                                        field.onChange([...field.value, author.name]);
+                                      }}
+                                    >
+                                      {author.name}
+                                    </CommandItem>
+                                  ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </CommandPopoverContent>
+                      </CommandPopover>
                     )}
                   />
                   {errors.authors?.message && (
@@ -166,16 +228,43 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="genres">Género (s)</Label>
+                  <Label htmlFor="genres">Género(s)</Label>
                   <Controller
                     name="genres"
                     control={control}
                     render={({ field }) => (
-                      <TagInput
-                        placeholder="Añadir género..."
-                        tags={field.value.map((genre: string) => ({ id: genre, text: genre }))}
-                        setTags={(newTags) => field.onChange(newTags.map((tag) => tag.text))}
-                      />
+                      <CommandPopover>
+                        <CommandPopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="w-full justify-between"
+                          >
+                            {field.value[0] || "Seleccionar género..."}
+                          </Button>
+                        </CommandPopoverTrigger>
+                        <CommandPopoverContent className="p-0">
+                          <Command>
+                            <CommandInput placeholder="Buscar géneros..." />
+                            <CommandList>
+                              <CommandEmpty>No se encontraron géneros.</CommandEmpty>
+                              <CommandGroup>
+                                {genresData?.results.map((genre) => (
+                                  <CommandItem
+                                    key={genre.id}
+                                    value={genre.label}
+                                    onSelect={() => {
+                                      field.onChange([genre.label]);
+                                    }}
+                                  >
+                                    {genre.label}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </CommandPopoverContent>
+                      </CommandPopover>
                     )}
                   />
                   {errors.genres?.message && (
@@ -343,3 +432,5 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
     </form>
   );
 }
+
+export default BookForm;
