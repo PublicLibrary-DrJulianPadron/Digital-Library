@@ -8,6 +8,7 @@ import { AppSidebar } from "../common/components/layout/Sidebar";
 import { AppHeader } from "../common/components/layout/Header";
 import Index from "../features/homepage/pages/Index";
 import BookPage from "../features/content/pages/BookPage";
+import FormBookPage from "../features/content-management/pages/FormBookPage";
 import Catalog from "../features/content/pages/CatalogPage";
 import ColeccionManagementPage from "../features/content-management/pages/ColeccionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
@@ -46,6 +47,7 @@ export const App = () => {
                     <Route path="/historia" element={<HistoriaPage />} />
                     <Route path="/prestamo/sala" element={<PrestamoSala />} />
                     <Route path="/gestion/coleccion" element={<ColeccionManagementPage />} />
+                    <Route path="/gestion/libro/:slug" element={<FormBookPage />} />
                     <Route path="/gestion/generos" element={<GenresManagementPage />} />
                     <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
                     <Route path="/gestion/materiales" element={<MaterialManagementPage />} />

@@ -1,3 +1,4 @@
+// src/features/content-management/components/BookForm/BookForm.tsx
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useToast } from '@/common/hooks/use-toast';
@@ -8,9 +9,6 @@ import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { Save, X, Upload, CalendarIcon } from 'lucide-react';
-import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice';
-import { useGetGenresQuery } from '@/features/content-management/api/genresApiSlice';
-import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
 import { mapBookToFormValues, BookFormData } from '@/features/content-management/components/BookForm/BookFormConfig';
 import type { Book } from '@/features/content-management/api/booksApiSlice';
 import { Popover, PopoverContent, PopoverTrigger } from '@/common/components/ui/popover';
@@ -18,60 +16,48 @@ import { cn } from '@/common/lib/utils';
 import { Calendar } from '@/common/components/ui/calendar';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { TagInput } from '@/common/components/ui/tag-input';
+import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice'; // Assuming this is the correct hook for fetching material types
+import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice'; // Assuming this is the correct hook for fetching languages
 
 interface BookFormProps {
-  book?: Book | null;
-  onSubmit: (bookData: Omit<Book, "id" | "created_at" | "updated_at">) => void;
+  initialData?: Book;
+  onSubmit: (bookData: Omit<Book, "id" | "slug" | "available_copies" | "authors_detail" | "genres_detail" | "material_type_detail" | "language_detail" | "created_at" | "updated_at"> & { authors: string[], genres: string[], material_type: string, language: string }) => void;
   onCancel: () => void;
-  isUpdatingBook: boolean | null;
   isSubmitting: boolean;
 }
 
-export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmitting }: BookFormProps) {
+export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: BookFormProps) {
   const { toast } = useToast();
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue, control } = useForm<BookFormData>({
-    defaultValues: mapBookToFormValues(book)
+  const { data: materialTypes } = useGetMaterialTypesQuery();
+  const { data: languages } = useGetLanguagesQuery();
+
+  const isEditMode = !!initialData;
+
+  const { register, handleSubmit, formState: { errors }, reset, watch, control } = useForm<BookFormData>({
+    defaultValues: mapBookToFormValues(initialData),
   });
-  const watchedCoverUrl = watch('cover_url');
-  const watchedAvailableCopies = watch('available_copies');
-  const watchedQuantityInStock = watch('quantity_in_stock');
-  const watchedPublicationDate = watch('publication_date');
 
-  // Load option lists from the metadata API slices
-  const { data: materialTypesData, isLoading: materialTypesLoading } = useGetMaterialTypesQuery();
-  const { data: genresData, isLoading: genresLoading } = useGetGenresQuery();
-  const { data: languagesData, isLoading: languagesLoading } = useGetLanguagesQuery();
-
-  // Map API results to simple string arrays used by the Select components.
-  const MaterialTypeOptions: string[] = materialTypesData ? materialTypesData.map((m) => m.name) : [];
-  const GenreOptions: string[] = genresData ? genresData.map((g) => g.name) : [];
-  const LanguageCodeOptions: string[] = languagesData ? languagesData.map((l) => l.name) : [];
+  const watchedCover = watch('cover');
 
   const onFormSubmit = async (data: BookFormData) => {
     try {
       const bookData = {
         ...data,
-        publication_date: data.publication_date ? String(data.publication_date) : undefined,
-        pages: data.pages ? Number(data.pages) : undefined,
-        quantity_in_stock: Number(data.quantity_in_stock),
-        available_copies: Number(data.available_copies),
-        material_type: data.material_type,
-        genre_names: Array.isArray(data.genres) ? data.genres : [data.genres].filter(Boolean),
+        pages: data.pages ?? undefined,
+        quantity_in_stock: data.quantity_in_stock ?? undefined,
+        publication_date: data.publication_date ? new Date(data.publication_date).toISOString().split('T')[0] : undefined,
       };
 
-      onSubmit(bookData as Omit<Book, "id" | "created_at" | "updated_at">);
+      onSubmit(bookData as any);
     } catch (error) {
       toast({ title: 'Error', description: `Error al procesar libro.`, variant: 'destructive' });
     }
   };
 
   useEffect(() => {
-    const initialValues = mapBookToFormValues(book);
-    if (initialValues.publication_date) {
-      initialValues.publication_date = initialValues.publication_date.toString();
-    }
-    reset(initialValues);
-  }, [book, reset]);
+    reset(mapBookToFormValues(initialData));
+  }, [initialData, reset]);
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
@@ -86,9 +72,9 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
             </CardHeader>
             <CardContent>
               <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-4">
-                {watchedCoverUrl ? (
+                {watchedCover ? (
                   <img
-                    src={watchedCoverUrl}
+                    src={watchedCover}
                     alt="Vista previa"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -100,15 +86,6 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                     <Upload className="w-12 h-12" />
                   </div>
                 )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cover_url">URL de la Portada</Label>
-                <Input
-                  id="cover_url"
-                  {...register('cover_url')}
-                  placeholder="https://ejemplo.com/portada.jpg"
-                  className="text-sm"
-                />
               </div>
             </CardContent>
           </Card>
@@ -136,14 +113,20 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="author">Autor</Label>
-                  <Input
-                    id="author"
-                    {...register('author')}
-                    className={errors.author ? 'border-red-500' : ''}
+                  <Label htmlFor="authors">Autor(es)</Label>
+                  <Controller
+                    name="authors"
+                    control={control}
+                    render={({ field }) => (
+                      <TagInput
+                        placeholder="Añadir autor..."
+                        tags={field.value.map((author: string) => ({ id: author, text: author }))}
+                        setTags={(newTags) => field.onChange(newTags.map((tag) => tag.text))}
+                      />
+                    )}
                   />
-                  {errors.author?.message && (
-                    <p className="text-red-500 text-sm">{String(errors.author.message)}</p>
+                  {errors.authors?.message && (
+                    <p className="text-red-500 text-sm">{String(errors.authors.message)}</p>
                   )}
                 </div>
 
@@ -161,7 +144,6 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                   <Controller
                     name="material_type"
                     control={control}
-                    defaultValue={book?.material_type || MaterialTypeOptions[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -171,10 +153,8 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                           <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(materialTypesLoading ? ['Cargando...'] : MaterialTypeOptions).map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
+                          {materialTypes?.map(type => (
+                            <SelectItem key={type.name} value={type.name}>{type.name}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -187,28 +167,15 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
 
                 <div className="space-y-2">
                   <Label htmlFor="genres">Género (s)</Label>
-                  {/* NOTE: You should use a multi-select component here for genre_names to align with the string[] type. */}
-                  {/* The current implementation is a single select for demonstration. */}
                   <Controller
                     name="genres"
                     control={control}
-                    defaultValue={book?.genres || []}
                     render={({ field }) => (
-                      <Select
-                        onValueChange={(value) => field.onChange([value])} // Cast to array for single select
-                        defaultValue={field.value?.[0]}
-                      >
-                        <SelectTrigger className={errors.genres ? 'border-red-500' : ''}>
-                          <SelectValue placeholder="Seleccionar género" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {(genresLoading ? ['Cargando...'] : GenreOptions).map((genre) => (
-                            <SelectItem key={genre} value={genre}>
-                              {genre}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <TagInput
+                        placeholder="Añadir género..."
+                        tags={field.value.map((genre: string) => ({ id: genre, text: genre }))}
+                        setTags={(newTags) => field.onChange(newTags.map((tag) => tag.text))}
+                      />
                     )}
                   />
                   {errors.genres?.message && (
@@ -273,7 +240,7 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                           <Calendar
                             mode="single"
                             selected={value ? new Date(value) : undefined}
-                            onSelect={(date) => onChange(date ? date.toISOString().split('T')[0] : undefined)}
+                            onSelect={(date) => onChange(date?.toISOString().split('T')[0])}
                             disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                             initialFocus
                           />
@@ -291,7 +258,6 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                   <Controller
                     name="language"
                     control={control}
-                    defaultValue={book?.language || LanguageCodeOptions[0]}
                     render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
@@ -301,10 +267,8 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                           <SelectValue placeholder="Seleccionar idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          {(languagesLoading ? ['Cargando...'] : LanguageCodeOptions).map((language) => (
-                            <SelectItem key={language} value={language}>
-                              {language}
-                            </SelectItem>
+                          {languages?.map(lang => (
+                            <SelectItem key={lang.name} value={lang.name}>{lang.name}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -329,7 +293,7 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
           </Card>
 
           {/* Inventory */}
-          {isUpdatingBook &&
+          {isEditMode &&
             <Card>
               <CardHeader>
                 <CardTitle className="text-biblioteca-blue">Inventario</CardTitle>
@@ -347,24 +311,6 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
                       })}
                       className="bg-gray-100 cursor-not-allowed"
                     />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="available_copies">Ejemplares Disponibles</Label>
-                    <Input
-                      id="available_copies"
-                      type="number"
-                      min="0"
-                      {...register('available_copies', {
-                        valueAsNumber: true,
-                        min: { value: 0, message: 'La cantidad disponible no puede ser negativa' },
-                        validate: (value) =>
-                          value <= watchedQuantityInStock || 'Los ejemplares disponibles no pueden ser más que el total'
-                      })}
-                    />
-                    {errors.available_copies?.message && (
-                      <p className="text-red-500 text-sm">{String(errors.available_copies.message)}</p>
-                    )}
                   </div>
                 </div>
               </CardContent>
@@ -391,7 +337,7 @@ export function BookForm({ book, onSubmit, onCancel, isUpdatingBook, isSubmittin
           disabled={isSubmitting}
         >
           <Save className="w-4 h-4 mr-2" />
-          {isUpdatingBook ? 'Actualizar' : 'Guardar'} Libro
+          {isEditMode ? 'Actualizar' : 'Guardar'} Libro
         </Button>
       </div>
     </form>

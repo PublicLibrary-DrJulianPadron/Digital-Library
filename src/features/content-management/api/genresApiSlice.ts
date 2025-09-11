@@ -1,10 +1,10 @@
 // src/features/metadata/api/genresApiSlice.ts
 import { apiSlice } from '@/common/api/apiSlice';
-import type { components } from '@/common/types/generated-api-types';
+import type { components, paths } from '@/common/types/generated-api-types';
 
 export type Genre = components['schemas']['Genre'];
-export type GenresList = Genre[];
-export type GenreRequest = Omit<Genre, "id">;
+export type GenresList = components['schemas']['PaginatedMinimalGenreList'];
+export type GenreRequest = components["schemas"]["GenreRequest"];
 
 export type PaginatedBookList = components["schemas"]["PaginatedMinimalBookList"];
 
@@ -15,14 +15,14 @@ export type SalaWithGenresList = SalaWithGenres[];
 
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getGenres: builder.query<{ results: GenresList; count: number }, void>({
+    getGenres: builder.query<GenresList, void>({
       query: () => `/library/genres/`,
       providesTags: (result) =>
         result?.results
           ? [
-            ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
-            { type: 'Genres', id: 'LIST' },
-          ]
+              ...result.results.map(({ slug }) => ({ type: 'Genres', slug } as const)),
+              { type: 'Genres', id: 'LIST' },
+            ]
           : [{ type: 'Genres', id: 'LIST' }],
     }),
     getBooksByGenreSlug: builder.query<PaginatedBookList, { slug?: string; search?: string; page?: number; page_size?: number }>({

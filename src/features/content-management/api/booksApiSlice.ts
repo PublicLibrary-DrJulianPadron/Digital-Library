@@ -1,18 +1,18 @@
-// src/features/books/api/booksApiSlice.ts
 import { apiSlice } from "@/common/api/apiSlice";
-import type { components, paths } from "@/common/types/generated-api-types";
+import type { components, paths, operations } from "@/common/types/generated-api-types";
 
 export type Book = components["schemas"]["Book"];
 export type MinimalBook = components["schemas"]["MinimalBook"];
 export type BookRequest = paths["/api/library/books/{slug}/"]["put"]["requestBody"];
 export type PatchedBookRequest = paths["/api/library/books/{slug}/"]["patch"]["requestBody"];
-export type BooksList = MinimalBook[];
+export type BooksList = components["schemas"]["PaginatedMinimalBookList"];
+export type BooksListRequest = operations["api_library_authors_list"]["parameters"]["query"];
 
 export const booksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query<
-      { results: BooksList; count: number },
-      { search?: string; author?: string; genres__name?: string; publication_date?: string; material_type?: string; language?: string } | void
+      BooksList,
+      { search?: string; author?: string; genres__name?: string; publication_date?: string; material_type?: string; language?: string; page?: number; page_size?: number } | void
     >({
       query: (arg) => {
         const params = new URLSearchParams();
@@ -28,7 +28,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
           params,
         };
       },
-      transformResponse: (response: { results: BooksList; count: number }) => response,
+      transformResponse: (response: BooksList) => response,
       providesTags: (result) =>
         result?.results
           ? [...result.results.map(({ id }) => ({ type: 'Books' as const, id })), { type: 'Books', id: 'LIST' }]

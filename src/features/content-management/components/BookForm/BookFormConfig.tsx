@@ -4,18 +4,18 @@ import { Book } from '@/features/content-management/api/booksApiSlice';
 // Correcting the default form values to match the Book type structure
 export const defaultBookFormValues = {
   title: '',
-  author: '',
   isbn: '',
   publication_date: undefined as string | undefined,
   pages: undefined as number | undefined,
-  available_copies: undefined as number | undefined,
   quantity_in_stock: undefined as number | undefined,
-  language: 'es',
   publisher: '',
-  genres: [] as string[],
   description: '',
-  cover_url: '',
+  cover: '',
+  digital_file: '',
+  authors: [] as string[],
+  genres: [] as string[],
   material_type: '',
+  language: '',
 };
 
 /**
@@ -30,18 +30,18 @@ export const mapBookToFormValues = (book: Book | null | undefined) => {
 
   return {
     title: book.title ?? '',
-    author: book.author ?? '',
     isbn: book.isbn ?? '',
     publication_date: book.publication_date ?? undefined,
     pages: book.pages ?? undefined,
-    available_copies: book.available_copies ?? undefined,
     quantity_in_stock: book.quantity_in_stock ?? undefined,
-    language: book.language ?? 'es',
     publisher: book.publisher ?? '',
-    genres: book.genres ?? [],
     description: book.description ?? '',
-    cover_url: book.cover_url ?? '',
-    material_type: book.material_type ?? '',
+    cover: book.cover ?? '',
+    digital_file: book.digital_file ?? '',
+    authors: book.authors_detail.map((author) => author.name) ?? [],
+    genres: book.genres_detail.map((genre) => genre.label) ?? [],
+    material_type: book.material_type_detail?.name ?? '',
+    language: book.language_detail?.name ?? '',
   };
 };
 
