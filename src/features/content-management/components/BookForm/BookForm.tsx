@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useToast } from '@/common/hooks/use-toast';
 import { Button } from '@/common/components/ui/button';
@@ -7,7 +7,7 @@ import { Textarea } from '@/common/components/ui/textarea';
 import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
-import { Save, X, Upload, CalendarIcon } from 'lucide-react';
+import { Save, X, Upload, CalendarIcon, Plus } from 'lucide-react';
 import { mapBookToFormValues, BookFormData } from '@/features/content-management/components/BookForm/BookFormConfig';
 import type { Book } from '@/features/content-management/api/booksApiSlice';
 import { Popover, PopoverContent, PopoverTrigger } from '@/common/components/ui/popover';
@@ -33,6 +33,7 @@ import {
   PopoverContent as CommandPopoverContent,
   PopoverTrigger as CommandPopoverTrigger,
 } from "@/common/components/ui/popover";
+import { useDebounce } from '@/common/components/ui/use-debounce';
 
 interface BookFormProps {
   initialData?: Book;
@@ -45,13 +46,21 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
   const { toast } = useToast();
   const { data: materialTypes } = useGetMaterialTypesQuery();
   const { data: languages } = useGetLanguagesQuery();
-  const { data: genresData } = useGetGenresQuery({ page_size: 1000 }); // Fetch all genres
-  const { data: authorsData } = useGetAuthorsQuery({ page_size: 1000 }); // Fetch all authors
+  const { data: genresData } = useGetGenresQuery({ page_size: 1000 });
+  const { data: authorsData } = useGetAuthorsQuery({ page_size: 1000 });
+
+  // Add state for author search
+  const [authorSearch, setAuthorSearch] = useState('');
+  // Add debounced value for author search
+  const debouncedAuthorSearch = useDebounce(authorSearch, 50);
 
   const isEditMode = !!initialData;
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, control, setValue } = useForm<BookFormData>({
-    defaultValues: mapBookToFormValues(initialData),
+  // ✅ Memoize default values to avoid re-creation on each render
+  const defaultValues = useMemo(() => mapBookToFormValues(initialData), [initialData]);
+
+  const { register, handleSubmit, formState: { errors }, reset, watch, control } = useForm<BookFormData>({
+    defaultValues,
   });
 
   const watchedCover = watch('cover');
@@ -71,8 +80,11 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
     }
   };
 
+  // ✅ Only reset when initialData changes, using memoized values
   useEffect(() => {
-    reset(mapBookToFormValues(initialData));
+    if (initialData) {
+      reset(mapBookToFormValues(initialData));
+    }
   }, [initialData, reset]);
 
   return (
@@ -133,60 +145,105 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                   <Controller
                     name="authors"
                     control={control}
-                    render={({ field }) => (
-                      <CommandPopover>
-                        <CommandPopoverTrigger asChild>
-                          <div className="flex flex-wrap gap-2 min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                            {field.value.length === 0 && (
-                              <span className="text-muted-foreground">Seleccionar autores...</span>
-                            )}
-                            {field.value.map((author, index) => (
-                              <div
-                                key={index}
-                                className="bg-primary text-primary-foreground rounded px-2 py-1 text-xs flex items-center"
-                              >
-                                {author}
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    const newAuthors = [...field.value];
-                                    newAuthors.splice(index, 1);
-                                    field.onChange(newAuthors);
-                                  }}
-                                  className="ml-2 hover:text-destructive"
+                    render={({ field }) => {
+                      const handleAddAuthor = (name: string) => {
+                        if (!name.trim()) return;
+                        if (!field.value.includes(name)) {
+                          field.onChange([...field.value, name]);
+                        }
+                        setAuthorSearch("");
+                      };
+
+                      const filteredAuthors = authorsData?.results
+                        ?.filter(
+                          (author) =>
+                            !field.value.includes(author.name) &&
+                            author.name.toLowerCase().includes(debouncedAuthorSearch.toLowerCase())
+                        ) || [];
+
+                      const noMatchingAuthor = debouncedAuthorSearch && !filteredAuthors.find(author => author.name.toLowerCase() === debouncedAuthorSearch.toLowerCase());
+
+                      return (
+                        <CommandPopover>
+                          <CommandPopoverTrigger asChild>
+                            <div className="flex flex-wrap gap-2 min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 cursor-pointer">
+                              {field.value.length === 0 && (
+                                <div className="flex items-center">
+                                  <span className="text-muted-foreground">Seleccionar autores...</span>
+                                  <div className="ml-2 w-6 h-6 rounded-full bg-biblioteca-blue text-white flex items-center justify-center hover:bg-biblioteca-blue/90 transition-colors">
+                                    <Plus className="h-4 w-4" />
+                                  </div>
+                                </div>
+                              )}
+                              {field.value.map((author, index) => (
+                                <div
+                                  key={index}
+                                  className="bg-primary text-primary-foreground rounded px-2 py-1 text-xs flex items-center"
                                 >
-                                  <X className="h-3 w-3" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </CommandPopoverTrigger>
-                        <CommandPopoverContent className="p-0" side="bottom" align="start">
-                          <Command>
-                            <CommandInput placeholder="Buscar autores..." />
-                            <CommandList>
-                              <CommandEmpty>No se encontraron autores.</CommandEmpty>
-                              <CommandGroup>
-                                {authorsData?.results
-                                  ?.filter(author => !field.value.includes(author.name))
-                                  .map((author) => (
+                                  {author}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const newAuthors = field.value.filter((_, i) => i !== index);
+                                      field.onChange(newAuthors);
+                                    }}
+                                    className="ml-2 hover:text-destructive"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              ))}
+                              {field.value.length > 0 && (
+                                <div className="w-6 h-6 rounded-full bg-biblioteca-blue text-white flex items-center justify-center hover:bg-biblioteca-blue/90 transition-colors">
+                                  <Plus className="h-4 w-4" />
+                                </div>
+                              )}
+                            </div>
+                          </CommandPopoverTrigger>
+                          <CommandPopoverContent className="p-0" side="bottom" align="start">
+                            <Command shouldFilter={false}>
+                              <CommandInput
+                                placeholder="Buscar autores..."
+                                value={authorSearch}
+                                onValueChange={setAuthorSearch}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && noMatchingAuthor) {
+                                    e.preventDefault();
+                                    handleAddAuthor(debouncedAuthorSearch);
+                                  }
+                                }}
+                              />
+                              <CommandList>
+                                <CommandEmpty>No se encontraron autores.</CommandEmpty>
+                                <CommandGroup>
+                                  {noMatchingAuthor && (
+                                    <CommandItem
+                                      onSelect={() => handleAddAuthor(debouncedAuthorSearch)}
+                                      className="group flex items-center justify-between"
+                                    >
+                                      <span>Añadir "{debouncedAuthorSearch}"</span>
+                                      <Plus className="h-4 w-4 text-biblioteca-blue opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                                    </CommandItem>
+                                  )}
+                                  {filteredAuthors.map((author) => (
                                     <CommandItem
                                       key={author.name}
-                                      onSelect={() => {
-                                        field.onChange([...field.value, author.name]);
-                                      }}
+                                      value={author.name}
+                                      onSelect={() => handleAddAuthor(author.name)}
                                     >
                                       {author.name}
                                     </CommandItem>
                                   ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </CommandPopoverContent>
-                      </CommandPopover>
-                    )}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </CommandPopoverContent>
+                        </CommandPopover>
+                      );
+                    }}
                   />
+
                   {errors.authors?.message && (
                     <p className="text-red-500 text-sm">{String(errors.authors.message)}</p>
                   )}
@@ -228,7 +285,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="genres">Género(s)</Label>
+                  <Label htmlFor="genres">Género</Label>
                   <Controller
                     name="genres"
                     control={control}
@@ -238,7 +295,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                           <Button
                             variant="outline"
                             role="combobox"
-                            className="w-full justify-between"
+                            className="w-auto justify-between"
                           >
                             {field.value[0] || "Seleccionar género..."}
                           </Button>
@@ -291,7 +348,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
               <CardTitle className="text-biblioteca-blue">Detalles de Publicación</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="publisher">Editorial</Label>
                   <Input
@@ -329,9 +386,16 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                           <Calendar
                             mode="single"
                             selected={value ? new Date(value) : undefined}
-                            onSelect={(date) => onChange(date?.toISOString().split('T')[0])}
-                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            onSelect={(date) => onChange(date?.toISOString())}
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date > today || date < new Date('1900-01-01');
+                            }}
                             initialFocus
+                            classNames={{
+                              day_selected: "bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-600 rounded-full border-2 border-blue-700",
+                            }}
                           />
                         </PopoverContent>
                       </Popover>

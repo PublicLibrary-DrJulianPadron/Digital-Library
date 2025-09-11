@@ -53,6 +53,15 @@ export function UserProfile() {
 
   }, [isAuthenticated, dispatch]);
 
+  useEffect(() => {
+    if (!showLoginDialog && !isAuthenticated) {
+      const isCurrentlyAuthenticated = !!getCookie('csrftoken');
+      if (isCurrentlyAuthenticated) {
+        dispatch(setIsAuthenticated());
+      }
+    }
+  }, [showLoginDialog, isAuthenticated, dispatch]);
+
   const handleSignOut = async () => {
     try {
       setShowLoginDialog(false)

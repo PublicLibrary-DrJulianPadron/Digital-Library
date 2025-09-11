@@ -555,7 +555,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/videos/{id}/": {
+    "/api/library/videos/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -1041,6 +1041,15 @@ export interface components {
             sala: string;
             readonly slug: string;
         };
+        /** @description Minimal serializer for dropdowns or lightweight lists. */
+        MinimalGenreRequest: {
+            /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
+            code: string;
+            /** @description Etiqueta descriptiva (ej: 'Literaturas española y portuguesa') */
+            label: string;
+            /** @description Nombre de la sala (ej: Sala Infantil, Sala Sociales, Sala Ciencias, etc.) */
+            sala: string;
+        };
         MinimalLanguage: {
             name: string;
         };
@@ -1049,6 +1058,41 @@ export interface components {
         };
         MinimalMaterialTypeRequest: {
             name: string;
+        };
+        /** @description Minimal serializer for listing videos.
+         *     Shows only essential information. */
+        MinimalVideo: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            /**
+             * Format: uri
+             * @description Upload video cover
+             */
+            readonly cover: string | null;
+            slug?: string;
+            genres?: number[];
+            material_type?: number;
+            readonly genres_detail: components["schemas"]["MinimalGenre"][];
+            readonly material_type_detail: components["schemas"]["MinimalMaterialType"];
+        };
+        /** @description Minimal serializer for listing videos.
+         *     Shows only essential information. */
+        MinimalVideoRequest: {
+            title: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            slug?: string;
+            genres?: number[];
+            material_type?: number;
         };
         PaginatedBlockedScheduleList: {
             /** @example 123 */
@@ -1155,6 +1199,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["MinimalGenre"][];
         };
+        PaginatedMinimalVideoList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalVideo"][];
+        };
         PaginatedProfileAdminList: {
             /** @example 123 */
             count: number;
@@ -1184,21 +1243,6 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["RoomBooking"][];
-        };
-        PaginatedVideoList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Video"][];
         };
         PasswordChange: {
             old_password: string;
@@ -1259,6 +1303,19 @@ export interface components {
         PatchedMinimalBookRequest: {
             material_type?: string;
         };
+        /** @description Minimal serializer for listing videos.
+         *     Shows only essential information. */
+        PatchedMinimalVideoRequest: {
+            title?: string;
+            director?: string;
+            /** Format: date */
+            release_date?: string | null;
+            /** @description Duration (hours:minutes:seconds) */
+            duration?: string | null;
+            slug?: string;
+            genres?: number[];
+            material_type?: number;
+        };
         PatchedProfileAdminRequest: {
             /** @description ID of the user associated with this profile */
             user_id?: number;
@@ -1310,18 +1367,6 @@ export interface components {
             response_date?: string | null;
             admin_comments?: string;
             is_active?: boolean;
-        };
-        /** @description Serializer for the Video model. */
-        PatchedVideoRequest: {
-            title?: string;
-            director?: string;
-            /** Format: date */
-            release_date?: string | null;
-            /** @description Duration (hours:minutes:seconds) */
-            duration?: string | null;
-            description?: string;
-            genres_ids?: number[];
-            material_type_id?: number;
         };
         Profile: {
             /**
@@ -1533,24 +1578,13 @@ export interface components {
              * @description Upload video file (MP4, MKV, AVI, MOV)
              */
             readonly video_file: string | null;
+            slug?: string;
             readonly genres: components["schemas"]["Genre"][];
             readonly material_type: components["schemas"]["MaterialType"];
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
-        };
-        /** @description Serializer for the Video model. */
-        VideoRequest: {
-            title: string;
-            director?: string;
-            /** Format: date */
-            release_date?: string | null;
-            /** @description Duration (hours:minutes:seconds) */
-            duration?: string | null;
-            description?: string;
-            genres_ids?: number[];
-            material_type_id?: number;
         };
     };
     responses: never;
@@ -3012,7 +3046,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedVideoList"];
+                    "application/json": components["schemas"]["PaginatedMinimalVideoList"];
                 };
             };
         };
@@ -3026,9 +3060,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["VideoRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["VideoRequest"];
-                "application/json": components["schemas"]["VideoRequest"];
+                "multipart/form-data": components["schemas"]["MinimalVideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalVideoRequest"];
+                "application/json": components["schemas"]["MinimalVideoRequest"];
             };
         };
         responses: {
@@ -3037,7 +3071,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Video"];
+                    "application/json": components["schemas"]["MinimalVideo"];
                 };
             };
         };
@@ -3047,8 +3081,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this video. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -3069,16 +3102,15 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this video. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["VideoRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["VideoRequest"];
-                "application/json": components["schemas"]["VideoRequest"];
+                "multipart/form-data": components["schemas"]["MinimalVideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalVideoRequest"];
+                "application/json": components["schemas"]["MinimalVideoRequest"];
             };
         };
         responses: {
@@ -3087,7 +3119,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Video"];
+                    "application/json": components["schemas"]["MinimalVideo"];
                 };
             };
         };
@@ -3097,8 +3129,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this video. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
@@ -3118,16 +3149,15 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this video. */
-                id: string;
+                slug: string;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "multipart/form-data": components["schemas"]["PatchedVideoRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedVideoRequest"];
-                "application/json": components["schemas"]["PatchedVideoRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMinimalVideoRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMinimalVideoRequest"];
+                "application/json": components["schemas"]["PatchedMinimalVideoRequest"];
             };
         };
         responses: {
@@ -3136,7 +3166,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Video"];
+                    "application/json": components["schemas"]["MinimalVideo"];
                 };
             };
         };

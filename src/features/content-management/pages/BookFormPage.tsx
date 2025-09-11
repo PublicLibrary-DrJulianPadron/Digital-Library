@@ -14,7 +14,7 @@ import { Card, CardHeader, CardTitle } from "@/common/components/ui/card";
 import { useToast } from "@/common/components/ui/use-toast";
 import { ReturnButton } from "@/common/components/ui/return-button";
 
-const FormBookPage: React.FC = () => {
+const BookFormPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -85,4 +85,4 @@ const FormBookPage: React.FC = () => {
     );
 };
 
-export default FormBookPage;
+export default BookFormPage;

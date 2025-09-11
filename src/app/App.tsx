@@ -8,9 +8,10 @@ import { AppSidebar } from "../common/components/layout/Sidebar";
 import { AppHeader } from "../common/components/layout/Header";
 import Index from "../features/homepage/pages/Index";
 import BookPage from "../features/content/pages/BookPage";
-import FormBookPage from "../features/content-management/pages/FormBookPage";
+import BookFormPage from "../features/content-management/pages/BookFormPage";
+import VideoFormPage from "../features/content-management/pages/VideoFormPage";
 import Catalog from "../features/content/pages/CatalogPage";
-import ColeccionManagementPage from "../features/content-management/pages/ColeccionManagementPage";
+import CollectionPage from "../features/content-management/pages/collectionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";
@@ -42,12 +43,15 @@ export const App = () => {
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/usuario/me" element={<DetallesUsuario />} />
-                    <Route path="/catalogo" element={<Catalog />} />
+                    <Route path="/salas" element={<Catalog />} />
                     <Route path="/libro/:slug" element={<BookPage />} />
                     <Route path="/historia" element={<HistoriaPage />} />
                     <Route path="/prestamo/sala" element={<PrestamoSala />} />
-                    <Route path="/gestion/coleccion" element={<ColeccionManagementPage />} />
-                    <Route path="/gestion/libro/:slug" element={<FormBookPage />} />
+                    <Route path="/gestion/coleccion" element={<CollectionPage />} />
+                    <Route path="/gestion/libro/create" element={<BookFormPage />} />
+                    <Route path="/gestion/libro/:slug" element={<BookFormPage />} />
+                    <Route path="/gestion/video/create" element={<VideoFormPage />} />
+                    <Route path="/gestion/video/:slug" element={<VideoFormPage />} />
                     <Route path="/gestion/generos" element={<GenresManagementPage />} />
                     <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
                     <Route path="/gestion/materiales" element={<MaterialManagementPage />} />

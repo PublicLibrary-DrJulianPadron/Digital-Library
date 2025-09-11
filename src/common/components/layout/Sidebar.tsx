@@ -15,7 +15,8 @@ import { useGetSalaWithGenresQuery } from '@/features/content-management/api/gen
 
 const allMenuItems: MenuItem[] = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
-  { group: "Navegación", title: "Catálogo", url: "/catalogo", icon: BookOpen, requiresAuth: false },
+  {
+    group: "Navegación", title: "Salas", url: "/salas", icon: BookOpen, requiresAuth: false},
   { group: "Navegación", title: "Historia", url: "/historia", icon: Clock, requiresAuth: false },
   { group: "Administración", title: "Préstamo Sala", url: "/prestamo/sala", icon: Calendar, requiresAuth: true },
   {
@@ -82,13 +83,13 @@ export function AppSidebar() {
               <SidebarMenu>
                 {items.map(item => (
                   <div key={item.title}>
-                    {item.title === "Catálogo" ? (
+                    {item.title === "Salas" ? (
                       <SidebarMenuDropdown
-                        label="Catálogo"
+                        label="Salas"
                         icon={<BookOpen size={18} />}
                       >
                         <SidebarMenuDropdownItem>
-                          <Link to="/catalogo" className="flex items-center gap-3 w-full h-full">
+                          <Link to="/salas" className="flex items-center gap-3 w-full h-full">
                             <BookOpen size={18} />
                             <span>Todos los libros</span>
                           </Link>
@@ -113,7 +114,7 @@ export function AppSidebar() {
                                 {sala.genres.map((genre) => (
                                   <li key={genre.slug}>
                                     <Link
-                                      to={`/catalogo?genre=${genre.slug}`}
+                                      to={`/salas?genre=${genre.slug}`}
                                       className="block w-full pl-6 pr-2 py-1 text-sm text-white hover:bg-biblioteca-blue/50 whitespace-normal break-words leading-snug"
                                     >
                                       {genre.label}
