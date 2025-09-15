@@ -1,4 +1,3 @@
-// src/features/content-management/pages/Catalog.tsx
 import { BookList } from '@/features/content/components/BookList';
 import { useGetBooksQuery } from '@/features/content-management/api/booksApiSlice';
 import { useState } from 'react';
@@ -8,6 +7,8 @@ import { SearchBar } from '@/common/components/ui/searchbar';
 import { Button } from '@/common/components/ui/button';
 import BookFilters from '@/features/content-management/components/book-filters';
 import { PaginationComponent } from '@/common/components/ui/pagination';
+import { Popover, PopoverTrigger, PopoverContent } from '@/common/components/ui/popover';
+import { Filter } from 'lucide-react';
 
 const DEFAULT_PAGE_SIZE = 5;
 
@@ -26,6 +27,7 @@ const Catalog = () => {
   }>({});
 
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
   const searchLogic = useSearchLogic();
   const {
@@ -39,7 +41,7 @@ const Catalog = () => {
     highlightedIndex,
     setHighlightedIndex,
     isLoading: searchLoading,
-    selectedGenreName, // 👈 ya lo traemos directo del hook
+    selectedGenreName,
   } = searchLogic;
 
   // renderizado de sugerencias
@@ -68,10 +70,9 @@ const Catalog = () => {
   // query a los libros
   const { data: booksData, isLoading: booksLoading } = useGetBooksQuery({
     ...filters,
-    // 👇 si estamos filtrando por género, lo pasamos
     genres__name: selectedGenreName || filters.genres__name,
     page,
-    page_size: DEFAULT_PAGE_SIZE,
+    page_size: pageSize,
   });
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
@@ -86,6 +87,11 @@ const Catalog = () => {
     setPage(pageNumber);
   };
 
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setPage(1); // Reset to the first page when page size changes
+  };
+
   if (booksLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
@@ -98,7 +104,7 @@ const Catalog = () => {
 
   const books = booksData?.results || [];
   const count = booksData?.count || 0;
-  const maxPage = Math.ceil(count / DEFAULT_PAGE_SIZE);
+  const maxPage = Math.ceil(count / pageSize);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -122,7 +128,7 @@ const Catalog = () => {
             isLoading={searchLoading}
             renderSuggestion={renderSuggestion}
           />
-          <BookFilters filters={filters} onFilterChange={handleFilterChange} />
+          <BookFilters filters={filters} onFilterChange={handleFilterChange} pageSize={pageSize} onPageSizeChange={handlePageSizeChange} />
         </div>
         {books.length > 0 ? (
           <>

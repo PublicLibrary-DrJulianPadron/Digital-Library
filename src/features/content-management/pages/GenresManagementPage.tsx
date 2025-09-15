@@ -37,7 +37,7 @@ import {
 import { Filter, Edit, Trash2, Plus } from "lucide-react";
 import {
     useGetGenresQuery,
-    useDeleteGenreMutation, // Assuming you have this mutation
+    useDeleteGenreMutation,
 } from "@/features/content-management/api/genresApiSlice";
 import {
     Select,
@@ -108,21 +108,13 @@ const GenresTable: React.FC = () => {
     const count = genres?.count || 0;
     const maxPage = Math.ceil(count / pageSize);
 
+    const pageSizeOptions = [10, 20, 50, 100];
+
     return (
         <Card className="w-full">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Listado de Géneros</CardTitle>
-                <div className="flex items-center space-x-2">
-                    <Select onValueChange={(value) => { setPageSize(Number(value)); setPage(1); }} value={pageSize.toString()}>
-                        <SelectTrigger className="w-[100px] h-9">
-                            <SelectValue placeholder="Page Size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="10">10</SelectItem>
-                            <SelectItem value="20">20</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
-                        </SelectContent>
-                    </Select>
+            <CardHeader className="flex">
+                <CardTitle className="" >Listado de Géneros</CardTitle>
+                <div className="flex items-center justify-end space-x-2">
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button variant="outline" size="sm">
@@ -131,6 +123,24 @@ const GenresTable: React.FC = () => {
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-80 space-y-3" align="end">
+                            <div className="flex flex-col space-y-2">
+                                <span className="text-sm font-medium">Tamaño de página</span>
+                                <div className="flex items-center space-x-2">
+                                    {pageSizeOptions.map((size) => (
+                                        <Button
+                                            key={size}
+                                            variant={pageSize === size ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => {
+                                                setPageSize(size);
+                                                setPage(1);
+                                            }}
+                                        >
+                                            {size}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
                             <Input
                                 placeholder="Buscar por nombre de género..."
                                 value={filters.search || ""}
@@ -171,6 +181,7 @@ const GenresTable: React.FC = () => {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Código</TableHead>
                                         <TableHead>Nombre del Género</TableHead>
                                         <TableHead>Sala</TableHead>
                                         <TableHead className="text-right">Acciones</TableHead>
@@ -179,6 +190,7 @@ const GenresTable: React.FC = () => {
                                 <TableBody>
                                     {genres?.results?.map((genre) => (
                                         <TableRow key={genre.id}>
+                                            <TableCell>{genre.code}</TableCell>
                                             <TableCell className="font-medium">{genre.label}</TableCell>
                                             <TableCell>
                                                 <Badge variant="outline">{genre.sala}</Badge>
@@ -187,7 +199,7 @@ const GenresTable: React.FC = () => {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    onClick={() => handleEdit(genre.slug)} // Assuming genre has an 'id'
+                                                    onClick={() => handleEdit(genre.slug)}
                                                     className="mr-2"
                                                 >
                                                     <Edit className="w-4 h-4" />

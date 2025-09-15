@@ -932,6 +932,7 @@ export interface components {
         };
         /** @description Serializer for the Language model. */
         Language: {
+            readonly id: number;
             name: string;
             /** Format: date-time */
             readonly created_at: string;
@@ -1051,6 +1052,7 @@ export interface components {
             sala: string;
         };
         MinimalLanguage: {
+            readonly id: number;
             name: string;
         };
         MinimalMaterialType: {

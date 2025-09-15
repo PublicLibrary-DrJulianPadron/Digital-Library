@@ -15,9 +15,13 @@ interface BookFiltersProps {
     language?: string;
   };
   onFilterChange: (key: string, value: string) => void;
+  pageSize: number;
+  onPageSizeChange: (size: number) => void;
 }
 
-const BookFilters: React.FC<BookFiltersProps> = ({ filters, onFilterChange }) => {
+const BookFilters: React.FC<BookFiltersProps> = ({ filters, onFilterChange, pageSize, onPageSizeChange }) => {
+  const pageSizeOptions = [10, 20, 50, 100];
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -27,6 +31,21 @@ const BookFilters: React.FC<BookFiltersProps> = ({ filters, onFilterChange }) =>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 space-y-3" align="end">
+        <div className="flex flex-col space-y-2">
+          <span className="text-sm font-medium">Tamaño de página</span>
+          <div className="flex items-center space-x-2">
+            {pageSizeOptions.map((size) => (
+              <Button
+                key={size}
+                variant={pageSize === size ? "default" : "outline"}
+                size="sm"
+                onClick={() => onPageSizeChange(size)}
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </div>
         <Input
           placeholder="Buscar título..."
           value={filters.search || ""}
