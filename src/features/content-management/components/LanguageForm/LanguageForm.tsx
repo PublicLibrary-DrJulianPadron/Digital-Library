@@ -45,9 +45,6 @@ export function LanguageForm({ language, onSubmit, onCancel, isUpdatingLanguage,
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-biblioteca-blue">Información del Idioma</CardTitle>
-        </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nombre del Idioma *</Label>

@@ -1,98 +1,112 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/common/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/common/components/ui/table";
-import { Input } from "@/common/components/ui/input";
-import { Button } from "@/common/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/common/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/common/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/common/components/ui/use-toast";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/common/components/ui/table";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/common/components/ui/card";
 import { Badge } from "@/common/components/ui/badge";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { useToast } from "@/common/hooks/use-toast";
-import { LanguageForm } from "@/features/content-management/components/LanguageForm/LanguageForm";
-import { Language, LanguageRequest, useGetLanguagesQuery, useCreateLanguageMutation, useUpdateLanguageMutation, useDeleteLanguageMutation } from '@/features/content-management/api/languagesApiSlice';
+import { Input } from "@/common/components/ui/input";
+import {
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+} from "@/common/components/ui/popover";
+import { Button } from "@/common/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/common/components/ui/alert-dialog";
+import { Filter, Edit, Trash2, Plus } from "lucide-react";
+import {
+    useGetLanguagesQuery,
+    useDeleteLanguageMutation,
+} from "@/features/content-management/api/languagesApiSlice";
+import { PaginationComponent } from "@/common/components/ui/pagination";
 
-const LanguageManagementPage = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isLanguageFormOpen, setIsLanguageFormOpen] = useState(false);
-    const [languageToEdit, setLanguageToEdit] = useState<Language | null>(null);
-    const [languageToDelete, setLanguageToDelete] = useState<Language | null>(null);
-
+const LanguageManagementPage: React.FC = () => {
+    const navigate = useNavigate();
     const { toast } = useToast();
 
-    const { data: languages, isLoading, isFetching, error } = useGetLanguagesQuery();
-    const [createLanguage, { isLoading: isCreating }] = useCreateLanguageMutation();
-    const [updateLanguage, { isLoading: isUpdating }] = useUpdateLanguageMutation();
-    const [deleteLanguage, { isLoading: isDeleting }] = useDeleteLanguageMutation();
+    const [filters, setFilters] = useState<{ search?: string }>({});
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [page, setPage] = useState<number>(1);
 
-    const filteredLanguages = languages?.filter(language =>
-        language.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const { data: languages, isFetching: isFetchingLanguages, error } = useGetLanguagesQuery({
+        search: filters.search,
+        page_size: pageSize,
+        page: page,
+    });
+    const [deleteLanguage, { isLoading: isDeletingLanguage }] = useDeleteLanguageMutation();
 
-    const handleLanguageFormSubmit = async (languageData: LanguageRequest) => {
+    const handleChange = (key: keyof typeof filters, value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value || undefined,
+        }));
+        setPage(1);
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        setPage(pageNumber);
+    };
+
+    const handleEdit = (languageId: number) => {
+        navigate(`/gestion/lenguajes/${languageId}`);
+    };
+
+    const handleDeleteLanguage = async (languageId: number, languageLabel: string) => {
         try {
-            if (languageToEdit) {
-                await updateLanguage({ id: languageToEdit.id, body: languageData }).unwrap();
-                toast({
-                    title: "Idioma actualizado",
-                    description: "Los detalles del idioma han sido actualizados exitosamente.",
-                });
-            } else {
-                await createLanguage(languageData).unwrap();
-                toast({
-                    title: "Idioma agregado",
-                    description: "El nuevo idioma ha sido agregado al catálogo exitosamente.",
-                });
-            }
-            setIsLanguageFormOpen(false);
-            setLanguageToEdit(null);
-        } catch (err) {
+            await deleteLanguage(languageId).unwrap();
+            toast({
+                title: "Idioma Eliminado",
+                description: `El idioma "${languageLabel}" ha sido eliminado exitosamente.`,
+            });
+        } catch (error) {
             toast({
                 title: "Error",
-                description: `No se pudo ${languageToEdit ? 'actualizar' : 'agregar'} el idioma. Inténtalo de nuevo.`,
+                description: "Hubo un error al eliminar el idioma.",
                 variant: "destructive",
             });
         }
     };
 
-    const handleDeleteLanguage = async () => {
-        if (languageToDelete) {
-            try {
-                await deleteLanguage(languageToDelete.id).unwrap();
-                toast({
-                    title: "Idioma eliminado",
-                    description: "El idioma ha sido eliminado del catálogo.",
-                });
-                setLanguageToDelete(null);
-            } catch (err) {
-                toast({
-                    title: "Error",
-                    description: "No se pudo eliminar el idioma. Inténtalo de nuevo.",
-                    variant: "destructive",
-                });
-            }
-        }
+    const handleAdd = () => {
+        navigate("/gestion/lenguajes/create");
     };
 
-    const openDeleteDialog = (language: Language) => {
-        setLanguageToDelete(language);
-    };
+    let languageResults = [];
+    let count = 0;
 
-    const openAddLanguageForm = () => {
-        setLanguageToEdit(null);
-        setIsLanguageFormOpen(true);
-    };
+    if (languages && "results" in languages) {
+        languageResults = languages.results;
+        count = languages.count;
+    } else if (Array.isArray(languages)) {
+        languageResults = languages;
+        count = languages.length;
+    }
 
-    const openEditLanguageForm = (language: Language) => {
-        setLanguageToEdit(language);
-        setIsLanguageFormOpen(true);
-    };
+    const maxPage = Math.ceil(count / pageSize);
+    const pageSizeOptions = [10, 20, 50, 100];
 
-    const handleLanguageFormCancel = () => {
-        setIsLanguageFormOpen(false);
-        setLanguageToEdit(null);
-    };
-
-    if (isLoading || isFetching) {
+    if (isFetchingLanguages) {
         return (
             <div className="p-6">
                 <div className="animate-pulse space-y-4">
@@ -112,165 +126,184 @@ const LanguageManagementPage = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
                 <div className="text-xl font-medium text-red-500">
-                    Error al cargar los idiomas.
+                    Error al cargar los lenguajes.
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex flex-col gap-4">
-                <h1 className="text-3xl font-bold text-foreground">Idiomas</h1>
-                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-                    <div className="flex-1 w-full">
-                        <Input
-                            placeholder="Buscar idioma..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full"
-                        />
-                    </div>
-                    <Dialog open={isLanguageFormOpen} onOpenChange={setIsLanguageFormOpen} aria-labelledby="add-edit-language-dialog-title">
-                        <DialogTrigger asChild>
-                            <Button
-                                onClick={openAddLanguageForm}
-                                className="bg-biblioteca-blue hover:bg-biblioteca-blue/90 text-white w-full sm:w-auto"
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
-                                Agregar Idioma
+        <Card className="w-full">
+            <CardHeader className="flex">
+                <CardTitle className="">Listado de Idiomas</CardTitle>
+                <div className="flex items-center justify-end space-x-2 pt-2 mt-0">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                <Filter className="w-4 h-4 mr-2" />
+                                Filtros
                             </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-md">
-                            <DialogHeader>
-                                <DialogTitle id="add-edit-language-dialog-title" className="text-biblioteca-blue font-display text-xl">
-                                    {languageToEdit ? 'Editar Idioma' : 'Agregar Nuevo Idioma'}
-                                </DialogTitle>
-                            </DialogHeader>
-                            <LanguageForm
-                                language={languageToEdit}
-                                onSubmit={handleLanguageFormSubmit}
-                                onCancel={handleLanguageFormCancel}
-                                isSubmitting={isCreating || isUpdating}
-                                isUpdatingLanguage={!!languageToEdit}
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 space-y-3" align="end">
+                            <div className="flex flex-col space-y-2">
+                                <span className="text-sm font-medium">Tamaño de página</span>
+                                <div className="flex items-center space-x-2">
+                                    {pageSizeOptions.map((size) => (
+                                        <Button
+                                            key={size}
+                                            variant={pageSize === size ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => {
+                                                setPageSize(size);
+                                                setPage(1);
+                                            }}
+                                        >
+                                            {size}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                            <Input
+                                placeholder="Buscar por nombre de idioma..."
+                                value={filters.search || ""}
+                                onChange={(e) => handleChange("search", e.target.value)}
                             />
-                        </DialogContent>
-                    </Dialog>
+                        </PopoverContent>
+                    </Popover>
+                    <Button onClick={handleAdd} size="sm">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Añadir Idioma
+                    </Button>
                 </div>
-            </div>
+            </CardHeader>
 
-            {/* Desktop Table View */}
-            <div className="hidden md:block">
-                <div className="border rounded-lg">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Nombre del Idioma</TableHead>
-                                <TableHead className="text-right">Acciones</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredLanguages?.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                                        No se encontraron idiomas.
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                filteredLanguages?.map((language) => (
-                                    <TableRow key={language.id}>
-                                        <TableCell className="font-medium">{language.name}</TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button variant="ghost" size="sm" onClick={() => openEditLanguageForm(language)}>
-                                                    <Edit className="h-4 w-4" />
-                                                </Button>
-                                                <AlertDialog open={!!languageToDelete && languageToDelete.id === language.id} onOpenChange={(open) => !open && setLanguageToDelete(null)}>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => openDeleteDialog(language)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
-                                                            <AlertDialogDescription>
-                                                                ¿Estás seguro de que quieres eliminar el idioma "{languageToDelete?.name}"? Esta acción no se puede deshacer.
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={handleDeleteLanguage} className="bg-red-600 hover:bg-red-700">
-                                                                Eliminar
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
-
-            {/* Mobile Card View */}
-            <div className="md:hidden grid gap-4">
-                {filteredLanguages?.length === 0 ? (
-                    <div className="text-center py-8">
-                        <p className="text-muted-foreground">No se encontraron idiomas.</p>
+            <CardContent>
+                {count === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">
+                        No se encontraron lenguajes.
                     </div>
                 ) : (
-                    filteredLanguages?.map((language) => (
-                        <Card key={language.id}>
-                            <CardContent className="p-4">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-start">
-                                        <h3 className="font-semibold text-sm">{language.name}</h3>
-                                        <div className="flex gap-1">
-                                            <Button variant="ghost" size="sm" onClick={() => openEditLanguageForm(language)}>
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <AlertDialog open={!!languageToDelete && languageToDelete.id === language.id} onOpenChange={(open) => !open && setLanguageToDelete(null)}>
-                                                <AlertDialogTrigger asChild>
+                    <>
+                        {/* Desktop Table View */}
+                        <div className="hidden md:block">
+                            <div className="border rounded-lg overflow-hidden">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Nombre del Idioma</TableHead>
+                                            <TableHead className="text-right">Acciones</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {languageResults.map((language) => (
+                                            <TableRow key={language.id}>
+                                                <TableCell className="font-medium">{language.name}</TableCell>
+                                                <TableCell className="text-right">
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => openDeleteDialog(language)}
+                                                        onClick={() => handleEdit(language.id)}
+                                                        className="mr-2"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Edit className="w-4 h-4" />
                                                     </Button>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Confirmar Eliminación</AlertDialogTitle>
-                                                        <AlertDialogDescription>
-                                                            ¿Estás seguro de que quieres eliminar el idioma "{languageToDelete?.name}"? Esta acción no se puede deshacer.
-                                                        </AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={handleDeleteLanguage} className="bg-red-600 hover:bg-red-700">
-                                                            Eliminar
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button variant="ghost" size="sm" disabled={isDeletingLanguage}>
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el idioma "{language.name}".
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel className="bg-gray-200 hover:bg-gray-300">
+                                                                    Cancelar
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    className="bg-red-500 text-white hover:bg-red-600"
+                                                                    onClick={() => handleDeleteLanguage(language.id, language.name)}
+                                                                >
+                                                                    Eliminar
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden grid gap-4">
+                            {languageResults.map((language) => (
+                                <Card key={language.id}>
+                                    <CardContent className="p-4">
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="font-semibold text-sm">{language.name}</h3>
+                                                <div className="flex gap-1">
+                                                    <Button variant="ghost" size="sm" onClick={() => handleEdit(language.id)}>
+                                                        <Edit className="h-4 w-4" />
+                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                disabled={isDeletingLanguage}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Esta acción no se puede deshacer. Esto eliminará permanentemente el idioma "{language.name}".
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel className="bg-gray-200 hover:bg-gray-300">
+                                                                    Cancelar
+                                                                </AlertDialogCancel>
+                                                                <AlertDialogAction
+                                                                    className="bg-red-500 text-white hover:bg-red-600"
+                                                                    onClick={() => handleDeleteLanguage(language.id, language.name)}
+                                                                >
+                                                                    Eliminar
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                        {count > 0 && (
+                            <div className="flex justify-center mt-4">
+                                <PaginationComponent
+                                    currentPage={page}
+                                    maxPage={maxPage}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 

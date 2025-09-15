@@ -989,6 +989,7 @@ export interface components {
         };
         /** @description Serializer for the MaterialType model. */
         MaterialType: {
+            readonly id: number;
             name: string;
             /** Format: date-time */
             readonly created_at: string;
@@ -1056,6 +1057,7 @@ export interface components {
             name: string;
         };
         MinimalMaterialType: {
+            readonly id: number;
             name: string;
         };
         MinimalMaterialTypeRequest: {
@@ -1111,21 +1113,6 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["BlockedSchedule"][];
         };
-        PaginatedLanguageList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Language"][];
-        };
         PaginatedLoanDetailList: {
             /** @example 123 */
             count: number;
@@ -1140,21 +1127,6 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["LoanDetail"][];
-        };
-        PaginatedMaterialTypeList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["MaterialType"][];
         };
         PaginatedMinimalAuthorList: {
             /** @example 123 */
@@ -1200,6 +1172,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["MinimalGenre"][];
+        };
+        PaginatedMinimalLanguageList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalLanguage"][];
+        };
+        PaginatedMinimalMaterialTypeList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalMaterialType"][];
         };
         PaginatedMinimalVideoList: {
             /** @example 123 */
@@ -2571,7 +2573,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedLanguageList"];
+                    "application/json": components["schemas"]["PaginatedMinimalLanguageList"];
                 };
             };
         };
@@ -2898,7 +2900,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedMaterialTypeList"];
+                    "application/json": components["schemas"]["PaginatedMinimalMaterialTypeList"];
                 };
             };
         };

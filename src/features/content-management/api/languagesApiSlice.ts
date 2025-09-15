@@ -3,22 +3,29 @@ import { apiSlice } from '@/common/api/apiSlice';
 import type { components } from '@/common/types/generated-api-types';
 
 export type Language = components['schemas']['Language'];
+export type LanguagesList = components['schemas']['PaginatedMinimalLanguageList'];
 export type LanguageRequest = components['schemas']['LanguageRequest'];
 export type PatchedLanguageRequest = components['schemas']['PatchedLanguageRequest'];
-export type LanguagesList = Language[];
 
 export const languagesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getLanguages: builder.query<LanguagesList, void>({
-      query: () => `/library/languages/`,
+    getLanguages: builder.query<LanguagesList, { page?: number; page_size?: number; search?: string; sala?: string }>({
+      query: ({ page, page_size, search, sala }) => {
+        const params = new URLSearchParams();
+        if (page) params.append('page', page.toString());
+        if (page_size) params.append('page_size', page_size.toString());
+        if (search) params.append('search', search);
+        if (sala) params.append('sala', sala);
+        return `/library/languages/?${params.toString()}`;
+      },
       transformResponse: (response: any) =>
         Array.isArray(response) ? response : response.results ?? [],
-      providesTags: (result) =>
-        result
+      providesTags: (results) =>
+        results && results.results
           ? [
-            ...result.map(({ name }) => ({
+            ...results.results.map(({ id }) => ({
               type: "Languages" as const,
-              id: name, // use id instead of name in tags
+              id,
             })),
             { type: "Languages", id: "LIST" },
           ]

@@ -18,7 +18,9 @@ import Estadisticas from "../features/content-management/pages/StatisticsDashboa
 import GenresManagementPage from "../features/content-management/pages/GenresManagementPage";
 import GenreFormPage from "../features/content-management/pages/GenreFormPage";
 import LanguageManagementPage from "../features/content-management/pages/LanguageManagementPage";
+import LanguageFormPage from "../features/content-management/pages/LanguageFormPage";
 import MaterialManagementPage from "../features/content-management/pages/MaterialManagementPage";
+import MaterialFormPage from "../features/content-management/pages/MaterialFormPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/users/pages/UserProfilePage";
@@ -57,7 +59,11 @@ export const App = () => {
                     <Route path="/gestion/generos/create" element={<GenreFormPage />} />
                     <Route path="/gestion/generos/:slug" element={<GenreFormPage />} />
                     <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
+                    <Route path="/gestion/lenguajes/create" element={<LanguageFormPage />} />
+                    <Route path="/gestion/lenguajes/:id" element={<LanguageFormPage />} />
                     <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
+                    <Route path="/gestion/materiales/create" element={<MaterialFormPage />} />
+                    <Route path="/gestion/materiales/:id" element={<MaterialFormPage />} />
                     <Route path="/estadisticas" element={<Estadisticas />} />
                     <Route path="/gestion/usuarios" element={<Gestion />} />
                     <Route path="/gestion/usuarios/:id" element={<UserProfilePage />} />

@@ -3,22 +3,29 @@ import { apiSlice } from '@/common/api/apiSlice';
 import type { components } from '@/common/types/generated-api-types';
 
 export type MaterialType = components['schemas']['MaterialType'];
+export type MaterialTypesList = components['schemas']['PaginatedMinimalMaterialTypeList'];
 export type MaterialTypeRequest = components['schemas']['MaterialTypeRequest'];
 export type PatchedMaterialTypeRequest = components['schemas']['PatchedMaterialTypeRequest'];
-export type MaterialTypesList = MaterialType[];
 
 export const materialTypesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getMaterialTypes: builder.query<MaterialTypesList, void>({
-      query: () => `/library/material-types/`,
-      transformResponse: (response: any) =>
-        Array.isArray(response) ? response : response.results ?? [],
+    getMaterialTypes: builder.query<
+      MaterialTypesList,
+      { page?: number; page_size?: number; search?: string; }
+    >({
+      query: ({ page, page_size, search }) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (page_size) params.append("page_size", page_size.toString());
+        if (search) params.append("search", search);
+        return `/library/material-types/?${params.toString()}`;
+      },
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ name }) => ({
+            ...result.results.map(({ id }) => ({
               type: "MaterialTypes" as const,
-              id: name, // consistent tag key
+              id: id,
             })),
             { type: "MaterialTypes", id: "LIST" },
           ]

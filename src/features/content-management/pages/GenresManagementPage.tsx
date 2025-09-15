@@ -48,7 +48,7 @@ import {
 } from "@/common/components/ui/select";
 import { PaginationComponent } from "@/common/components/ui/pagination";
 
-const GenresTable: React.FC = () => {
+const GenresManagementPage: React.FC = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
 
@@ -251,4 +251,4 @@ const GenresTable: React.FC = () => {
     );
 };
 
-export default GenresTable;
+export default GenresManagementPage;
