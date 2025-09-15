@@ -11,11 +11,12 @@ import BookPage from "../features/content/pages/BookPage";
 import BookFormPage from "../features/content-management/pages/BookFormPage";
 import VideoFormPage from "../features/content-management/pages/VideoFormPage";
 import Catalog from "../features/content/pages/CatalogPage";
-import CollectionPage from "../features/content-management/pages/collectionManagementPage";
+import CollectionPage from "../features/content-management/pages/CollectionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
 import Estadisticas from "../features/content-management/pages/StatisticsDashboardPage";
 import GenresManagementPage from "../features/content-management/pages/GenresManagementPage";
+import GenreFormPage from "../features/content-management/pages/GenreFormPage";
 import LanguageManagementPage from "../features/content-management/pages/LanguageManagementPage";
 import MaterialManagementPage from "../features/content-management/pages/MaterialManagementPage";
 import Gestion from "../features/users/pages/UserManagementPage";
@@ -53,6 +54,8 @@ export const App = () => {
                     <Route path="/gestion/video/create" element={<VideoFormPage />} />
                     <Route path="/gestion/video/:slug" element={<VideoFormPage />} />
                     <Route path="/gestion/generos" element={<GenresManagementPage />} />
+                    <Route path="/gestion/generos/create" element={<GenreFormPage />} />
+                    <Route path="/gestion/generos/:slug" element={<GenreFormPage />} />
                     <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
                     <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
                     <Route path="/estadisticas" element={<Estadisticas />} />

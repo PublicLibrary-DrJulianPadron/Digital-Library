@@ -1,3 +1,4 @@
+// src/features/content-management/pages/Catalog.tsx
 import { BookList } from '@/features/content/components/BookList';
 import { useGetBooksQuery } from '@/features/content-management/api/booksApiSlice';
 import { useState } from 'react';
@@ -6,6 +7,7 @@ import { useSearchLogic } from '@/features/content-management/components/search-
 import { SearchBar } from '@/common/components/ui/searchbar';
 import { Button } from '@/common/components/ui/button';
 import BookFilters from '@/features/content-management/components/book-filters';
+import { PaginationComponent } from '@/common/components/ui/pagination';
 
 const DEFAULT_PAGE_SIZE = 5;
 
@@ -80,36 +82,8 @@ const Catalog = () => {
     setPage(1); // reset de paginación
   };
 
-  const handleNextPage = () => {
-    if (booksData && booksData.next) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (page > 1) {
-      setPage((prev) => prev - 1);
-    }
-  };
-
-  const handlePageClick = (pageNumber: number) => {
+  const handlePageChange = (pageNumber: number) => {
     setPage(pageNumber);
-  };
-
-  const renderPageNumbers = (currentPage: number, maxPage: number) => {
-    const pages: (number | string)[] = [];
-    if (maxPage <= 5) {
-      for (let i = 1; i <= maxPage; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('...');
-      if (currentPage > 2) pages.push(currentPage - 1);
-      if (currentPage !== 1 && currentPage !== maxPage) pages.push(currentPage);
-      if (currentPage < maxPage - 1) pages.push(currentPage + 1);
-      if (currentPage < maxPage - 2) pages.push('...');
-      pages.push(maxPage);
-    }
-    return pages;
   };
 
   if (booksLoading) {
@@ -153,30 +127,11 @@ const Catalog = () => {
         {books.length > 0 ? (
           <>
             <BookList books={books} />
-            <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
-              <Button onClick={handlePrevPage} disabled={page <= 1}>
-                Anterior
-              </Button>
-              {renderPageNumbers(page, maxPage).map((pageNumber, index) =>
-                typeof pageNumber === 'number' ? (
-                  <Button
-                    key={index}
-                    onClick={() => handlePageClick(pageNumber)}
-                    variant={page === pageNumber ? 'default' : 'secondary'}
-                    className={`${page === pageNumber ? 'bg-biblioteca-blue text-white' : ''}`}
-                  >
-                    {pageNumber}
-                  </Button>
-                ) : (
-                  <span key={index} className="px-2 text-biblioteca-gray">
-                    {pageNumber}
-                  </span>
-                )
-              )}
-              <Button onClick={handleNextPage} disabled={page >= maxPage}>
-                Siguiente
-              </Button>
-            </div>
+            <PaginationComponent
+              currentPage={page}
+              maxPage={maxPage}
+              onPageChange={handlePageChange}
+            />
           </>
         ) : (
           <div className="text-biblioteca-gray text-center">No hay libros disponibles.</div>

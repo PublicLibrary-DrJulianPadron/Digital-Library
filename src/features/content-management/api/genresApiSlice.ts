@@ -17,12 +17,15 @@ export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getGenres: builder.query<
       GenresList,
-      { page?: number; page_size?: number; search?: string } // Add pagination params
+      { page?: number; page_size?: number; search?: string; sala?: string } // Add pagination params
     >({
-      query: ({ page = 1, page_size = 10, search } = {}) => {
+      query: ({ page = 1, page_size = 10, search, sala } = {}) => {
         let params = `page=${page}&page_size=${page_size}`;
         if (search) {
           params += `&search=${encodeURIComponent(search)}`;
+        }
+        if (sala) {
+          params += `&sala=${encodeURIComponent(sala)}`;
         }
         return `/library/genres/?${params}`; // Add params to URL
       },

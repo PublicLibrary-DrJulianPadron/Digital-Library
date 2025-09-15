@@ -2355,6 +2355,8 @@ export interface operations {
                 page?: number;
                 /** @description Number of results to return per page. */
                 page_size?: number;
+                /** @description Filter genres by sala */
+                sala?: string;
                 /** @description A search term. */
                 search?: string;
             };
