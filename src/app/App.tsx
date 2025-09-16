@@ -21,6 +21,8 @@ import LanguageManagementPage from "../features/content-management/pages/Languag
 import LanguageFormPage from "../features/content-management/pages/LanguageFormPage";
 import MaterialManagementPage from "../features/content-management/pages/MaterialManagementPage";
 import MaterialFormPage from "../features/content-management/pages/MaterialFormPage";
+import AuthorManagementPage from "../features/content-management/pages/AuthorManagementPage";
+import AuthorFormPage from "../features/content-management/pages/AuthorFormPage";
 import Gestion from "../features/users/pages/UserManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/users/pages/UserProfilePage";
@@ -64,6 +66,9 @@ export const App = () => {
                     <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
                     <Route path="/gestion/materiales/create" element={<MaterialFormPage />} />
                     <Route path="/gestion/materiales/:id" element={<MaterialFormPage />} />
+                    <Route path="/gestion/autores" element={<AuthorManagementPage />} />
+                    <Route path="/gestion/autores/create" element={<AuthorFormPage />} />
+                    <Route path="/gestion/autores/:slug" element={<AuthorFormPage />} />
                     <Route path="/estadisticas" element={<Estadisticas />} />
                     <Route path="/gestion/usuarios" element={<Gestion />} />
                     <Route path="/gestion/usuarios/:id" element={<UserProfilePage />} />

@@ -825,11 +825,16 @@ export interface components {
     schemas: {
         /** @description Serializer for the Author model. */
         Author: {
+            readonly id: number;
             name: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        /** @description Serializer for the Author model. */
+        AuthorRequest: {
+            name: string;
         };
         BlockedSchedule: {
             /** Format: uuid */
@@ -1001,6 +1006,7 @@ export interface components {
             name: string;
         };
         MinimalAuthor: {
+            readonly id: number;
             name: string;
             slug?: string;
         };
@@ -1261,6 +1267,10 @@ export interface components {
             password: string;
             token: string;
         };
+        /** @description Serializer for the Author model. */
+        PatchedAuthorRequest: {
+            name?: string;
+        };
         PatchedBlockedScheduleRequest: {
             /** Format: date */
             date?: string;
@@ -1297,10 +1307,6 @@ export interface components {
         /** @description Serializer for the MaterialType model. */
         PatchedMaterialTypeRequest: {
             name?: string;
-        };
-        PatchedMinimalAuthorRequest: {
-            name?: string;
-            slug?: string;
         };
         /** @description Minimal serializer for listing books.
          *     Shows only essential information. */
@@ -2096,9 +2102,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MinimalAuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["MinimalAuthorRequest"];
-                "multipart/form-data": components["schemas"]["MinimalAuthorRequest"];
+                "application/json": components["schemas"]["AuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
+                "multipart/form-data": components["schemas"]["AuthorRequest"];
             };
         };
         responses: {
@@ -2107,7 +2113,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalAuthor"];
+                    "application/json": components["schemas"]["Author"];
                 };
             };
         };
@@ -2144,9 +2150,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MinimalAuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["MinimalAuthorRequest"];
-                "multipart/form-data": components["schemas"]["MinimalAuthorRequest"];
+                "application/json": components["schemas"]["AuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AuthorRequest"];
+                "multipart/form-data": components["schemas"]["AuthorRequest"];
             };
         };
         responses: {
@@ -2155,7 +2161,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalAuthor"];
+                    "application/json": components["schemas"]["Author"];
                 };
             };
         };
@@ -2191,9 +2197,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedMinimalAuthorRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedMinimalAuthorRequest"];
-                "multipart/form-data": components["schemas"]["PatchedMinimalAuthorRequest"];
+                "application/json": components["schemas"]["PatchedAuthorRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAuthorRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAuthorRequest"];
             };
         };
         responses: {
@@ -2202,7 +2208,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalAuthor"];
+                    "application/json": components["schemas"]["Author"];
                 };
             };
         };

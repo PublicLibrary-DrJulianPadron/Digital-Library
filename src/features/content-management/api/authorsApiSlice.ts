@@ -1,76 +1,82 @@
-            // src/features/content-management/api/authorsApiSlice.ts
-            import { apiSlice } from "@/common/api/apiSlice";
-            import type { components } from "@/common/types/generated-api-types";
+// src/features/content-management/api/authorsApiSlice.ts
+import { apiSlice } from "@/common/api/apiSlice";
+import type { components } from "@/common/types/generated-api-types";
 
-            export type Author = components["schemas"]["Author"];
-            export type AuthorListResponse = components["schemas"]["PaginatedMinimalAuthorList"];
-            export type AuthorDetailResponse = Author;
+export type Author = components["schemas"]["Author"];
+export type AuthorList = components["schemas"]["PaginatedMinimalAuthorList"];
+export type AuthorRequest = components["schemas"]["AuthorRequest"];
 
-            export const authorsApiSlice = apiSlice.injectEndpoints({
-                endpoints: (builder) => ({
-                    getAuthors: builder.query<
-                        AuthorListResponse,
-                        { page?: number; page_size?: number; search?: string }
-                    >({
-                        query: ({ page = 1, page_size = 10, search } = {}) => {
-                            let params = `page=${page}&page_size=${page_size}`;
-                            if (search) {
-                                params += `&search=${encodeURIComponent(search)}`;
-                            }
-                            return `/library/authors/?${params}`;
-                        },
-                        providesTags: (result) =>
-                            result
-                                ? [
-                                    ...result.results.map(({ slug }) => ({
-                                        type: "Authors" as const,
-                                        id: slug, // use slug as unique identifier
-                                    })),
-                                    { type: "Authors", id: "LIST" },
-                                ]
-                                : [{ type: "Authors", id: "LIST" }],
-                    }),
+export const authorsApiSlice = apiSlice.injectEndpoints({
+    endpoints: (builder) => ({
+        getAuthors: builder.query<
+            AuthorList,
+            { page?: number; page_size?: number; search?: string }
+        >({
+            query: ({ page, page_size, search } = {}) => {
+                let params = ``;
+                if (page) {
+                    params += `page=${encodeURIComponent(page)}`;
+                }
+                if (page_size) {
+                    params += `&page_size=${encodeURIComponent(page_size)}`;
+                }
+                if (search) {
+                    params += `&search=${encodeURIComponent(search)}`;
+                }
+                return `/library/authors/?${params}`;
+            },
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.results.map(({ slug }) => ({
+                            type: "Authors" as const,
+                            id: slug, // use slug as unique identifier
+                        })),
+                        { type: "Authors", id: "LIST" },
+                    ]
+                    : [{ type: "Authors", id: "LIST" }],
+        }),
 
-                    getAuthorBySlug: builder.query<AuthorDetailResponse, string>({
-                        query: (slug) => `/library/authors/${slug}/`,
-                        providesTags: (result, error, slug) => [{ type: "Authors", id: slug }],
-                    }),
+        getAuthorBySlug: builder.query<Author, string>({
+            query: (slug) => `/library/authors/${slug}/`,
+            providesTags: (result, error, slug) => [{ type: "Authors", id: slug }],
+        }),
 
-                    createAuthor: builder.mutation<AuthorDetailResponse, Partial<Author>>({
-                        query: (body) => ({
-                            url: "/library/authors/",
-                            method: "POST",
-                            body,
-                        }),
-                        invalidatesTags: [{ type: "Authors", id: "LIST" }],
-                    }),
+        createAuthor: builder.mutation<Author, Partial<Author>>({
+            query: (body) => ({
+                url: "/library/authors/",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "Authors", id: "LIST" }],
+        }),
 
-                    updateAuthor: builder.mutation<
-                        AuthorDetailResponse,
-                        { id: string; data: Partial<Author> }
-                    >({
-                        query: ({ id, data }) => ({
-                            url: `/library/authors/${id}/`,
-                            method: "PUT",
-                            body: data,
-                        }),
-                        invalidatesTags: (result, error, { id }) => [{ type: "Authors", id }],
-                    }),
+        updateAuthor: builder.mutation<
+            Author,
+            { slug: string; data: Partial<Author> }
+        >({
+            query: ({ slug, data }) => ({
+                url: `/library/authors/${slug}/`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: (result, error, { slug }) => [{ type: "Authors", slug }],
+        }),
 
-                    deleteAuthor: builder.mutation<{ success: boolean }, string>({
-                        query: (id) => ({
-                            url: `/library/authors/${id}/`,
-                            method: "DELETE",
-                        }),
-                        invalidatesTags: (result, error, id) => [{ type: "Authors", id }],
-                    }),
-                }),
-            });
+        deleteAuthor: builder.mutation<{ success: boolean }, string>({
+            query: (slug) => ({
+                url: `/library/authors/${slug}/`,
+                method: "DELETE",
+            }),
+            invalidatesTags: (result, error, slug) => [{ type: "Authors", slug }],
+        }),
+    }),
+});
 
-            export const {
-                useGetAuthorsQuery,
-                useGetAuthorBySlugQuery,
-                useCreateAuthorMutation,
-                useUpdateAuthorMutation,
-                useDeleteAuthorMutation,
-            } = authorsApiSlice;
+export const {
+    useGetAuthorsQuery,
+    useGetAuthorBySlugQuery,
+    useCreateAuthorMutation,
+    useUpdateAuthorMutation,
+    useDeleteAuthorMutation,
+} = authorsApiSlice;

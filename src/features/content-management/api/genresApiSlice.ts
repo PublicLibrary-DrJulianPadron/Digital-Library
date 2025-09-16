@@ -19,8 +19,14 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       GenresList,
       { page?: number; page_size?: number; search?: string; sala?: string } // Add pagination params
     >({
-      query: ({ page = 1, page_size = 10, search, sala } = {}) => {
-        let params = `page=${page}&page_size=${page_size}`;
+      query: ({ page, page_size, search, sala } = {}) => {
+        let params = ``;
+        if (page) {
+          params += `page=${encodeURIComponent(page)}`;
+        }
+        if (page_size) {
+          params += `&page_size=${encodeURIComponent(page_size)}`;
+        }
         if (search) {
           params += `&search=${encodeURIComponent(search)}`;
         }

@@ -35,12 +35,12 @@ import {
 } from "@/common/components/ui/alert-dialog";
 import { Filter, Edit, Trash2, Plus } from "lucide-react";
 import {
-  useGetMaterialTypesQuery,
-  useDeleteMaterialTypeMutation,
-} from "@/features/content-management/api/materialTypesApiSlice";
+  useGetAuthorsQuery,
+  useDeleteAuthorMutation,
+} from "@/features/content-management/api/authorsApiSlice";
 import { PaginationComponent } from "@/common/components/ui/pagination";
 
-const MaterialManagementPage: React.FC = () => {
+const AuthorManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -48,12 +48,12 @@ const MaterialManagementPage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
 
-  const { data: materialTypes, isFetching, error } = useGetMaterialTypesQuery({
+  const { data: authors, isFetching: isFetchingAuthors, error } = useGetAuthorsQuery({
     search: filters.search,
     page_size: pageSize,
     page: page,
   });
-  const [deleteMaterialType, { isLoading: isDeleting }] = useDeleteMaterialTypeMutation();
+  const [deleteAuthor, { isLoading: isDeletingAuthor }] = useDeleteAuthorMutation();
 
   const handleChange = (key: keyof typeof filters, value: string) => {
     setFilters((prev) => ({
@@ -67,37 +67,54 @@ const MaterialManagementPage: React.FC = () => {
     setPage(pageNumber);
   };
 
-  const handleEdit = (materialTypeId: number) => {
-    navigate(`/gestion/materiales/${materialTypeId}`);
+  const handleEdit = (authorSlug: string) => {
+    if (!authorSlug) {
+      console.error("Author slug is undefined or empty. Cannot navigate.");
+      toast({
+        title: "Error de Navegación",
+        description: "No se pudo encontrar la información del autor para editar.",
+        variant: "destructive",
+      });
+      return;
+    }
+    navigate(`/gestion/autores/${authorSlug}`);
   };
 
-  const handleDeleteMaterialType = async (materialTypeId: number, materialLabel: string) => {
+  const handleDeleteAuthor = async (authorSlug: string, authorName: string) => {
     try {
-      await deleteMaterialType(materialTypeId).unwrap();
+      await deleteAuthor(authorSlug).unwrap();
       toast({
-        title: "Tipo de Material Eliminado",
-        description: `El tipo de material "${materialLabel}" ha sido eliminado exitosamente.`,
+        title: "Autor Eliminado",
+        description: `El autor "${authorName}" ha sido eliminado exitosamente.`,
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Hubo un error al eliminar el tipo de material.",
+        description: "Hubo un error al eliminar el autor.",
         variant: "destructive",
       });
     }
   };
 
   const handleAdd = () => {
-    navigate("/gestion/materiales/create");
+    navigate("/gestion/autores/create");
   };
 
-  const materialTypeResults = materialTypes?.results ?? [];
-  const count = materialTypes?.count ?? 0;
+  let authorResults = [];
+  let count = 0;
+
+  if (authors && "results" in authors) {
+    authorResults = authors.results;
+    count = authors.count;
+  } else if (Array.isArray(authors)) {
+    authorResults = authors;
+    count = authors.length;
+  }
 
   const maxPage = Math.ceil(count / pageSize);
   const pageSizeOptions = [10, 20, 50, 100];
 
-  if (isFetching && !materialTypes) {
+  if (isFetchingAuthors) {
     return (
       <div className="p-6">
         <div className="animate-pulse space-y-4">
@@ -117,7 +134,7 @@ const MaterialManagementPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="text-xl font-medium text-red-500">
-          Error al cargar los tipos de material.
+          Error al cargar los autores.
         </div>
       </div>
     );
@@ -126,7 +143,7 @@ const MaterialManagementPage: React.FC = () => {
   return (
     <Card className="w-full">
       <CardHeader className="flex">
-        <CardTitle className="">Listado de Tipos de Material</CardTitle>
+        <CardTitle className="">Listado de Autores</CardTitle>
         <div className="flex items-center justify-end space-x-2 pt-2 mt-0">
           <Popover>
             <PopoverTrigger asChild>
@@ -155,7 +172,7 @@ const MaterialManagementPage: React.FC = () => {
                 </div>
               </div>
               <Input
-                placeholder="Buscar por nombre de material..."
+                placeholder="Buscar por nombre de autor..."
                 value={filters.search || ""}
                 onChange={(e) => handleChange("search", e.target.value)}
               />
@@ -163,7 +180,7 @@ const MaterialManagementPage: React.FC = () => {
           </Popover>
           <Button onClick={handleAdd} size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            Añadir Tipo de Material
+            Añadir Autor
           </Button>
         </div>
       </CardHeader>
@@ -171,7 +188,7 @@ const MaterialManagementPage: React.FC = () => {
       <CardContent>
         {count === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            No se encontraron tipos de material.
+            No se encontraron autores.
           </div>
         ) : (
           <>
@@ -181,26 +198,26 @@ const MaterialManagementPage: React.FC = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nombre del Tipo de Material</TableHead>
+                      <TableHead>Nombre del Autor</TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {materialTypeResults.map((materialType) => (
-                      <TableRow key={materialType.id}>
-                        <TableCell className="font-medium">{materialType.name}</TableCell>
+                    {authorResults.map((author) => (
+                      <TableRow key={author.slug}>
+                        <TableCell className="font-medium">{author.name}</TableCell>
                         <TableCell className="text-right">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleEdit(materialType.id)}
+                            onClick={() => handleEdit(author.slug)}
                             className="mr-2"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm" disabled={isDeleting}>
+                              <Button variant="ghost" size="sm" disabled={isDeletingAuthor}>
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </AlertDialogTrigger>
@@ -208,7 +225,7 @@ const MaterialManagementPage: React.FC = () => {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Esta acción no se puede deshacer. Esto eliminará permanentemente el tipo de material "{materialType.name}".
+                                  Esta acción no se puede deshacer. Esto eliminará permanentemente el autor "{author.name}".
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -217,7 +234,7 @@ const MaterialManagementPage: React.FC = () => {
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-red-500 text-white hover:bg-red-600"
-                                  onClick={() => handleDeleteMaterialType(materialType.id, materialType.name)}
+                                  onClick={() => handleDeleteAuthor(author.slug, author.name)}
                                 >
                                   Eliminar
                                 </AlertDialogAction>
@@ -234,14 +251,14 @@ const MaterialManagementPage: React.FC = () => {
 
             {/* Mobile Card View */}
             <div className="md:hidden grid gap-4">
-              {materialTypeResults.map((materialType) => (
-                <Card key={materialType.id}>
+              {authorResults.map((author) => (
+                <Card key={author.slug}>
                   <CardContent className="p-4">
                     <div className="space-y-3">
                       <div className="flex justify-between items-start">
-                        <h3 className="font-semibold text-sm">{materialType.name}</h3>
+                        <h3 className="font-semibold text-sm">{author.name}</h3>
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="sm" onClick={() => handleEdit(materialType.id)}>
+                          <Button variant="ghost" size="sm" onClick={() => handleEdit(author.slug)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <AlertDialog>
@@ -249,7 +266,7 @@ const MaterialManagementPage: React.FC = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                disabled={isDeleting}
+                                disabled={isDeletingAuthor}
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -259,7 +276,7 @@ const MaterialManagementPage: React.FC = () => {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Esta acción no se puede deshacer. Esto eliminará permanentemente el tipo de material "{materialType.name}".
+                                  Esta acción no se puede deshacer. Esto eliminará permanentemente el autor "{author.name}".
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
@@ -268,7 +285,7 @@ const MaterialManagementPage: React.FC = () => {
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-red-500 text-white hover:bg-red-600"
-                                  onClick={() => handleDeleteMaterialType(materialType.id, materialType.name)}
+                                  onClick={() => handleDeleteAuthor(author.slug, author.name)}
                                 >
                                   Eliminar
                                 </AlertDialogAction>
@@ -298,4 +315,4 @@ const MaterialManagementPage: React.FC = () => {
   );
 };
 
-export default MaterialManagementPage;
+export default AuthorManagementPage;
