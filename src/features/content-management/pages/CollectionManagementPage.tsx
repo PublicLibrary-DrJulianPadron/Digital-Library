@@ -44,6 +44,7 @@ import {
   useDeleteVideoMutation,
 } from "@/features/content-management/api/videosApiSlice";
 import { MinimalVideo } from "@/features/content-management/api/videosApiSlice";
+import { Author } from "@/features/content-management/api/authorsApiSlice";
 import BookFilters from "@/features/content-management/components/book-filters";
 import { PaginationComponent } from "@/common/components/ui/pagination";
 
@@ -201,17 +202,15 @@ const CollectionPage: React.FC = () => {
                   <div className="flex flex-col">
                     <Button
                       variant="ghost"
-                      className="justify-end"
+                      className="justify-start"
                       onClick={() => handleAdd("book")}
-                    >
-                      Añadir Libro
+                    >Añadir Libro
                     </Button>
                     <Button
                       variant="ghost"
-                      className="justify-end"
+                      className="justify-start"
                       onClick={() => handleAdd("video")}
-                    >
-                      Añadir Video
+                    >Añadir Video
                     </Button>
                   </div>
                 </PopoverContent>
@@ -259,7 +258,7 @@ const CollectionPage: React.FC = () => {
                   {books.map((book: MinimalBook) => {
                     const authors =
                       book.authors
-                        ?.filter((a): a is { name: string } => Boolean(a?.name))
+                        ?.filter((a): a is Author => a !== null)
                         .map((a) => a.name)
                         .join(", ") || "Sin autor";
 

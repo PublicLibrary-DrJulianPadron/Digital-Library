@@ -10,24 +10,21 @@ export const defaultBookFormValues = {
   quantity_in_stock: undefined as number | undefined,
   publisher: '',
   description: '',
-  cover: '',
-  digital_file: '',
+  cover: undefined as File | string | undefined,
+  digital_file: undefined as File | string | undefined,
   authors: [] as string[],
   genres: [] as string[],
   material_type: '',
   language: '',
 };
 
-/**
- * Maps a Book model object to the format expected by the BookForm.
- * @param {Book | null | undefined} book - The Book model object to map.
- * @returns {typeof defaultBookFormValues} The formatted object for form reset.
- */
-export const mapBookToFormValues = (book: Book | null | undefined) => {
+export type BookFormData = typeof defaultBookFormValues;
+
+// Map from Book to form values
+export const mapBookToFormValues = (book: Book | null | undefined): BookFormData => {
   if (!book) {
     return defaultBookFormValues;
   }
-
   return {
     title: book.title ?? '',
     isbn: book.isbn ?? '',
@@ -36,13 +33,11 @@ export const mapBookToFormValues = (book: Book | null | undefined) => {
     quantity_in_stock: book.quantity_in_stock ?? undefined,
     publisher: book.publisher ?? '',
     description: book.description ?? '',
-    cover: book.cover ?? '',
-    digital_file: book.digital_file ?? '',
-    authors: book.authors_detail.map((author) => author.name) ?? [],
-    genres: book.genres_detail.map((genre) => genre.label) ?? [],
+    cover: book.cover ?? undefined,
+    digital_file: book.digital_file ?? undefined,
+    authors: book.authors_detail.map(a => a.name) ?? [],
+    genres: book.genres_detail.map(g => g.label) ?? [],
     material_type: book.material_type_detail?.name ?? '',
     language: book.language_detail?.name ?? '',
   };
 };
-
-export type BookFormData = typeof defaultBookFormValues;

@@ -34,25 +34,25 @@ export const booksApiSlice = apiSlice.injectEndpoints({
           ? [...result.results.map(({ id }) => ({ type: 'Books' as const, id })), { type: 'Books', id: 'LIST' }]
           : [{ type: 'Books', id: 'LIST' }],
     }),
-    createBook: builder.mutation<Book, BookRequest>({
-      query: (newBook) => ({
+    createBook: builder.mutation<Book, FormData>({
+      query: (formData) => ({
         url: `/library/books/`,
         method: "POST",
-        body: newBook,
+        body: formData,
       }),
       invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
     getBookBySlug: builder.query<Book, string>({
       query: (slug) => `/library/books/${slug}/`,
-      providesTags: (result, error, slug) => [{ type: "Books", id: slug }],
+      providesTags: (result, error, slug) => [{ type: "Books", id: 'LIST' }],
     }),
-    updateBook: builder.mutation<Book, { slug: string; body: BookRequest }>({
-      query: ({ slug, body }) => ({
+    updateBook: builder.mutation<Book, { slug: string; formData: FormData }>({
+      query: ({ slug, formData }) => ({
         url: `/library/books/${slug}/`,
         method: "PUT",
-        body: body,
+        body: formData,
       }),
-      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: slug }],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: 'LIST' }],
     }),
     partialUpdateBook: builder.mutation<Book, { slug: string; body: PatchedBookRequest }>({
       query: ({ slug, body }) => ({
@@ -60,7 +60,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body: body,
       }),
-      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: slug }],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Books", id: 'LIST' }],
     }),
     deleteBook: builder.mutation<void, string>({
       query: (slug) => ({

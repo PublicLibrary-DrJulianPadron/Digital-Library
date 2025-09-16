@@ -15,7 +15,6 @@ import { cn } from '@/common/lib/utils';
 import { Calendar } from '@/common/components/ui/calendar';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { TagInput } from '@/common/components/ui/tag-input';
 import { useGetMaterialTypesQuery } from '@/features/content-management/api/materialTypesApiSlice';
 import { useGetLanguagesQuery } from '@/features/content-management/api/languagesApiSlice';
 import { useGetGenresQuery } from '@/features/content-management/api/genresApiSlice';
@@ -37,55 +36,106 @@ import { useDebounce } from '@/common/components/ui/use-debounce';
 
 interface BookFormProps {
   initialData?: Book;
-  onSubmit: (bookData: Omit<Book, "id" | "slug" | "available_copies" | "authors_detail" | "genres_detail" | "material_type_detail" | "language_detail" | "created_at" | "updated_at"> & { authors: string[], genres: string[], material_type: string, language: string }) => void;
+  onSubmit: (bookData: BookFormData | FormData) => void;
   onCancel: () => void;
   isSubmitting: boolean;
 }
 
 export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: BookFormProps) {
   const { toast } = useToast();
-  const { data: materialTypes } = useGetMaterialTypesQuery();
-  const { data: languages } = useGetLanguagesQuery();
+  const { data: materialTypes } = useGetMaterialTypesQuery({ page_size: 1000 });
+  const { data: languages } = useGetLanguagesQuery({ page_size: 1000 });
   const { data: genresData } = useGetGenresQuery({ page_size: 1000 });
   const { data: authorsData } = useGetAuthorsQuery({ page_size: 1000 });
 
-  // Add state for author search
   const [authorSearch, setAuthorSearch] = useState('');
-  // Add debounced value for author search
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
   const debouncedAuthorSearch = useDebounce(authorSearch, 50);
 
   const isEditMode = !!initialData;
 
-  // ✅ Memoize default values to avoid re-creation on each render
-  const defaultValues = useMemo(() => mapBookToFormValues(initialData), [initialData]);
+  const defaultValues = useMemo(
+    () => ({
+      ...mapBookToFormValues(initialData),
+      authors: initialData?.authors_detail?.map((author) => author.name) || [],
+      genres: initialData?.genres_detail?.map((g) => g.label) || [],
+      material_type: initialData?.material_type_detail?.slug || "",
+      language: initialData?.language_detail?.name || "",
+      isbn: initialData?.isbn || "",
+    }),
+    [initialData]
+  );
 
-  const { register, handleSubmit, formState: { errors }, reset, watch, control } = useForm<BookFormData>({
+  const { register, handleSubmit, formState: { errors }, reset, watch, control, setValue } = useForm<BookFormData>({
     defaultValues,
   });
 
   const watchedCover = watch('cover');
+  const watchedDigitalFile = watch('digital_file');
+
+  useEffect(() => {
+    if (watchedCover instanceof File) {
+      const url = URL.createObjectURL(watchedCover);
+      setCoverPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (typeof watchedCover === 'string') {
+      setCoverPreviewUrl(watchedCover);
+    } else {
+      setCoverPreviewUrl(null);
+    }
+  }, [watchedCover]);
+
+  // Handle digital file preview
+  useEffect(() => {
+    if (watchedDigitalFile instanceof File) {
+      console.log('New digital file selected:', watchedDigitalFile.name);
+    }
+  }, [watchedDigitalFile]);
 
   const onFormSubmit = async (data: BookFormData) => {
     try {
-      const bookData = {
-        ...data,
-        pages: data.pages ?? undefined,
-        quantity_in_stock: data.quantity_in_stock ?? undefined,
-        publication_date: data.publication_date ? new Date(data.publication_date).toISOString().split('T')[0] : undefined,
-      };
+      // Create a new FormData object
+      const formData = new FormData();
 
-      onSubmit(bookData as any);
+      // Append all fields to the FormData object, but only append files if they are actually file objects.
+      Object.keys(data).forEach(key => {
+        const value = data[key as keyof BookFormData];
+        if (value !== undefined && value !== null) {
+          if (key === 'cover' || key === 'digital_file') {
+            // Only append file fields if the value is an actual File object.
+            if (value instanceof File) {
+              formData.append(key, value);
+            }
+          } else if (Array.isArray(value)) {
+            value.forEach(item => formData.append(`${key}[]`, item as string));
+          } else if (value instanceof Date) {
+            formData.append(key, value.toISOString().split('T')[0]);
+          } else if (typeof value === 'object' && value !== null) {
+            // Handle nested objects if necessary, though the current form structure suggests this isn't needed
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      // Log FormData contents for debugging
+      console.log("FormData contents before submission:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      // Pass the FormData object to the onSubmit prop
+      onSubmit(formData);
     } catch (error) {
       toast({ title: 'Error', description: `Error al procesar libro.`, variant: 'destructive' });
     }
   };
 
-  // ✅ Only reset when initialData changes, using memoized values
   useEffect(() => {
     if (initialData) {
-      reset(mapBookToFormValues(initialData));
+      reset(defaultValues);
     }
-  }, [initialData, reset]);
+  }, [initialData, reset, defaultValues]);
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
@@ -100,9 +150,9 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
             </CardHeader>
             <CardContent>
               <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-4">
-                {watchedCover ? (
+                {coverPreviewUrl ? (
                   <img
-                    src={watchedCover}
+                    src={coverPreviewUrl}
                     alt="Vista previa"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -115,19 +165,37 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                   </div>
                 )}
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="cover-upload">Subir nueva portada</Label>
+                <Input
+                  id="cover-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setValue('cover', file);
+                    }
+                  }}
+                  className={errors.cover ? 'border-red-500' : ''}
+                />
+                {errors.cover?.message && (
+                  <p className="text-red-500 text-sm">{String(errors.cover.message)}</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Form Fields */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Basic Information */}
           <Card>
             <CardHeader>
               <CardTitle className="text-biblioteca-blue">Información Básica</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Título */}
                 <div className="space-y-2">
                   <Label htmlFor="title">Nombre (Título) *</Label>
                   <Input
@@ -140,6 +208,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                   )}
                 </div>
 
+                {/* Autores */}
                 <div className="space-y-2">
                   <Label htmlFor="authors">Autor(es)</Label>
                   <Controller
@@ -149,7 +218,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                       const handleAddAuthor = (name: string) => {
                         if (!name.trim()) return;
                         if (!field.value.includes(name)) {
-                          field.onChange([...field.value, name]);
+                          field.onChange([...(field.value || []), name]);
                         }
                         setAuthorSearch("");
                       };
@@ -157,25 +226,29 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                       const filteredAuthors = authorsData?.results
                         ?.filter(
                           (author) =>
-                            !field.value.includes(author.name) &&
+                            !(field.value || []).includes(author.name) &&
                             author.name.toLowerCase().includes(debouncedAuthorSearch.toLowerCase())
                         ) || [];
 
-                      const noMatchingAuthor = debouncedAuthorSearch && !filteredAuthors.find(author => author.name.toLowerCase() === debouncedAuthorSearch.toLowerCase());
+                      const noMatchingAuthor =
+                        debouncedAuthorSearch &&
+                        !filteredAuthors.find(
+                          (author) => author.name.toLowerCase() === debouncedAuthorSearch.toLowerCase()
+                        );
 
                       return (
                         <CommandPopover>
                           <CommandPopoverTrigger asChild>
-                            <div className="flex flex-wrap gap-2 min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 cursor-pointer">
-                              {field.value.length === 0 && (
+                            <div className="flex flex-wrap gap-2 min-h-10 rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer">
+                              {(field.value || []).length === 0 && (
                                 <div className="flex items-center">
                                   <span className="text-muted-foreground">Seleccionar autores...</span>
-                                  <div className="ml-2 w-6 h-6 rounded-full bg-biblioteca-blue text-white flex items-center justify-center hover:bg-biblioteca-blue/90 transition-colors">
+                                  <div className="ml-2 w-6 h-6 rounded-full bg-biblioteca-blue text-white flex items-center justify-center">
                                     <Plus className="h-4 w-4" />
                                   </div>
                                 </div>
                               )}
-                              {field.value.map((author, index) => (
+                              {(field.value || []).map((author, index) => (
                                 <div
                                   key={index}
                                   className="bg-primary text-primary-foreground rounded px-2 py-1 text-xs flex items-center"
@@ -185,7 +258,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                                     type="button"
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      const newAuthors = field.value.filter((_, i) => i !== index);
+                                      const newAuthors = (field.value || []).filter((_, i) => i !== index);
                                       field.onChange(newAuthors);
                                     }}
                                     className="ml-2 hover:text-destructive"
@@ -194,11 +267,6 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                                   </button>
                                 </div>
                               ))}
-                              {field.value.length > 0 && (
-                                <div className="w-6 h-6 rounded-full bg-biblioteca-blue text-white flex items-center justify-center hover:bg-biblioteca-blue/90 transition-colors">
-                                  <Plus className="h-4 w-4" />
-                                </div>
-                              )}
                             </div>
                           </CommandPopoverTrigger>
                           <CommandPopoverContent className="p-0" side="bottom" align="start">
@@ -218,15 +286,11 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                                 <CommandEmpty>No se encontraron autores.</CommandEmpty>
                                 <CommandGroup>
                                   {noMatchingAuthor && (
-                                    <CommandItem
-                                      onSelect={() => handleAddAuthor(debouncedAuthorSearch)}
-                                      className="group flex items-center justify-between"
-                                    >
-                                      <span>Añadir "{debouncedAuthorSearch}"</span>
-                                      <Plus className="h-4 w-4 text-biblioteca-blue opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                                    <CommandItem onSelect={() => handleAddAuthor(debouncedAuthorSearch)}>
+                                      Añadir "{debouncedAuthorSearch}"
                                     </CommandItem>
                                   )}
-                                  {filteredAuthors.map((author) => (
+                                  {authorsData?.results?.map((author) => (
                                     <CommandItem
                                       key={author.name}
                                       value={author.name}
@@ -243,37 +307,34 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                       );
                     }}
                   />
-
                   {errors.authors?.message && (
                     <p className="text-red-500 text-sm">{String(errors.authors.message)}</p>
                   )}
                 </div>
 
+                {/* ISBN */}
                 <div className="space-y-2">
                   <Label htmlFor="isbn">ISBN</Label>
-                  <Input
-                    id="isbn"
-                    {...register('isbn')}
-                    placeholder="978-0-123456-78-9"
-                  />
+                  <Input id="isbn" {...register('isbn')} placeholder="978-0-123456-78-9" />
                 </div>
 
+                {/* Tipo de Material */}
                 <div className="space-y-2">
                   <Label htmlFor="material_type">Tipo de Material</Label>
                   <Controller
                     name="material_type"
                     control={control}
                     render={({ field }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={errors.material_type ? 'border-red-500' : ''}>
                           <SelectValue placeholder="Selecciona un tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {materialTypes?.map(type => (
-                            <SelectItem key={type.name} value={type.name}>{type.name}</SelectItem>
+                          {materialTypes?.results?.map((type) => (
+                            // 👇 mandamos el slug al backend, mostramos el nombre al usuario
+                            <SelectItem key={type.slug} value={type.slug}>
+                              {type.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -284,6 +345,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                   )}
                 </div>
 
+                {/* Géneros */}
                 <div className="space-y-2">
                   <Label htmlFor="genres">Género</Label>
                   <Controller
@@ -292,12 +354,8 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     render={({ field }) => (
                       <CommandPopover>
                         <CommandPopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className="w-auto justify-between"
-                          >
-                            {field.value[0] || "Seleccionar género..."}
+                          <Button variant="outline" role="combobox" className="w-auto justify-between">
+                            {field.value?.[0] || "Seleccionar género..."}
                           </Button>
                         </CommandPopoverTrigger>
                         <CommandPopoverContent className="p-0">
@@ -306,13 +364,11 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                             <CommandList>
                               <CommandEmpty>No se encontraron géneros.</CommandEmpty>
                               <CommandGroup>
-                                {genresData?.results.map((genre) => (
+                                {genresData?.results?.map((genre) => (
                                   <CommandItem
                                     key={genre.id}
                                     value={genre.label}
-                                    onSelect={() => {
-                                      field.onChange([genre.label]);
-                                    }}
+                                    onSelect={() => field.onChange([genre.label])}
                                   >
                                     {genre.label}
                                   </CommandItem>
@@ -330,19 +386,15 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                 </div>
               </div>
 
+              {/* Descripción */}
               <div className="space-y-2">
                 <Label htmlFor="description">Descripción</Label>
-                <Textarea
-                  id="description"
-                  {...register('description')}
-                  rows={3}
-                  placeholder="Breve descripción del libro..."
-                />
+                <Textarea id="description" {...register('description')} rows={3} />
               </div>
             </CardContent>
           </Card>
 
-          {/* Publication Details */}
+          {/* Publicación */}
           <Card>
             <CardHeader>
               <CardTitle className="text-biblioteca-blue">Detalles de Publicación</CardTitle>
@@ -351,10 +403,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="publisher">Editorial</Label>
-                  <Input
-                    id="publisher"
-                    {...register('publisher')}
-                  />
+                  <Input id="publisher" {...register('publisher')} />
                 </div>
 
                 <div className="space-y-2">
@@ -375,11 +424,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
-                            {value ? (
-                              format(new Date(value), 'PPP', { locale: es })
-                            ) : (
-                              <span>Elige una fecha</span>
-                            )}
+                            {value ? format(new Date(value), 'PPP', { locale: es }) : <span>Elige una fecha</span>}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -391,10 +436,6 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                               const today = new Date();
                               today.setHours(0, 0, 0, 0);
                               return date > today || date < new Date('1900-01-01');
-                            }}
-                            initialFocus
-                            classNames={{
-                              day_selected: "bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-600 rounded-full border-2 border-blue-700",
                             }}
                           />
                         </PopoverContent>
@@ -412,41 +453,53 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     name="language"
                     control={control}
                     render={({ field }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={errors.language ? 'border-red-500' : ''}>
                           <SelectValue placeholder="Seleccionar idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          {languages?.map(lang => (
-                            <SelectItem key={lang.name} value={lang.name}>{lang.name}</SelectItem>
+                          {languages?.results?.map((lang) => (
+                            <SelectItem key={lang.name} value={lang.name}>
+                              {lang.name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                   />
-                  {errors.language && (
-                    <p className="text-red-500 text-sm">{errors.language.message}</p>
+                  {errors.language?.message && (
+                    <p className="text-red-500 text-sm">{String(errors.language.message)}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="pages">Número de Páginas</Label>
+                  <Input id="pages" type="number" min="1" {...register('pages', { valueAsNumber: true })} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="digital_file">Archivo Digital (PDF, EPUB, etc.)</Label>
                   <Input
-                    id="pages"
-                    type="number"
-                    min="1"
-                    {...register('pages', { valueAsNumber: true })}
+                    id="digital_file"
+                    type="file"
+                    accept=".pdf,.epub"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setValue('digital_file', file);
+                      }
+                    }}
                   />
+                  {errors.digital_file?.message && (
+                    <p className="text-red-500 text-sm">{String(errors.digital_file.message)}</p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Inventory */}
-          {isEditMode &&
+          {/* Inventario (solo edición) */}
+          {isEditMode && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-biblioteca-blue">Inventario</CardTitle>
@@ -458,21 +511,19 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     <Input
                       id="quantity_in_stock"
                       type="number"
-                      readOnly={true}
-                      {...register('quantity_in_stock', {
-                        valueAsNumber: true,
-                      })}
+                      readOnly
+                      {...register('quantity_in_stock', { valueAsNumber: true })}
                       className="bg-gray-100 cursor-not-allowed"
                     />
                   </div>
                 </div>
               </CardContent>
             </Card>
-          }
+          )}
         </div>
       </div>
 
-      {/* Form Actions */}
+      {/* Actions */}
       <div className="flex justify-end space-x-4 pt-6 border-t">
         <Button
           type="button"

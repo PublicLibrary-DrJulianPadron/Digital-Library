@@ -517,7 +517,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/material-types/{id}/": {
+    "/api/library/material-types/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -996,6 +996,7 @@ export interface components {
         MaterialType: {
             readonly id: number;
             name: string;
+            slug?: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -1004,6 +1005,7 @@ export interface components {
         /** @description Serializer for the MaterialType model. */
         MaterialTypeRequest: {
             name: string;
+            slug?: string;
         };
         MinimalAuthor: {
             readonly id: number;
@@ -1065,9 +1067,11 @@ export interface components {
         MinimalMaterialType: {
             readonly id: number;
             name: string;
+            slug?: string;
         };
         MinimalMaterialTypeRequest: {
             name: string;
+            slug?: string;
         };
         /** @description Minimal serializer for listing videos.
          *     Shows only essential information. */
@@ -1307,6 +1311,7 @@ export interface components {
         /** @description Serializer for the MaterialType model. */
         PatchedMaterialTypeRequest: {
             name?: string;
+            slug?: string;
         };
         /** @description Minimal serializer for listing books.
          *     Shows only essential information. */
@@ -2941,8 +2946,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this material type. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2963,8 +2967,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this material type. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2991,8 +2994,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this material type. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -3012,8 +3014,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this material type. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
