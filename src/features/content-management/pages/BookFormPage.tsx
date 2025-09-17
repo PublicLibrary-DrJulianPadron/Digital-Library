@@ -33,39 +33,19 @@ const BookFormPage: React.FC = () => {
 
     const isLoading = isBookLoading || isUpdating || isPartialUpdating || isCreating;
 
-    const handleSubmit = async (bookData: BookFormData | FormData) => {
+    // Type the bookData parameter correctly as FormData
+    const handleSubmit = async (bookData: FormData) => {
         try {
-            // Check if the data is a FormData object. If so, use it directly.
-            // If it's not (e.g., in a non-file submission), create a new one.
-            const formData = bookData instanceof FormData ? bookData : new FormData();
-
-            if (!(bookData instanceof FormData)) {
-                Object.keys(bookData).forEach(key => {
-                    const value = bookData[key as keyof BookFormData];
-                    if (value !== undefined && value !== null) {
-                        if (Array.isArray(value)) {
-                            value.forEach(item => formData.append(`${key}[]`, item as string));
-                        } else if (value instanceof File) {
-                            formData.append(key, value);
-                        } else if (typeof value === 'object' && value !== null) {
-                            // Handle nested objects if necessary
-                        } else {
-                            formData.append(key, String(value));
-                        }
-                    }
-                });
-            }
-
             if (isEditMode) {
                 if (slug) {
-                    await updateBook({ slug, formData: formData }).unwrap();
+                    await updateBook({ slug, formData: bookData }).unwrap();
                     toast({
                         title: "Libro Actualizado",
                         description: `El libro ha sido actualizado exitosamente.`,
                     });
                 }
             } else {
-                await createBook(formData).unwrap();
+                await createBook(bookData).unwrap();
                 toast({
                     title: "Libro Creado",
                     description: `El libro ha sido creado exitosamente.`,

@@ -412,7 +412,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/languages/{id}/": {
+    "/api/library/languages/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -827,6 +827,7 @@ export interface components {
         Author: {
             readonly id: number;
             name: string;
+            slug?: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -835,6 +836,7 @@ export interface components {
         /** @description Serializer for the Author model. */
         AuthorRequest: {
             name: string;
+            slug?: string;
         };
         BlockedSchedule: {
             /** Format: uuid */
@@ -867,7 +869,8 @@ export interface components {
             is_active?: boolean;
         };
         /** @description Full serializer for CRUD operations on a book.
-         *     Handles both input (write) and output (read) for all fields. */
+         *     Expects material_type slug on input,
+         *     returns full material_type_detail on output. */
         Book: {
             /** Format: uuid */
             readonly id: string;
@@ -899,6 +902,33 @@ export interface components {
             readonly created_at: string;
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        /** @description Full serializer for CRUD operations on a book.
+         *     Expects material_type slug on input,
+         *     returns full material_type_detail on output. */
+        BookRequest: {
+            title: string;
+            isbn?: string;
+            /** Format: date */
+            publication_date?: string | null;
+            pages?: number | null;
+            quantity_in_stock?: number;
+            publisher?: string;
+            description?: string;
+            /**
+             * Format: binary
+             * @description Upload book cover (PNG format only)
+             */
+            cover?: string | null;
+            /**
+             * Format: binary
+             * @description Upload a PDF file for the digital version.
+             */
+            digital_file?: string | null;
+            authors?: string[];
+            genres?: string[];
+            material_type?: string | null;
+            language?: string;
         };
         EmailRequest: {
             /** Format: email */
@@ -939,6 +969,7 @@ export interface components {
         Language: {
             readonly id: number;
             name: string;
+            slug?: string;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -947,6 +978,7 @@ export interface components {
         /** @description Serializer for the Language model. */
         LanguageRequest: {
             name: string;
+            slug?: string;
         };
         /** @description Serializer for a loan, showing only essential IDs and dates. */
         Loan: {
@@ -1017,28 +1049,24 @@ export interface components {
             slug?: string;
         };
         /** @description Minimal serializer for listing books.
-         *     Shows only essential information. */
+         *     Uses material_type slug for write,
+         *     but returns full material_type_detail on read. */
         MinimalBook: {
             /** Format: uuid */
             readonly id: string;
-            readonly title: string;
+            title: string;
             readonly slug: string;
             /**
              * Format: uri
              * @description Upload book cover (PNG format only)
              */
-            readonly cover: string | null;
-            readonly quantity_in_stock: number;
+            cover?: string | null;
+            quantity_in_stock?: number;
             readonly available_copies: number;
             /** Format: date */
-            readonly publication_date: string | null;
+            publication_date?: string | null;
             readonly material_type_detail: components["schemas"]["MinimalMaterialType"];
             readonly authors: components["schemas"]["MinimalAuthor"][];
-        };
-        /** @description Minimal serializer for listing books.
-         *     Shows only essential information. */
-        MinimalBookRequest: {
-            material_type?: string;
         };
         /** @description Minimal serializer for dropdowns or lightweight lists. */
         MinimalGenre: {
@@ -1063,6 +1091,11 @@ export interface components {
         MinimalLanguage: {
             readonly id: number;
             name: string;
+            slug?: string;
+        };
+        MinimalLanguageRequest: {
+            name: string;
+            slug?: string;
         };
         MinimalMaterialType: {
             readonly id: number;
@@ -1274,6 +1307,7 @@ export interface components {
         /** @description Serializer for the Author model. */
         PatchedAuthorRequest: {
             name?: string;
+            slug?: string;
         };
         PatchedBlockedScheduleRequest: {
             /** Format: date */
@@ -1287,6 +1321,33 @@ export interface components {
             is_permanent?: boolean;
             is_active?: boolean;
         };
+        /** @description Full serializer for CRUD operations on a book.
+         *     Expects material_type slug on input,
+         *     returns full material_type_detail on output. */
+        PatchedBookRequest: {
+            title?: string;
+            isbn?: string;
+            /** Format: date */
+            publication_date?: string | null;
+            pages?: number | null;
+            quantity_in_stock?: number;
+            publisher?: string;
+            description?: string;
+            /**
+             * Format: binary
+             * @description Upload book cover (PNG format only)
+             */
+            cover?: string | null;
+            /**
+             * Format: binary
+             * @description Upload a PDF file for the digital version.
+             */
+            digital_file?: string | null;
+            authors?: string[];
+            genres?: string[];
+            material_type?: string | null;
+            language?: string;
+        };
         /** @description Full serializer for Genre model. */
         PatchedGenreRequest: {
             /** @description Código de clasificación (ej: 860 para Literaturas española y portuguesa) */
@@ -1299,6 +1360,7 @@ export interface components {
         /** @description Serializer for the Language model. */
         PatchedLanguageRequest: {
             name?: string;
+            slug?: string;
         };
         /** @description Serializer for a loan, showing only essential IDs and dates. */
         PatchedLoanRequest: {
@@ -1312,11 +1374,6 @@ export interface components {
         PatchedMaterialTypeRequest: {
             name?: string;
             slug?: string;
-        };
-        /** @description Minimal serializer for listing books.
-         *     Shows only essential information. */
-        PatchedMinimalBookRequest: {
-            material_type?: string;
         };
         /** @description Minimal serializer for listing videos.
          *     Shows only essential information. */
@@ -2254,9 +2311,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["MinimalBookRequest"];
+                "multipart/form-data": components["schemas"]["BookRequest"];
             };
         };
         responses: {
@@ -2265,7 +2322,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalBook"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
@@ -2300,9 +2357,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "multipart/form-data": components["schemas"]["MinimalBookRequest"];
+                "multipart/form-data": components["schemas"]["BookRequest"];
             };
         };
         responses: {
@@ -2311,7 +2368,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalBook"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
@@ -2347,7 +2404,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "multipart/form-data": components["schemas"]["PatchedMinimalBookRequest"];
+                "multipart/form-data": components["schemas"]["PatchedBookRequest"];
             };
         };
         responses: {
@@ -2356,7 +2413,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MinimalBook"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
@@ -2619,8 +2676,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this language. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2641,8 +2697,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this language. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2669,8 +2724,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this language. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };
@@ -2690,8 +2744,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description A unique integer value identifying this language. */
-                id: number;
+                slug: string;
             };
             cookie?: never;
         };

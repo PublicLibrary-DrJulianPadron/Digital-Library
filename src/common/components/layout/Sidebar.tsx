@@ -33,7 +33,7 @@ const allMenuItems: MenuItem[] = [
       { title: "Autores", url: "/gestion/autores", icon: User, requiresAuth: true }, // ✅ fixed author icon
     ]
   },
-  { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
+  // { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
   { group: "Administración", title: "Gestión de Usuarios", url: "/gestion/usuarios", icon: Users, requiresAuth: true },
 ];
 

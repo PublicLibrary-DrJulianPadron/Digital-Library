@@ -72,9 +72,9 @@ const LanguageManagementPage: React.FC = () => {
         navigate(`/gestion/lenguajes/${languageId}`);
     };
 
-    const handleDeleteLanguage = async (languageId: number, languageLabel: string) => {
+    const handleDeleteLanguage = async (languageSlug: string, languageLabel: string) => {
         try {
-            await deleteLanguage(languageId).unwrap();
+            await deleteLanguage(languageSlug).unwrap();
             toast({
                 title: "Idioma Eliminado",
                 description: `El idioma "${languageLabel}" ha sido eliminado exitosamente.`,
@@ -202,7 +202,7 @@ const LanguageManagementPage: React.FC = () => {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => handleEdit(language.id)}
+                                                        onClick={() => handleEdit(language.slug)}
                                                         className="mr-2"
                                                     >
                                                         <Edit className="w-4 h-4" />
@@ -226,7 +226,7 @@ const LanguageManagementPage: React.FC = () => {
                                                                 </AlertDialogCancel>
                                                                 <AlertDialogAction
                                                                     className="bg-red-500 text-white hover:bg-red-600"
-                                                                    onClick={() => handleDeleteLanguage(language.id, language.name)}
+                                                                    onClick={() => handleDeleteLanguage(language.slug, language.name)}
                                                                 >
                                                                     Eliminar
                                                                 </AlertDialogAction>

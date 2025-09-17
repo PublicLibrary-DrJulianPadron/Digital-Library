@@ -39,32 +39,32 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Languages', id: 'LIST' }],
     }),
-    getLanguageById: builder.query<Language, number>({
-      query: (id) => `/library/languages/${id}/`,
-      providesTags: (result, error, id) => [{ type: 'Languages', id }],
+    getLanguageBySlug: builder.query<Language, number>({
+      query: (slug) => `/library/languages/${slug}/`,
+      providesTags: (result, error, slug) => [{ type: 'Languages', slug }],
     }),
-    updateLanguage: builder.mutation<Language, { id: number; body: LanguageRequest }>({
+    updateLanguage: builder.mutation<Language, { slug: string; body: LanguageRequest }>({
       query: (languageData) => ({
-        url: `/library/languages/${languageData.id}/`,
+        url: `/library/languages/${languageData.slug}/`,
         method: 'PUT',
         body: languageData.body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Languages', id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: 'Languages', slug }],
     }),
-    partialUpdateLanguage: builder.mutation<Language, { id: number; body: PatchedLanguageRequest }>({
+    partialUpdateLanguage: builder.mutation<Language, { slug: string; body: PatchedLanguageRequest }>({
       query: (languageData) => ({
-        url: `/library/languages/${languageData.id}/`,
+        url: `/library/languages/${languageData.slug}/`,
         method: 'PATCH',
         body: languageData.body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Languages', id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: 'Languages', slug }],
     }),
-    deleteLanguage: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/library/languages/${id}/`,
+    deleteLanguage: builder.mutation<void, string>({
+      query: (slug) => ({
+        url: `/library/languages/${slug}/`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Languages', id }, { type: 'Languages', id: 'LIST' }],
+      invalidatesTags: (result, error, slug) => [{ type: 'Languages', slug }, { type: 'Languages', id: 'LIST' }],
     }),
   }),
   overrideExisting: false,
@@ -73,7 +73,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetLanguagesQuery,
   useCreateLanguageMutation,
-  useGetLanguageByIdQuery,
+  useGetLanguageBySlugQuery,
   useUpdateLanguageMutation,
   usePartialUpdateLanguageMutation,
   useDeleteLanguageMutation,

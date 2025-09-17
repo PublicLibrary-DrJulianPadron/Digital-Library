@@ -7,7 +7,7 @@ import { Textarea } from '@/common/components/ui/textarea';
 import { Label } from '@/common/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/common/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
-import { Save, X, Upload, CalendarIcon, Plus } from 'lucide-react';
+import { Save, X, Upload, CalendarIcon, Plus, FileText, Trash2 } from 'lucide-react';
 import { mapBookToFormValues, BookFormData } from '@/features/content-management/components/BookForm/BookFormConfig';
 import type { Book } from '@/features/content-management/api/booksApiSlice';
 import { Popover, PopoverContent, PopoverTrigger } from '@/common/components/ui/popover';
@@ -58,10 +58,9 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
     () => ({
       ...mapBookToFormValues(initialData),
       authors: initialData?.authors_detail?.map((author) => author.name) || [],
-      genres: initialData?.genres_detail?.map((g) => g.label) || [],
+      genres: initialData?.genres_detail?.map((g) => g.slug) || [], // CHANGE 1: Use g.slug instead of g.label
       material_type: initialData?.material_type_detail?.slug || "",
       language: initialData?.language_detail?.name || "",
-      isbn: initialData?.isbn || "",
     }),
     [initialData]
   );
@@ -72,6 +71,17 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
 
   const watchedCover = watch('cover');
   const watchedDigitalFile = watch('digital_file');
+
+  let languageResults = [];
+  let count = 0;
+
+  if (languages && "results" in languages) {
+    languageResults = languages.results;
+    count = languages.count;
+  } else if (Array.isArray(languages)) {
+    languageResults = languages;
+    count = languages.length;
+  }
 
   useEffect(() => {
     if (watchedCover instanceof File) {
@@ -85,40 +95,56 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
     }
   }, [watchedCover]);
 
-  // Handle digital file preview
-  useEffect(() => {
-    if (watchedDigitalFile instanceof File) {
-      console.log('New digital file selected:', watchedDigitalFile.name);
-    }
-  }, [watchedDigitalFile]);
-
   const onFormSubmit = async (data: BookFormData) => {
     try {
       // Create a new FormData object
       const formData = new FormData();
 
-      // Append all fields to the FormData object, but only append files if they are actually file objects.
-      Object.keys(data).forEach(key => {
-        const value = data[key as keyof BookFormData];
-        if (value !== undefined && value !== null) {
-          if (key === 'cover' || key === 'digital_file') {
-            // Only append file fields if the value is an actual File object.
-            if (value instanceof File) {
-              formData.append(key, value);
-            }
-          } else if (Array.isArray(value)) {
-            value.forEach(item => formData.append(`${key}[]`, item as string));
-          } else if (value instanceof Date) {
-            formData.append(key, value.toISOString().split('T')[0]);
-          } else if (typeof value === 'object' && value !== null) {
-            // Handle nested objects if necessary, though the current form structure suggests this isn't needed
-          } else {
-            formData.append(key, String(value));
-          }
-        }
-      });
+      // Explicitly append all fields
+      formData.append('title', data.title);
+      if (data.isbn) formData.append('isbn', data.isbn);
+      if (data.pages) formData.append('pages', String(data.pages));
+      if (data.publisher) formData.append('publisher', data.publisher);
+      if (data.description) formData.append('description', data.description);
+      if (data.material_type) formData.append('material_type', data.material_type);
+      if (data.language) formData.append('language', data.language);
+      if (data.quantity_in_stock) formData.append('quantity_in_stock', String(data.quantity_in_stock));
+      if (data.available_copies) formData.append('available_copies', String(data.available_copies));
+
+
+      // Append authors array
+      if (data.authors && data.authors.length > 0) {
+        data.authors.forEach(author => formData.append('authors', author));
+      }
+
+      // Append genres array
+      if (data.genres && data.genres.length > 0) {
+        data.genres.forEach(genre => formData.append('genres', genre));
+      }
+
+      // Append date field
+      if (data.publication_date && !isNaN(Date.parse(data.publication_date as string))) {
+        formData.append(
+          'publication_date',
+          new Date(data.publication_date as string).toISOString().split('T')[0]
+        );
+      }
+
+      // Append file fields
+      if (data.cover instanceof File) {
+        formData.append('cover', data.cover);
+      } else if (data.cover === null) {
+        formData.append('cover', '');
+      }
+
+      if (data.digital_file instanceof File) {
+        formData.append('digital_file', data.digital_file);
+      } else if (data.digital_file === null) {
+        formData.append('digital_file', '');
+      }
 
       // Log FormData contents for debugging
+      console.log(languageResults);
       console.log("FormData contents before submission:");
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
@@ -137,6 +163,15 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
     }
   }, [initialData, reset, defaultValues]);
 
+  const handleCoverDelete = () => {
+    setValue('cover', null, { shouldDirty: true });
+    setCoverPreviewUrl(null);
+  };
+
+  const handleDigitalFileDelete = () => {
+    setValue('digital_file', null, { shouldDirty: true });
+  };
+
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -149,16 +184,27 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-4">
+              <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-4 relative">
                 {coverPreviewUrl ? (
-                  <img
-                    src={coverPreviewUrl}
-                    alt="Vista previa"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop';
-                    }}
-                  />
+                  <>
+                    <img
+                      src={coverPreviewUrl}
+                      alt="Vista previa"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=400&fit=crop';
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleCoverDelete}
+                      className="absolute top-2 right-2 p-1 rounded-full bg-gray-900/50 text-white hover:bg-red-500/70 transition-colors"
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
                     <Upload className="w-12 h-12" />
@@ -166,7 +212,17 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cover-upload">Subir nueva portada</Label>
+                {watchedCover && typeof watchedCover !== 'string' && (
+                  <p className="text-sm text-gray-500 truncate">
+                    Archivo seleccionado: <span className="font-medium text-gray-900">{watchedCover.name}</span>
+                  </p>
+                )}
+                <Label htmlFor="cover-upload">
+                  <div className="w-full flex justify-center items-center py-2 px-4 border border-biblioteca-blue text-biblioteca-blue rounded-md cursor-pointer hover:bg-biblioteca-blue/10 transition-colors">
+                    <Upload className="h-4 w-4 mr-2" />
+                    <span>Añadir archivo</span>
+                  </div>
+                </Label>
                 <Input
                   id="cover-upload"
                   type="file"
@@ -177,10 +233,73 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                       setValue('cover', file);
                     }
                   }}
-                  className={errors.cover ? 'border-red-500' : ''}
+                  className="hidden" // Oculta el input de archivo real
                 />
                 {errors.cover?.message && (
                   <p className="text-red-500 text-sm">{String(errors.cover.message)}</p>
+                )}
+              </div>
+
+              <div className="mt-4 space-y-2">
+                <Label htmlFor="digital_file">Archivo Digital (PDF, EPUB, etc.)</Label>
+                {watchedDigitalFile && (
+                  <div className="text-sm text-gray-500 flex items-center justify-end">
+                    {typeof watchedDigitalFile === 'string' ? (
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={watchedDigitalFile}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-biblioteca-blue hover:underline"
+                        >
+                          Ver archivo
+                        </a>
+                        <Button
+                          type="button"
+                          onClick={handleDigitalFileDelete}
+                          className="p-1 text-red-500 hover:bg-red-500/10"
+                          variant="ghost"
+                          size="icon"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-gray-900">Archivo añadido</span>
+                        <Button
+                          type="button"
+                          onClick={handleDigitalFileDelete}
+                          className="p-1 text-red-500 hover:bg-red-500/10"
+                          variant="ghost"
+                          size="icon"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <Label htmlFor="digital-file-upload">
+                  <div className="w-full flex justify-center items-center py-2 px-4 border border-biblioteca-blue text-biblioteca-blue rounded-md cursor-pointer hover:bg-biblioteca-blue/10 transition-colors">
+                    <FileText className="h-4 w-4 mr-2" />
+                    <span>Añadir archivo</span>
+                  </div>
+                </Label>
+                <Input
+                  id="digital-file-upload"
+                  type="file"
+                  accept=".pdf,.epub"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setValue('digital_file', file);
+                    }
+                  }}
+                  className="hidden" // Oculta el input de archivo real
+                />
+                {errors.digital_file?.message && (
+                  <p className="text-red-500 text-sm">{String(errors.digital_file.message)}</p>
                 )}
               </div>
             </CardContent>
@@ -347,7 +466,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
 
                 {/* Géneros */}
                 <div className="space-y-2">
-                  <Label htmlFor="genres">Género</Label>
+                  <Label htmlFor="genres" className='block py-2'>Género</Label>
                   <Controller
                     name="genres"
                     control={control}
@@ -355,7 +474,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                       <CommandPopover>
                         <CommandPopoverTrigger asChild>
                           <Button variant="outline" role="combobox" className="w-auto justify-between">
-                            {field.value?.[0] || "Seleccionar género..."}
+                            {field.value?.[0] ? genresData?.results?.find(g => g.slug === field.value?.[0])?.label : "Seleccionar género..."}
                           </Button>
                         </CommandPopoverTrigger>
                         <CommandPopoverContent className="p-0">
@@ -366,9 +485,9 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                               <CommandGroup>
                                 {genresData?.results?.map((genre) => (
                                   <CommandItem
-                                    key={genre.id}
-                                    value={genre.label}
-                                    onSelect={() => field.onChange([genre.label])}
+                                    key={genre.slug}
+                                    value={genre.slug}
+                                    onSelect={() => field.onChange([genre.slug])} // CHANGE 2: Set the form field value to the genre slug
                                   >
                                     {genre.label}
                                   </CommandItem>
@@ -446,7 +565,6 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     <p className="text-red-500 text-sm">{String(errors.publication_date.message)}</p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="language">Idioma</Label>
                   <Controller
@@ -458,8 +576,8 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                           <SelectValue placeholder="Seleccionar idioma" />
                         </SelectTrigger>
                         <SelectContent>
-                          {languages?.results?.map((lang) => (
-                            <SelectItem key={lang.name} value={lang.name}>
+                          {languageResults.map((lang) => (
+                            <SelectItem key={lang.slug} value={lang.name}>
                               {lang.name}
                             </SelectItem>
                           ))}
@@ -471,30 +589,13 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     <p className="text-red-500 text-sm">{String(errors.language.message)}</p>
                   )}
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="pages">Número de Páginas</Label>
-                  <Input id="pages" type="number" min="1" {...register('pages', { valueAsNumber: true })} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="digital_file">Archivo Digital (PDF, EPUB, etc.)</Label>
-                  <Input
-                    id="digital_file"
-                    type="file"
-                    accept=".pdf,.epub"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setValue('digital_file', file);
-                      }
-                    }}
-                  />
-                  {errors.digital_file?.message && (
-                    <p className="text-red-500 text-sm">{String(errors.digital_file.message)}</p>
-                  )}
-                </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pages">Número de Páginas</Label>
+                <Input id="pages" type="number" min="1" {...register('pages', { valueAsNumber: true })} />
+              </div>
+
             </CardContent>
           </Card>
 
@@ -511,9 +612,18 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                     <Input
                       id="quantity_in_stock"
                       type="number"
-                      readOnly
                       {...register('quantity_in_stock', { valueAsNumber: true })}
-                      className="bg-gray-100 cursor-not-allowed"
+                      className=""
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="available_copies">Ejemplares disponibles</Label>
+                    <Input
+                      id="available_copies"
+                      type="number"
+                      {...register('available_copies', { valueAsNumber: true })}
+                      className=""
+                      readOnly // Make this input read-only
                     />
                   </div>
                 </div>
