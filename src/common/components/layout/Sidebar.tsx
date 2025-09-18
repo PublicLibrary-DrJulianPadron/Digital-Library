@@ -22,7 +22,7 @@ const allMenuItems: MenuItem[] = [
   {
     group: "Administración",
     title: "Gestión de Contenido",
-    url: "/gestion", // ✅ aligned with App routes
+    url: "", // ✅ aligned with App routes
     icon: Book,
     requiresAuth: true,
     children: [

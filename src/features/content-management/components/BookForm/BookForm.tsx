@@ -329,7 +329,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
 
                 {/* Autores */}
                 <div className="space-y-2">
-                  <Label htmlFor="authors">Autor(es)</Label>
+                  <Label htmlFor="authors">Autor(es) *</Label>
                   <Controller
                     name="authors"
                     control={control}
@@ -433,13 +433,13 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
 
                 {/* ISBN */}
                 <div className="space-y-2">
-                  <Label htmlFor="isbn">ISBN</Label>
+                  <Label htmlFor="isbn">ISBN *</Label>
                   <Input id="isbn" {...register('isbn')} placeholder="978-0-123456-78-9" />
                 </div>
 
                 {/* Tipo de Material */}
                 <div className="space-y-2">
-                  <Label htmlFor="material_type">Tipo de Material</Label>
+                  <Label htmlFor="material_type">Tipo de Material *</Label>
                   <Controller
                     name="material_type"
                     control={control}
@@ -466,7 +466,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
 
                 {/* Géneros */}
                 <div className="space-y-2">
-                  <Label htmlFor="genres" className='block py-2'>Género</Label>
+                  <Label htmlFor="genres" className='block py-2'>Género *</Label>
                   <Controller
                     name="genres"
                     control={control}
@@ -566,7 +566,7 @@ export function BookForm({ initialData, onSubmit, onCancel, isSubmitting }: Book
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="language">Idioma</Label>
+                  <Label htmlFor="language">Idioma *</Label>
                   <Controller
                     name="language"
                     control={control}

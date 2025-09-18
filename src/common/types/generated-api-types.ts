@@ -1106,6 +1106,19 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
+        MinimalProfileRequest: {
+            /** Documento nacional */
+            national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
+            /**
+             * Fecha de nacimiento
+             * Format: date
+             */
+            birth_date?: string | null;
+            /** Teléfono */
+            phone?: string | null;
+        };
         /** @description Minimal serializer for listing videos.
          *     Shows only essential information. */
         MinimalVideo: {
@@ -1276,21 +1289,6 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["MinimalVideo"][];
         };
-        PaginatedProfileList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["Profile"][];
-        };
         PaginatedRoomBookingList: {
             /** @example 123 */
             count: number;
@@ -1394,6 +1392,19 @@ export interface components {
         PatchedMaterialTypeRequest: {
             name?: string;
             slug?: string;
+        };
+        PatchedMinimalProfileRequest: {
+            /** Documento nacional */
+            national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
+            /**
+             * Fecha de nacimiento
+             * Format: date
+             */
+            birth_date?: string | null;
+            /** Teléfono */
+            phone?: string | null;
         };
         /** @description Minimal serializer for listing videos.
          *     Shows only essential information. */
@@ -3593,7 +3604,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedProfileList"];
+                    "application/json": components["schemas"]["PaginatedMinimalProfileList"];
                 };
             };
         };
@@ -3607,9 +3618,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["ProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
-                "multipart/form-data": components["schemas"]["ProfileRequest"];
+                "application/json": components["schemas"]["MinimalProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalProfileRequest"];
+                "multipart/form-data": components["schemas"]["MinimalProfileRequest"];
             };
         };
         responses: {
@@ -3618,7 +3629,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["MinimalProfile"];
                 };
             };
         };
@@ -3640,7 +3651,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["MinimalProfile"];
                 };
             };
         };
@@ -3657,9 +3668,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["ProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
-                "multipart/form-data": components["schemas"]["ProfileRequest"];
+                "application/json": components["schemas"]["MinimalProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["MinimalProfileRequest"];
+                "multipart/form-data": components["schemas"]["MinimalProfileRequest"];
             };
         };
         responses: {
@@ -3668,7 +3679,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["MinimalProfile"];
                 };
             };
         };
@@ -3706,9 +3717,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedProfileRequest"];
-                "multipart/form-data": components["schemas"]["PatchedProfileRequest"];
+                "application/json": components["schemas"]["PatchedMinimalProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedMinimalProfileRequest"];
+                "multipart/form-data": components["schemas"]["PatchedMinimalProfileRequest"];
             };
         };
         responses: {
@@ -3717,7 +3728,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["MinimalProfile"];
                 };
             };
         };

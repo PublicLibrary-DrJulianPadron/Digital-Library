@@ -39,32 +39,32 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'MaterialTypes', id: 'LIST' }],
     }),
-    getMaterialTypeById: builder.query<MaterialType, number>({
-      query: (id) => `/library/material-types/${id}/`,
-      providesTags: (result, error, id) => [{ type: 'MaterialTypes', id }],
+    getMaterialTypeBySlug: builder.query<MaterialType, string>({
+      query: (slug) => `/library/material-types/${slug}/`,
+      providesTags: (result, error, slug) => [{ type: 'MaterialTypes', slug }],
     }),
-    updateMaterialType: builder.mutation<MaterialType, { id: number; body: MaterialTypeRequest }>({
+    updateMaterialType: builder.mutation<MaterialType, { slug: string; body: MaterialTypeRequest }>({
       query: (materialTypeData) => ({
-        url: `/library/material-types/${materialTypeData.id}/`,
+        url: `/library/material-types/${materialTypeData.slug}/`,
         method: 'PUT',
         body: materialTypeData.body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'MaterialTypes', id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: 'MaterialTypes', slug }],
     }),
-    partialUpdateMaterialType: builder.mutation<MaterialType, { id: number; body: PatchedMaterialTypeRequest }>({
+    partialUpdateMaterialType: builder.mutation<MaterialType, { slug: string; body: PatchedMaterialTypeRequest }>({
       query: (materialTypeData) => ({
-        url: `/library/material-types/${materialTypeData.id}/`,
+        url: `/library/material-types/${materialTypeData.slug}/`,
         method: 'PATCH',
         body: materialTypeData.body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'MaterialTypes', id }],
+      invalidatesTags: (result, error, { slug }) => [{ type: 'MaterialTypes', slug }],
     }),
-    deleteMaterialType: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/library/material-types/${id}/`,
+    deleteMaterialType: builder.mutation<void, string>({
+      query: (slug) => ({
+        url: `/library/material-types/${slug}/`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'MaterialTypes', id }, { type: 'MaterialTypes', id: 'LIST' }],
+      invalidatesTags: (result, error, slug) => [{ type: 'MaterialTypes', slug }, { type: 'MaterialTypes', id: 'LIST' }],
     }),
   }),
   overrideExisting: false,
@@ -73,7 +73,7 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetMaterialTypesQuery,
   useCreateMaterialTypeMutation,
-  useGetMaterialTypeByIdQuery,
+  useGetMaterialTypeBySlugQuery,
   useUpdateMaterialTypeMutation,
   usePartialUpdateMaterialTypeMutation,
   useDeleteMaterialTypeMutation,

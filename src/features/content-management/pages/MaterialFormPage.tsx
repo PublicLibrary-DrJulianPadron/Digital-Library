@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
     MaterialType,
     MaterialTypeRequest,
-    useGetMaterialTypeByIdQuery,
+    useGetMaterialTypeBySlugQuery,
     useUpdateMaterialTypeMutation,
     useCreateMaterialTypeMutation,
 } from "@/features/content-management/api/materialTypesApiSlice";
@@ -13,15 +13,15 @@ import { ReturnButton } from "@/common/components/ui/return-button";
 import { MaterialForm } from "@/features/content-management/components/MaterialForm/MaterialForm";
 
 const MaterialFormPage: React.FC = () => {
-    const { id: idString } = useParams<{ id: string }>();
+    const { slug: slugString } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const id = idString ? Number(idString) : undefined;
-    const isEditMode = !!id;
+    const slug = slugString ? slugString : undefined;
+    const isEditMode = !!slug;
 
-    const { data: materialType, isLoading: isMaterialLoading } = useGetMaterialTypeByIdQuery(id, {
-        skip: !isEditMode || isNaN(id),
+    const { data: materialType, isLoading: isMaterialLoading } = useGetMaterialTypeBySlugQuery(slug, {
+        skip: !isEditMode,
     });
 
     const [updateMaterialType, { isLoading: isUpdating }] = useUpdateMaterialTypeMutation();
@@ -32,8 +32,8 @@ const MaterialFormPage: React.FC = () => {
     const handleSubmit = async (materialData: Partial<MaterialType>) => {
         try {
             if (isEditMode) {
-                if (id) {
-                    await updateMaterialType({ id, body: materialData as MaterialTypeRequest }).unwrap();
+                if (slug) {
+                    await updateMaterialType({ slug, body: materialData as MaterialTypeRequest }).unwrap();
                     toast({
                         title: "Tipo de Material Actualizado",
                         description: `El tipo de material "${materialData.name}" ha sido actualizado exitosamente.`,

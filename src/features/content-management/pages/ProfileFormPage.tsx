@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/common/components/ui/card';
-import { Badge } from '@/common/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/common/components/ui/avatar';
 import { Button } from '@/common/components/ui/button';
 import { Edit, User, Mail, Phone, MapPin, Briefcase, Calendar, BookOpen, Activity } from 'lucide-react';
 import { Separator } from '@/common/components/ui/separator';
+import { ReturnButton } from '@/common/components/ui/return-button';
 import { useToast } from '@/common/hooks/use-toast';
 import { ProfileForm } from '@/features/content-management/components/ProfileForm/ProfileForm';
 import { Profile, ProfileFormData } from '@/features/content-management/components/ProfileForm/ProfileFormConfig';
@@ -15,35 +15,15 @@ export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Destructure the mutation trigger and state from the hook
-  const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileMutation();
+  // Correctly use the RTK Query hooks to fetch data
+  const { data: profile, isLoading, isError } = useGetProfileByIdQuery(id!, {
+    skip: !id, // Skip the query if id is not present
+  });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!id) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const fetchedProfile = await useGetProfileByIdQuery(id);
-        setProfile(fetchedProfile.data);
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "No se pudo cargar el perfil del usuario.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, [id, toast]);
+  const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileMutation();
 
   const handleEdit = () => {
     setEditing(true);
@@ -55,14 +35,14 @@ export default function ProfilePage() {
 
   const handleSave = async (profileData: ProfileFormData) => {
     if (!id) return;
-    setIsSubmitting(true);
     try {
       const formData = new FormData();
       Object.keys(profileData).forEach(key => {
         formData.append(key, profileData[key as keyof ProfileFormData]);
       });
-      await updateProfile({ id, formData });
-      setProfile({ ...profile, ...profileData } as Profile);
+
+      // Use the mutation trigger function returned by the hook
+      await updateProfile({ id, formData }).unwrap();
       setEditing(false);
       toast({
         title: "Éxito",
@@ -74,16 +54,32 @@ export default function ProfilePage() {
         description: "No se pudo actualizar el perfil.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const getInitials = (firstName: string, lastName: string): string => {
+  const getInitials = (firstName: string | undefined, lastName: string | undefined): string => {
+    if (!firstName || !lastName) return '';
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  if (loading) {
+  if (!id) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <ReturnButton />
+        <div className="flex items-center justify-between my-3">
+          <h1 className="text-3xl font-bold text-biblioteca-dark">Crear Nuevo Perfil</h1>
+        </div>
+        <ProfileForm
+          onSubmit={handleSave}
+          onCancel={() => navigate(-1)}
+          isUpdatingProfile={isUpdatingProfile}
+          isSubmitting={isSubmitting}
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className="container mx-auto p-6 flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-biblioteca-primary"></div>
@@ -91,15 +87,13 @@ export default function ProfilePage() {
     );
   }
 
-  if (!profile) {
+  if (isError || !profile) {
     return (
       <div className="container mx-auto p-6 max-w-4xl">
+        <ReturnButton />
         <Card>
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">Usuario no encontrado</p>
-            <Button onClick={() => navigate("/gestion")} className="w-full mt-4">
-              Volver a Gestión
-            </Button>
           </CardContent>
         </Card>
       </div>
@@ -108,7 +102,8 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto p-6 max-w-6xl">
-      <div className="flex items-center justify-between mb-6">
+      <ReturnButton />
+      <div className="flex items-center justify-between my-3">
         <h1 className="text-3xl font-bold text-biblioteca-dark">Perfil de Usuario</h1>
         {!editing && (
           <Button onClick={handleEdit} size="sm">
@@ -137,19 +132,12 @@ export default function ProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <CardTitle className="text-xl">{`${profile.user?.first_name} ${profile.user?.last_name}`}</CardTitle>
-              {/* <Badge variant={profile.activo ? "default" : "secondary"}>
-                {profile.activo ? "Activo" : "Inactivo"}
-              </Badge> */}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-2 text-sm">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span>Cédula: {profile.national_document || 'N/A'}</span>
               </div>
-              {/* <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="truncate">{profile.email}</span>
-              </div> */}
               {profile.phone && (
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-4 w-4 text-muted-foreground" />
@@ -184,22 +172,6 @@ export default function ProfilePage() {
                   Estadísticas de Préstamos
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center">
-                        <p className="text-3xl font-bold text-biblioteca-primary">{profile.prestamos_activos}</p>
-                        <p className="text-sm text-muted-foreground">Préstamos Activos</p>
-                      </div>
-                    </CardContent>
-                  </Card> */}
-                  {/* <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center">
-                        <p className="text-3xl font-bold text-biblioteca-accent">{profile.total_libros_prestados}</p>
-                        <p className="text-sm text-muted-foreground">Total de Libros Prestados</p>
-                      </div>
-                    </CardContent>
-                  </Card> */}
                 </div>
               </div>
             </CardContent>
@@ -207,13 +179,6 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {!editing && (
-        <div className="mt-6 flex justify-end">
-          <Button onClick={() => navigate('/gestion')} variant="outline">
-            Volver a Gestión
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

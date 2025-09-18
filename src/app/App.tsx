@@ -23,7 +23,8 @@ import MaterialManagementPage from "../features/content-management/pages/Materia
 import MaterialFormPage from "../features/content-management/pages/MaterialFormPage";
 import AuthorManagementPage from "../features/content-management/pages/AuthorManagementPage";
 import AuthorFormPage from "../features/content-management/pages/AuthorFormPage";
-import Gestion from "../features/content-management/pages/ProfileManagementPage";
+import ProfileManagementPage from "../features/content-management/pages/ProfileManagementPage";
+import ProfileFormPage from "../features/content-management/pages/ProfileFormPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/content-management/pages/ProfileFormPage";
 import MisPrestamos from "../features/loans/pages/MyLoansPage";
@@ -69,9 +70,10 @@ export const App = () => {
                     <Route path="/gestion/autores" element={<AuthorManagementPage />} />
                     <Route path="/gestion/autores/create" element={<AuthorFormPage />} />
                     <Route path="/gestion/autores/:slug" element={<AuthorFormPage />} />
+                    <Route path="/gestion/usuarios" element={<ProfileManagementPage />} />
+                    <Route path="/gestion/usuarios/create" element={<ProfileFormPage />} />
+                    <Route path="/gestion/usuarios/:id" element={<ProfileFormPage />} />
                     <Route path="/estadisticas" element={<Estadisticas />} />
-                    <Route path="/gestion/usuarios" element={<Gestion />} />
-                    <Route path="/gestion/usuarios/:id" element={<UserProfilePage />} />
                     {/* <Route path="/mis-prestamos" element={<MisPrestamos />} /> */}
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />

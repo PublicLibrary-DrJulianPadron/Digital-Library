@@ -71,9 +71,9 @@ const MaterialManagementPage: React.FC = () => {
     navigate(`/gestion/materiales/${materialTypeId}`);
   };
 
-  const handleDeleteMaterialType = async (materialTypeId: number, materialLabel: string) => {
+  const handleDeleteMaterialType = async (materialTypeSlug: string, materialLabel: string) => {
     try {
-      await deleteMaterialType(materialTypeId).unwrap();
+      await deleteMaterialType(materialTypeSlug).unwrap();
       toast({
         title: "Tipo de Material Eliminado",
         description: `El tipo de material "${materialLabel}" ha sido eliminado exitosamente.`,
@@ -217,7 +217,7 @@ const MaterialManagementPage: React.FC = () => {
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-red-500 text-white hover:bg-red-600"
-                                  onClick={() => handleDeleteMaterialType(materialType.id, materialType.name)}
+                                  onClick={() => handleDeleteMaterialType(materialType.slug, materialType.name)}
                                 >
                                   Eliminar
                                 </AlertDialogAction>
@@ -268,7 +268,7 @@ const MaterialManagementPage: React.FC = () => {
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-red-500 text-white hover:bg-red-600"
-                                  onClick={() => handleDeleteMaterialType(materialType.id, materialType.name)}
+                                  onClick={() => handleDeleteMaterialType(materialType.slug, materialType.name)}
                                 >
                                   Eliminar
                                 </AlertDialogAction>
