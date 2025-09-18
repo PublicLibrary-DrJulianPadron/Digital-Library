@@ -39,22 +39,22 @@ export const profileApiSlice = apiSlice.injectEndpoints({
             query: (id) => `/profiles/${id}/`,
             providesTags: (result, error, id) => [{ type: "Profiles", id }],
         }),
-        createProfile: builder.mutation<Profile, Partial<ProfileRequest>>({
-            query: (body) => ({
+        createProfile: builder.mutation<Profile, {formData: FormData}>({
+            query: (formData) => ({
                 url: "/profiles/",
                 method: "POST",
-                body,
+                formData,
             }),
             invalidatesTags: [{ type: "Profiles", id: "LIST" }],
         }),
         updateProfile: builder.mutation<
             Profile,
-            { id: string; data: Partial<ProfileRequest> }
+            { id: string; formData: FormData }
         >({
-            query: ({ id, data }) => ({
+            query: ({ id, formData }) => ({
                 url: `/profiles/${id}/`,
                 method: "PUT",
-                body: data,
+                body: formData,
             }),
             invalidatesTags: (result, error, { id }) => [{ type: "Profiles", id }],
         }),

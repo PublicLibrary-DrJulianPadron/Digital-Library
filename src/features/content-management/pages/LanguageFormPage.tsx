@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
     Language,
     LanguageRequest,
-    useGetLanguageByIdQuery,
+    useGetLanguageBySlugQuery,
     useUpdateLanguageMutation,
     useCreateLanguageMutation,
 } from "@/features/content-management/api/languagesApiSlice";
@@ -13,15 +13,15 @@ import { ReturnButton } from "@/common/components/ui/return-button";
 import { LanguageForm } from "@/features/content-management/components/LanguageForm/LanguageForm";
 
 const LanguageFormPage: React.FC = () => {
-    const { id: idString } = useParams<{ id: string }>();
+    const { slug: slugString } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const id = idString ? Number(idString) : undefined;
-    const isEditMode = !!id;
+    const slug = slugString ? slugString : undefined;
+    const isEditMode = !!slug;
 
-    const { data: language, isLoading: isLanguageLoading } = useGetLanguageByIdQuery(id, {
-        skip: !isEditMode || isNaN(id),
+    const { data: language, isLoading: isLanguageLoading } = useGetLanguageBySlugQuery(slug, {
+        skip: !isEditMode,
     });
 
     const [updateLanguage, { isLoading: isUpdating }] = useUpdateLanguageMutation();
@@ -32,8 +32,8 @@ const LanguageFormPage: React.FC = () => {
     const handleSubmit = async (languageData: Partial<Language>) => {
         try {
             if (isEditMode) {
-                if (id) {
-                    await updateLanguage({ id, body: languageData as LanguageRequest }).unwrap();
+                if (slug) {
+                    await updateLanguage({ slug, body: languageData as LanguageRequest }).unwrap();
                     toast({
                         title: "Idioma Actualizado",
                         description: `El idioma "${languageData.name}" ha sido actualizado exitosamente.`,

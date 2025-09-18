@@ -23,9 +23,9 @@ import MaterialManagementPage from "../features/content-management/pages/Materia
 import MaterialFormPage from "../features/content-management/pages/MaterialFormPage";
 import AuthorManagementPage from "../features/content-management/pages/AuthorManagementPage";
 import AuthorFormPage from "../features/content-management/pages/AuthorFormPage";
-import Gestion from "../features/content-management/pages/UserManagementPage";
+import Gestion from "../features/content-management/pages/ProfileManagementPage";
 import DetallesUsuario from "../features/users/pages/UserDetailsPage";
-import UserProfilePage from "../features/content-management/pages/UserFormPage";
+import UserProfilePage from "../features/content-management/pages/ProfileFormPage";
 import MisPrestamos from "../features/loans/pages/MyLoansPage";
 import NotFound from "../pages/NotFound";
 

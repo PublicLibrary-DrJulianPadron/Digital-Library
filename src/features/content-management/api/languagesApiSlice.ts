@@ -39,7 +39,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: 'Languages', id: 'LIST' }],
     }),
-    getLanguageBySlug: builder.query<Language, number>({
+    getLanguageBySlug: builder.query<Language, string>({
       query: (slug) => `/library/languages/${slug}/`,
       providesTags: (result, error, slug) => [{ type: 'Languages', slug }],
     }),

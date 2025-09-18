@@ -11,29 +11,32 @@ export const authApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         logIn: builder.mutation<AuthSuccessResponse, LoginRequest>({
             query: (payload) => ({
-                url: 'users/login/',
+                url: 'login/',
                 method: 'POST',
                 body: payload,
+                providesTags: (result, error, id) => [{ type: "User", id }],
             }),
         }),
         signUp: builder.mutation<AuthSuccessResponse, SignUpRequest>({
             query: (payload) => ({
-                url: 'users/signup/',
+                url: 'signup/',
                 method: 'POST',
                 body: payload,
+                providesTags: (result, error, id) => [{ type: "User", id }],
             }),
         }),
         signOut: builder.mutation<AuthSuccessResponse, void>({
             query: () => ({
-                url: 'users/signout/',
+                url: 'signout/',
                 method: 'POST',
                 body: {},
             }),
+            invalidatesTags: [{ type: "User", id: "LIST" }],
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
                     deleteCookie('csrftoken');
-                    dispatch(apiSlice.util.invalidateTags(['Profile']));
+                    dispatch(apiSlice.util.invalidateTags(['User']));
                 } catch (error) {
                     console.error('Logout failed:', error);
                 }

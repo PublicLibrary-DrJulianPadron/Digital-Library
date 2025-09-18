@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avat
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
 import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
-import { useGetUserProfileQuery } from "@/features/content-management/api/s";
+import { useGetUserQuery } from "@/features/content-management/api/userApiSlice";
 
 export function UserProfile() {
   const navigate = useNavigate();
@@ -24,16 +24,13 @@ export function UserProfile() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
-  const { data: profile, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserProfileQuery(undefined, {
+  const { data: profileData, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserQuery({ page_size: 1 }, {
     skip: !isAuthenticated,
   });
 
-
   useEffect(() => {
-
     const checkAuthStatus = () => {
       const csrfToken = getCookie('csrftoken');
       const isCurrentlyAuthenticated = !!csrfToken;
@@ -46,11 +43,8 @@ export function UserProfile() {
     };
 
     checkAuthStatus();
-
     const intervalId = setInterval(checkAuthStatus, 1000);
-
     return () => clearInterval(intervalId);
-
   }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
@@ -88,9 +82,12 @@ export function UserProfile() {
     return <div>Loading...</div>;
   }
 
-  if (isAuthenticated && profile) {
-    const firstName = profile?.user?.first_name || "";
-    const lastName = profile?.user?.last_name || "";
+  const userProfile = profileData?.results?.[0]?.user;
+
+
+  if (isAuthenticated && !!userProfile) {
+    const firstName = userProfile?.first_name || "";
+    const lastName = userProfile?.last_name || "";
 
     return (
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
@@ -129,22 +126,22 @@ export function UserProfile() {
         </DropdownMenuContent>
       </DropdownMenu>
     );
+  } else {
+    return (
+      <div>
+        <button
+          onClick={() => setShowLoginDialog(true)}
+          className="group flex items-center px-3 pr-2 py-2 w-max rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
+        >
+          <div className="flex items-center overflow-hidden transition-all duration-300 ease-in-out md:group-hover:w-[140px] md:w-[24px]">
+            <LogInIcon className="h-4 w-4 flex-shrink-0" />
+            <span className="whitespace-nowrap transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 ml-2">
+              Iniciar Sesión
+            </span>
+          </div>
+        </button>
+        <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
+      </div>
+    );
   }
-
-  return (
-    <div>
-      <button
-        onClick={() => setShowLoginDialog(true)}
-        className="group flex items-center px-3 pr-2 py-2 w-max rounded-md bg-accent text-accent-foreground font-semibold hover:opacity-90 transition-opacity"
-      >
-        <div className="flex items-center overflow-hidden transition-all duration-300 ease-in-out md:group-hover:w-[140px] md:w-[24px]">
-          <LogInIcon className="h-4 w-4 flex-shrink-0" />
-          <span className="whitespace-nowrap transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 ml-2">
-            Iniciar Sesión
-          </span>
-        </div>
-      </button>
-      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
-    </div>
-  );
 }
