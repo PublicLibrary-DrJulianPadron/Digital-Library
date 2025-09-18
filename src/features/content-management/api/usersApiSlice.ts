@@ -7,8 +7,8 @@ type ProfileResponse = components['schemas']['Profile'];
 export const profileApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserProfile: builder.query<ProfileResponse, void>({
-      query: () => 'users/me/',
-      providesTags: ['Profile'], 
+      query: () => 'user/',
+      providesTags: ['User'], 
     }),
   }),
 });

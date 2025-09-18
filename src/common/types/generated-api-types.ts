@@ -575,63 +575,7 @@ export interface paths {
         patch: operations["api_library_videos_partial_update"];
         trace?: never;
     };
-    "/api/users/admin/profiles/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List all profiles (admin only)
-         * @description Retrieve a list of all user profiles. Requires admin privileges.
-         */
-        get: operations["api_users_admin_profiles_list"];
-        put?: never;
-        /**
-         * Create a profile (admin only)
-         * @description Create a new user profile. Requires admin privileges.
-         */
-        post: operations["api_users_admin_profiles_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/admin/profiles/{id}/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve a profile (admin only)
-         * @description Retrieve a single profile by ID. Requires admin privileges.
-         */
-        get: operations["api_users_admin_profiles_retrieve"];
-        /**
-         * Update a profile (admin only)
-         * @description Fully update an existing profile by ID. Requires admin privileges.
-         */
-        put: operations["api_users_admin_profiles_update"];
-        post?: never;
-        /**
-         * Delete a profile (admin only)
-         * @description Delete an existing profile by ID. Requires admin privileges.
-         */
-        delete: operations["api_users_admin_profiles_destroy"];
-        options?: never;
-        head?: never;
-        /**
-         * Partially update a profile (admin only)
-         * @description Partially update fields of an existing profile by ID. Requires admin privileges.
-         */
-        patch: operations["api_users_admin_profiles_partial_update"];
-        trace?: never;
-    };
-    "/api/users/login/": {
+    "/api/login/": {
         parameters: {
             query?: never;
             header?: never;
@@ -644,42 +588,14 @@ export interface paths {
          * User login
          * @description Authenticate a user, returning a success message in the body and JWT tokens via HTTP-only cookies.
          */
-        post: operations["api_users_login_create"];
+        post: operations["api_login_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/me/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieve own profile
-         * @description Retrieve the authenticated user's profile. If it does not exist, it will be created automatically.
-         */
-        get: operations["api_users_me_retrieve"];
-        /**
-         * Update own profile
-         * @description Fully update the authenticated user's profile.
-         */
-        put: operations["api_users_me_update"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Update own profile
-         * @description Update the authenticated user's profile.
-         */
-        patch: operations["api_users_me_partial_update"];
-        trace?: never;
-    };
-    "/api/users/password_change/": {
+    "/api/password_change/": {
         parameters: {
             query?: never;
             header?: never;
@@ -692,14 +608,14 @@ export interface paths {
          * Update user password
          * @description Allows an authenticated user to update their password by providing the current (old) password and the new password.Validates the old password and enforces password policies on the new one.
          */
-        post: operations["api_users_password_change_create"];
+        post: operations["api_password_change_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/password_reset/": {
+    "/api/password_reset/": {
         parameters: {
             query?: never;
             header?: never;
@@ -708,18 +624,17 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Password Reset
-         * @description Solicita un token para restablecer la contraseña. Este endpoint envía un email con instrucciones.
-         */
-        post: operations["api_users_password_reset_create"];
+        /** @description An Api View which provides a method to request a password reset token based on an e-mail address
+         *
+         *     Sends a signal reset_password_token_created when a reset token was created */
+        post: operations["api_password_reset_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/password_reset/confirm/": {
+    "/api/password_reset/confirm/": {
         parameters: {
             query?: never;
             header?: never;
@@ -728,18 +643,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Confirmación de Password Reset
-         * @description Confirma el token y establece la nueva contraseña.
-         */
-        post: operations["api_users_password_reset_confirm_create"];
+        /** @description An Api View which provides a method to reset a password based on a unique token */
+        post: operations["api_password_reset_confirm_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/password_reset/validate_token/": {
+    "/api/password_reset/validate_token/": {
         parameters: {
             query?: never;
             header?: never;
@@ -748,18 +660,47 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Validar Token de Password Reset
-         * @description Verifica que un token de restablecimiento de contraseña es válido.
-         */
-        post: operations["api_users_password_reset_validate_token_create"];
+        /** @description An Api View which provides a method to verify that a token is valid */
+        post: operations["api_password_reset_validate_token_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/signout/": {
+    "/api/profiles/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_profiles_list"];
+        put?: never;
+        post: operations["api_profiles_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/profiles/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_profiles_retrieve"];
+        put: operations["api_profiles_update"];
+        post?: never;
+        delete: operations["api_profiles_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["api_profiles_partial_update"];
+        trace?: never;
+    };
+    "/api/signout/": {
         parameters: {
             query?: never;
             header?: never;
@@ -772,14 +713,14 @@ export interface paths {
          * User signout
          * @description Logs a user out by deleting their authentication tokens (access and refresh) and CSRF token from HTTP-only cookies.
          */
-        post: operations["api_users_signout_create"];
+        post: operations["api_signout_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/signup/": {
+    "/api/signup/": {
         parameters: {
             query?: never;
             header?: never;
@@ -792,14 +733,14 @@ export interface paths {
          * User registration
          * @description Register a new user. On successful registration, a success message is returned in the body, and JWT tokens are set in HTTP-only cookies.
          */
-        post: operations["api_users_signup_create"];
+        post: operations["api_signup_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/users/token/refresh/": {
+    "/api/token/refresh/": {
         parameters: {
             query?: never;
             header?: never;
@@ -812,11 +753,43 @@ export interface paths {
          * Refresh access token
          * @description Generates a new short-lived access token using the refresh token stored in an HttpOnly cookie. The new access token is also returned via an HttpOnly cookie.
          */
-        post: operations["api_users_token_refresh_create"];
+        post: operations["api_token_refresh_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/user/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_user_list"];
+        put?: never;
+        post: operations["api_user_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["api_user_retrieve"];
+        put: operations["api_user_update"];
+        post?: never;
+        delete: operations["api_user_destroy"];
+        options?: never;
+        head?: never;
+        patch: operations["api_user_partial_update"];
         trace?: never;
     };
 }
@@ -929,6 +902,10 @@ export interface components {
             genres?: string[];
             material_type?: string | null;
             language?: string;
+        };
+        Email: {
+            /** Format: email */
+            email: string;
         };
         EmailRequest: {
             /** Format: email */
@@ -1106,6 +1083,29 @@ export interface components {
             name: string;
             slug?: string;
         };
+        MinimalProfile: {
+            /**
+             * ID único
+             * Format: uuid
+             */
+            readonly id: string;
+            readonly user: components["schemas"]["User"];
+            /** Documento nacional */
+            national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
+            /**
+             * Fecha de nacimiento
+             * Format: date
+             */
+            birth_date?: string | null;
+            /** Teléfono */
+            phone?: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
         /** @description Minimal serializer for listing videos.
          *     Shows only essential information. */
         MinimalVideo: {
@@ -1246,6 +1246,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["MinimalMaterialType"][];
         };
+        PaginatedMinimalProfileList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["MinimalProfile"][];
+        };
         PaginatedMinimalVideoList: {
             /** @example 123 */
             count: number;
@@ -1261,7 +1276,7 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["MinimalVideo"][];
         };
-        PaginatedProfileAdminList: {
+        PaginatedProfileList: {
             /** @example 123 */
             count: number;
             /**
@@ -1274,7 +1289,7 @@ export interface components {
              * @example http://api.example.org/accounts/?page=2
              */
             previous?: string | null;
-            results: components["schemas"]["ProfileAdmin"][];
+            results: components["schemas"]["Profile"][];
         };
         PaginatedRoomBookingList: {
             /** @example 123 */
@@ -1298,6 +1313,11 @@ export interface components {
         PasswordChangeRequest: {
             old_password: string;
             new_password: string;
+        };
+        PasswordToken: {
+            /** Contraseña */
+            password: string;
+            token: string;
         };
         PasswordTokenRequest: {
             /** Contraseña */
@@ -1388,21 +1408,6 @@ export interface components {
             genres?: number[];
             material_type?: number;
         };
-        PatchedProfileAdminRequest: {
-            /** @description ID of the user associated with this profile */
-            user_id?: number;
-            /** Documento nacional */
-            national_document?: string | null;
-            /** Dirección */
-            address?: string | null;
-            /**
-             * Fecha de nacimiento
-             * Format: date
-             */
-            birth_date?: string | null;
-            /** Teléfono */
-            phone?: string | null;
-        };
         PatchedProfileRequest: {
             /** Documento nacional */
             national_document?: string | null;
@@ -1463,44 +1468,6 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
-        ProfileAdmin: {
-            /**
-             * ID único
-             * Format: uuid
-             */
-            readonly id: string;
-            readonly user: components["schemas"]["User"];
-            /** Documento nacional */
-            national_document?: string | null;
-            /** Dirección */
-            address?: string | null;
-            /**
-             * Fecha de nacimiento
-             * Format: date
-             */
-            birth_date?: string | null;
-            /** Teléfono */
-            phone?: string | null;
-            /** Format: date-time */
-            readonly created_at: string;
-            /** Format: date-time */
-            readonly updated_at: string;
-        };
-        ProfileAdminRequest: {
-            /** @description ID of the user associated with this profile */
-            user_id: number;
-            /** Documento nacional */
-            national_document?: string | null;
-            /** Dirección */
-            address?: string | null;
-            /**
-             * Fecha de nacimiento
-             * Format: date
-             */
-            birth_date?: string | null;
-            /** Teléfono */
-            phone?: string | null;
-        };
         ProfileRequest: {
             /** Documento nacional */
             national_document?: string | null;
@@ -1513,6 +1480,9 @@ export interface components {
             birth_date?: string | null;
             /** Teléfono */
             phone?: string | null;
+        };
+        ResetToken: {
+            token: string;
         };
         ResetTokenRequest: {
             token: string;
@@ -1591,11 +1561,7 @@ export interface components {
          * @enum {string}
          */
         StatusEnum: "Active" | "Returned" | "Overdue";
-        StatusOKResponse: {
-            status: string;
-        };
         User: {
-            readonly id: number;
             /** Nombre */
             first_name?: string;
             /** Apellidos */
@@ -1605,18 +1571,6 @@ export interface components {
              * Format: email
              */
             email?: string;
-        };
-        UserProfileCreateAdminRequest: {
-            /** Format: email */
-            email: string;
-            password: string;
-            first_name: string;
-            last_name: string;
-            national_document?: string;
-            /** Format: date */
-            birth_date?: string | null;
-            phone?: string;
-            address?: string;
         };
         UserRequest: {
             /** Nombre */
@@ -3237,255 +3191,7 @@ export interface operations {
             };
         };
     };
-    api_users_admin_profiles_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-                /** @description A page number within the paginated result set. */
-                page?: number;
-                /** @description Number of results to return per page. */
-                page_size?: number;
-                /** @description A search term. */
-                search?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of profiles retrieved successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedProfileAdminList"];
-                };
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_admin_profiles_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserProfileCreateAdminRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["UserProfileCreateAdminRequest"];
-                "multipart/form-data": components["schemas"]["UserProfileCreateAdminRequest"];
-            };
-        };
-        responses: {
-            /** @description Profile created successfully. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProfileAdmin"];
-                };
-            };
-            /** @description Invalid input data. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_admin_profiles_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A UUID string identifying this Perfil. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Profile retrieved successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProfileAdmin"];
-                };
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Profile not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_admin_profiles_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A UUID string identifying this Perfil. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ProfileAdminRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProfileAdminRequest"];
-                "multipart/form-data": components["schemas"]["ProfileAdminRequest"];
-            };
-        };
-        responses: {
-            /** @description Profile updated successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProfileAdmin"];
-                };
-            };
-            /** @description Invalid input data. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Profile not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_admin_profiles_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A UUID string identifying this Perfil. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Profile deleted successfully. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Profile not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_admin_profiles_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description A UUID string identifying this Perfil. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedProfileAdminRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedProfileAdminRequest"];
-                "multipart/form-data": components["schemas"]["PatchedProfileAdminRequest"];
-            };
-        };
-        responses: {
-            /** @description Profile updated successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProfileAdmin"];
-                };
-            };
-            /** @description Invalid input data. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Forbidden - admin access required. */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Profile not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_login_create: {
+    api_login_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3523,114 +3229,7 @@ export interface operations {
             };
         };
     };
-    api_users_me_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Profile retrieved successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Profile"];
-                };
-            };
-            /** @description Authentication required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_me_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
-                "multipart/form-data": components["schemas"]["ProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description Profile updated successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Profile"];
-                };
-            };
-            /** @description Invalid input. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Authentication required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_me_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedProfileRequest"];
-                "multipart/form-data": components["schemas"]["PatchedProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description Profile updated successfully. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Profile"];
-                };
-            };
-            /** @description Invalid input. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Authentication required. */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    api_users_password_change_create: {
+    api_password_change_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3670,7 +3269,7 @@ export interface operations {
             };
         };
     };
-    api_users_password_reset_create: {
+    api_password_reset_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3690,12 +3289,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatusOKResponse"];
+                    "application/json": components["schemas"]["Email"];
                 };
             };
         };
     };
-    api_users_password_reset_confirm_create: {
+    api_password_reset_confirm_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3715,12 +3314,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatusOKResponse"];
+                    "application/json": components["schemas"]["PasswordToken"];
                 };
             };
         };
     };
-    api_users_password_reset_validate_token_create: {
+    api_password_reset_validate_token_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3740,12 +3339,164 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatusOKResponse"];
+                    "application/json": components["schemas"]["ResetToken"];
                 };
             };
         };
     };
-    api_users_signout_create: {
+    api_profiles_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedMinimalProfileList"];
+                };
+            };
+        };
+    };
+    api_profiles_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
+                "multipart/form-data": components["schemas"]["ProfileRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_profiles_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_profiles_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
+                "multipart/form-data": components["schemas"]["ProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_profiles_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_profiles_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProfileRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_signout_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3763,7 +3514,7 @@ export interface operations {
             };
         };
     };
-    api_users_signup_create: {
+    api_signup_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3794,7 +3545,7 @@ export interface operations {
             };
         };
     };
-    api_users_token_refresh_create: {
+    api_token_refresh_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3816,6 +3567,158 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    api_user_list: {
+        parameters: {
+            query?: {
+                /** @description Which field to use when ordering the results. */
+                ordering?: string;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedProfileList"];
+                };
+            };
+        };
+    };
+    api_user_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
+                "multipart/form-data": components["schemas"]["ProfileRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_user_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_user_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
+                "multipart/form-data": components["schemas"]["ProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    api_user_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    api_user_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description A UUID string identifying this Perfil. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProfileRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProfileRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Profile"];
+                };
             };
         };
     };

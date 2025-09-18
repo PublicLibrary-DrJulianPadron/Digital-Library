@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avat
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
 import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
-import { useGetUserProfileQuery } from "@/features/users/api/profileApiSlice";
+import { useGetUserProfileQuery } from "@/features/content-management/api/s";
 
 export function UserProfile() {
   const navigate = useNavigate();

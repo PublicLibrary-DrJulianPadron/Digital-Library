@@ -17,7 +17,7 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { apiSlice } from '@/common/api/apiSlice';
-import { profileApiSlice }from '@/features/users/api/profileApiSlice';
+import { profileApiSlice }from '@/features/content-management/api/s';
 import { booksApiSlice }from '@/features/content-management/api/booksApiSlice';
 import { genresApiSlice }from '@/features/content-management/api/genresApiSlice';
 import { materialTypesApiSlice }from '@/features/content-management/api/materialTypesApiSlice';
