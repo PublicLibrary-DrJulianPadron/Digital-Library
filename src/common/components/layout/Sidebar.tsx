@@ -1,30 +1,41 @@
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import {
-  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
-  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem
+  MenuItem, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
+  SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+  SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
-import { Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, User } from "lucide-react";
-import { LucideProps } from "lucide-react";
+import {
+  Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, Users, Book,
+  BookType, Languages, ScrollText, ChevronDown, ChevronRight, User
+} from "lucide-react";
 import { Link } from 'react-router-dom';
+import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
 
-const allMenuItems = [
+const allMenuItems: MenuItem[] = [
   { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
-  { group: "Navegación", title: "Catálogo", url: "/catalogo", icon: BookOpen, requiresAuth: false },
+  {
+    group: "Navegación", title: "Salas", url: "/salas", icon: BookOpen, requiresAuth: false},
   { group: "Navegación", title: "Historia", url: "/historia", icon: Clock, requiresAuth: false },
-  { group: "Navegación", title: "Préstamo Sala", url: "/prestamo-sala", icon: Calendar, requiresAuth: true },
-  { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
-  { group: "Administración", title: "Gestión", url: "/gestion", icon: User, requiresAuth: true },
-  { group: "Administración", title: "Colección", url: "/coleccion", icon: LibraryBig, requiresAuth: true },
+  { group: "Administración", title: "Préstamo Sala", url: "/prestamo/sala", icon: Calendar, requiresAuth: true },
+  {
+    group: "Administración",
+    title: "Gestión de Contenido",
+    url: "", // ✅ aligned with App routes
+    icon: Book,
+    requiresAuth: true,
+    children: [
+      { title: "Colección", url: "/gestion/coleccion", icon: LibraryBig, requiresAuth: true },
+      { title: "Géneros", url: "/gestion/generos", icon: BookType, requiresAuth: true },
+      { title: "Lenguajes", url: "/gestion/lenguajes", icon: Languages, requiresAuth: true },
+      { title: "Materiales", url: "/gestion/materiales", icon: ScrollText, requiresAuth: true },
+      { title: "Autores", url: "/gestion/autores", icon: User, requiresAuth: true }, // ✅ fixed author icon
+    ]
+  },
+  // { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
+  { group: "Administración", title: "Gestión de Usuarios", url: "/gestion/usuarios", icon: Users, requiresAuth: true },
 ];
-
-interface MenuItem {
-  group: string;
-  title: string;
-  url: string;
-  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
-  requiresAuth: boolean;
-}
 
 type GroupedMenuItems = {
   [key: string]: MenuItem[];
@@ -32,6 +43,8 @@ type GroupedMenuItems = {
 
 export function AppSidebar() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { data: salas } = useGetSalaWithGenresQuery();
+  const [expandedSalas, setExpandedSalas] = useState<Record<string, boolean>>({});
 
   const visibleItems = allMenuItems.filter(item => !item.requiresAuth || isAuthenticated);
 
@@ -39,6 +52,10 @@ export function AppSidebar() {
     (acc[item.group] = acc[item.group] || []).push(item);
     return acc;
   }, {} as GroupedMenuItems);
+
+  const toggleSala = (salaName: string) => {
+    setExpandedSalas(prev => ({ ...prev, [salaName]: !prev[salaName] }));
+  };
 
   return (
     <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
@@ -65,17 +82,78 @@ export function AppSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map(item => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
-                    >
-                      <Link to={item.url} className="flex items-center gap-3"> {/* ⬅️ The fix */}
-                        <item.icon size={18} />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <div key={item.title}>
+                    {item.title === "Salas" ? (
+                      <SidebarMenuDropdown
+                        label="Salas"
+                        icon={<BookOpen size={18} />}
+                      >
+                        <SidebarMenuDropdownItem>
+                          <Link to="/salas" className="flex items-center gap-3 w-full h-full">
+                            <BookOpen size={18} />
+                            <span>Todos los libros</span>
+                          </Link>
+                        </SidebarMenuDropdownItem>
+
+                        {salas?.map((sala) => (
+                          <div key={sala.sala}>
+                            <button
+                              onClick={() => toggleSala(sala.sala)}
+                              className="flex items-center justify-between w-full px-2 py-1 text-left hover:bg-biblioteca-blue/50 text-white"
+                            >
+                              <span>{sala.sala}</span>
+                              {expandedSalas[sala.sala] ? (
+                                <ChevronDown size={14} />
+                              ) : (
+                                <ChevronRight size={14} />
+                              )}
+                            </button>
+
+                            {expandedSalas[sala.sala] && (
+                              <ul className="pl-4 mt-1 space-y-1">
+                                {sala.genres.map((genre) => (
+                                  <li key={genre.slug}>
+                                    <Link
+                                      to={`/salas?genre=${genre.slug}`}
+                                      className="block w-full pl-6 pr-2 py-1 text-sm text-white hover:bg-biblioteca-blue/50 whitespace-normal break-words leading-snug"
+                                    >
+                                      {genre.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </SidebarMenuDropdown>
+                    ) : item.children ? (
+                      <SidebarMenuDropdown
+                        label={item.title}
+                        icon={<item.icon size={18} />}
+                      >
+                        {item.children.map(child => (
+                          <SidebarMenuDropdownItem key={child.title}>
+                            <Link to={child.url} className="flex items-center gap-3 w-full h-full">
+                              <child.icon size={18} />
+                              <span>{child.title}</span>
+                            </Link>
+                          </SidebarMenuDropdownItem>
+                        ))}
+                      </SidebarMenuDropdown>
+                    ) : (
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          asChild
+                          className="text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200"
+                        >
+                          <Link to={item.url} className="flex items-center gap-3">
+                            <item.icon size={18} />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )}
+                  </div>
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>

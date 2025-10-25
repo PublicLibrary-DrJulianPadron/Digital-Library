@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, ChevronDown, LucideProps } from "lucide-react"
 
 import { useIsMobile } from "@/common/hooks/use-mobile"
 import { cn } from "@/common/lib/utils"
@@ -23,6 +23,22 @@ const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
+
+export interface SubMenuItem {
+  title: string;
+  url: string;
+  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
+  requiresAuth: boolean;
+}
+
+export interface MenuItem {
+  group: string;
+  title: string;
+  url: string;
+  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
+  requiresAuth: boolean;
+  children?: SubMenuItem[];
+}
 
 type SidebarContext = {
   state: "expanded" | "collapsed"
@@ -396,34 +412,30 @@ SidebarSeparator.displayName = "SidebarSeparator"
 const SidebarContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      data-sidebar="content"
-      className={cn(
-        "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
-        className
-      )}
-      {...props}
-    />
-  )
-})
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    data-sidebar="content"
+    className={cn(
+      "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+      className
+    )}
+    {...props}
+  />
+))
 SidebarContent.displayName = "SidebarContent"
 
 const SidebarGroup = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div">
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
-      {...props}
-    />
-  )
-})
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    data-sidebar="group"
+    className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+    {...props}
+  />
+))
 SidebarGroup.displayName = "SidebarGroup"
 
 const SidebarGroupLabel = React.forwardRef<
@@ -733,6 +745,106 @@ const SidebarMenuSubButton = React.forwardRef<
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 
+const SidebarMenuDropdown = React.forwardRef<
+  HTMLDetailsElement,
+  React.ComponentProps<"details"> & {
+    label: string
+    icon: React.ReactNode
+    open?: boolean
+  }
+>(({ label, icon, open, className, children, ...props }, ref) => {
+  const [isOpen, setIsOpen] = React.useState(open)
+  const { isMobile, state } = useSidebar()
+
+  const handleToggle = (event: React.MouseEvent) => {
+    event.preventDefault()
+    setIsOpen(!isOpen)
+  }
+
+  const isCollapsed = state === "collapsed"
+
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className={cn(
+              "flex w-full items-center justify-center rounded-md p-2 text-white hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold transition-colors duration-200 cursor-pointer"
+            )}
+            onClick={handleToggle}
+          >
+            {icon}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          side="right"
+          align="center"
+          hidden={isMobile}
+          className="bg-sidebar text-sidebar-foreground"
+        >
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <details
+      ref={ref}
+      data-sidebar="menu-dropdown"
+      className={cn("group/dropdown", className)}
+      open={isOpen}
+      {...props}
+    >
+      <summary
+        className={cn(
+          "flex w-full cursor-pointer items-center gap-2 overflow-hidden rounded-md p-2 text-sm text-white outline-none ring-sidebar-ring transition-[width,padding] hover:bg-biblioteca-blue/50 hover:text-biblioteca-gold focus-visible:ring-2",
+          "[&::-webkit-details-marker]:hidden",
+        )}
+      >
+        <span className="flex items-center gap-2 flex-1">
+          {icon}
+          {label}
+        </span>
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 transition-transform duration-200",
+            isOpen ? "rotate-180" : ""
+          )}
+        />
+      </summary>
+      <ul
+        data-sidebar="menu-sub"
+        className={cn(
+          "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5"
+        )}
+      >
+        {children}
+      </ul>
+    </details>
+  );
+});
+SidebarMenuDropdown.displayName = "SidebarMenuDropdown";
+
+
+const SidebarMenuDropdownItem = React.forwardRef<
+  HTMLLIElement,
+  React.ComponentProps<"li">
+>(({ className, ...props }, ref) => {
+  return (
+    <li
+      ref={ref}
+      data-sidebar="menu-dropdown-item"
+      className={cn(
+        "relative flex h-8 items-center rounded-md text-sm transition-colors duration-200",
+        className
+      )}
+      {...props}
+    />
+  );
+});
+SidebarMenuDropdownItem.displayName = "SidebarMenuDropdownItem";
+
 export {
   Sidebar,
   SidebarContent,
@@ -757,5 +869,7 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  SidebarMenuDropdown,
+  SidebarMenuDropdownItem,
   useSidebar,
 }

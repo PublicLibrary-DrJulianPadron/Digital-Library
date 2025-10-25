@@ -1,5 +1,5 @@
 import { SearchSection } from "@/features/homepage/components/SearchSection";
-import { FeaturedBooks } from "@/features/books/components/FeaturedBooks";
+import { FeaturedBooks } from "@/features/content/components/FeaturedBooks";
 import { ServicesSection } from "@/features/homepage/components/ServicesSection";
 import { NewsSection } from "@/features/homepage/components/NewsSection";
 import { Footer } from "@/common/components/layout/Footer";

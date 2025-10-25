@@ -51,7 +51,7 @@ export function createApi() {
             isRefreshing = true;
 
             try {
-              await ky.post('users/token/refresh/', {
+              await ky.post('token/refresh/', {
                 prefixUrl: import.meta.env.VITE_API_BASE_URL + 'api',
                 credentials: 'include'
               });

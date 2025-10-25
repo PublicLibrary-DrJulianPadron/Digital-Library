@@ -17,7 +17,16 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { apiSlice } from '@/common/api/apiSlice';
+import { authorsApiSlice }from '@/features/content-management/api/authorsApiSlice';
+import { booksApiSlice }from '@/features/content-management/api/booksApiSlice';
+import { genresApiSlice }from '@/features/content-management/api/genresApiSlice';
+import { languagesApiSlice }from '@/features/content-management/api/languagesApiSlice';
+import { materialTypesApiSlice }from '@/features/content-management/api/materialTypesApiSlice';
+import { profileApiSlice }from '@/features/content-management/api/profilesApiSlice';
+import { userApiSlice }from '@/features/content-management/api/userApiSlice';
+import { videosApiSlice }from '@/features/content-management/api/videosApiSlice';
 import authReducer from '@/features/authentication/api/authSlice';
+
 
 const rootReducer = combineReducers({
   auth: authReducer,
