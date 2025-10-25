@@ -106,6 +106,19 @@ export function ProfileForm({
               <p className="text-red-500 text-sm">{String(errors.email.message)}</p>
             )}
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Contraseña *</Label>
+            <Input
+              id="password"
+              type="password"
+              {...register('password', { required: 'La contraseña es requerida' })}
+              className={errors.password ? 'border-red-500' : ''}
+              placeholder="••••••••"
+            />
+            {errors.password?.message && (
+              <p className="text-red-500 text-sm">{String(errors.password.message)}</p>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="national_document">Documento de identidad</Label>
@@ -161,10 +174,10 @@ export function ProfileForm({
         <Button
           type="submit"
           className="bg-biblioteca-blue hover:bg-biblioteca-blue/90 text-white"
-          disabled={isSubmitting || isUpdatingProfile}
+          disabled={isSubmitting}
         >
           <Save className="w-4 h-4 mr-2" />
-          {isNewProfile ? 'Guardar Perfil' : 'Actualizar Perfil'}
+          {isNewProfile ? 'Crear Perfil' : 'Actualizar Perfil'}
         </Button>
       </div>
     </form>

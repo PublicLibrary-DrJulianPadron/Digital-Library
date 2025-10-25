@@ -9,21 +9,20 @@ import { ReturnButton } from '@/common/components/ui/return-button';
 import { useToast } from '@/common/hooks/use-toast';
 import { ProfileForm } from '@/features/content-management/components/ProfileForm/ProfileForm';
 import { Profile, ProfileFormData } from '@/features/content-management/components/ProfileForm/ProfileFormConfig';
-import { useGetProfileByIdQuery, useUpdateProfileMutation } from '@/features/content-management/api/profilesApiSlice';
+import { useGetProfileByIdQuery, useUpdateProfileMutation, useCreateProfileMutation } from '@/features/content-management/api/profilesApiSlice';
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [editing, setEditing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Correctly use the RTK Query hooks to fetch data
   const { data: profile, isLoading, isError } = useGetProfileByIdQuery(id!, {
-    skip: !id, // Skip the query if id is not present
+    skip: !id,
   });
 
   const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileMutation();
+  const [createProfile, { isLoading: isCreatingProfile }] = useCreateProfileMutation();
 
   const handleEdit = () => {
     setEditing(true);
@@ -34,24 +33,32 @@ export default function ProfilePage() {
   };
 
   const handleSave = async (profileData: ProfileFormData) => {
-    if (!id) return;
     try {
       const formData = new FormData();
       Object.keys(profileData).forEach(key => {
         formData.append(key, profileData[key as keyof ProfileFormData]);
       });
-
-      // Use the mutation trigger function returned by the hook
-      await updateProfile({ id, formData }).unwrap();
-      setEditing(false);
-      toast({
-        title: "Éxito",
-        description: "Perfil actualizado correctamente",
-      });
+      if (id) {
+        // Handle update operation
+        await updateProfile({ id, formData }).unwrap();
+        toast({
+          title: "Éxito",
+          description: "Perfil actualizado correctamente",
+        });
+        setEditing(false);
+      } else {
+        // Handle create operation
+        await createProfile({ formData }).unwrap(); // Fix is here
+        toast({
+          title: "Éxito",
+          description: "Perfil creado correctamente",
+        });
+        navigate('/content-management/profiles');
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "No se pudo actualizar el perfil.",
+        description: `No se pudo ${id ? 'actualizar' : 'crear'} el perfil.`,
         variant: "destructive",
       });
     }
@@ -72,8 +79,7 @@ export default function ProfilePage() {
         <ProfileForm
           onSubmit={handleSave}
           onCancel={() => navigate(-1)}
-          isUpdatingProfile={isUpdatingProfile}
-          isSubmitting={isSubmitting}
+          isSubmitting={isCreatingProfile}
         />
       </div>
     );
@@ -118,8 +124,7 @@ export default function ProfilePage() {
           profile={profile}
           onSubmit={handleSave}
           onCancel={handleCancel}
-          isUpdatingProfile={isUpdatingProfile}
-          isSubmitting={isSubmitting}
+          isSubmitting={isUpdatingProfile}
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

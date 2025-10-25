@@ -3,7 +3,7 @@ import type { components } from "@/common/types/generated-api-types";
 
 export type Profile = components["schemas"]["Profile"];
 export type ProfileList = components["schemas"]["PaginatedMinimalProfileList"];
-export type ProfileRequest = components["schemas"]["ProfileRequest"];
+export type CreateProfileRequest = components["schemas"]["CreateProfileRequest"];
 
 export const profileApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -39,7 +39,7 @@ export const profileApiSlice = apiSlice.injectEndpoints({
             query: (id) => `/profiles/${id}/`,
             providesTags: (result, error, id) => [{ type: "Profiles", id }],
         }),
-        createProfile: builder.mutation<Profile, {formData: FormData}>({
+        createProfile: builder.mutation<CreateProfileRequest, {formData: FormData}>({
             query: (formData) => ({
                 url: "/profiles/",
                 method: "POST",

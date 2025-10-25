@@ -675,8 +675,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description API endpoint that allows a profile to be created, viewed, or edited. */
         get: operations["api_profiles_list"];
         put?: never;
+        /** @description Handle the creation of a new user profile. */
         post: operations["api_profiles_create"];
         delete?: never;
         options?: never;
@@ -691,12 +693,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description API endpoint that allows a profile to be created, viewed, or edited. */
         get: operations["api_profiles_retrieve"];
+        /** @description API endpoint that allows a profile to be created, viewed, or edited. */
         put: operations["api_profiles_update"];
         post?: never;
+        /** @description API endpoint that allows a profile to be created, viewed, or edited. */
         delete: operations["api_profiles_destroy"];
         options?: never;
         head?: never;
+        /** @description API endpoint that allows a profile to be created, viewed, or edited. */
         patch: operations["api_profiles_partial_update"];
         trace?: never;
     };
@@ -902,6 +908,39 @@ export interface components {
             genres?: string[];
             material_type?: string | null;
             language?: string;
+        };
+        /** @description A serializer for creating a new Profile and its associated User. */
+        CreateProfile: {
+            /** Documento nacional */
+            national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
+            /**
+             * Fecha de nacimiento
+             * Format: date
+             */
+            birth_date?: string | null;
+            /** Teléfono */
+            phone?: string | null;
+        };
+        /** @description A serializer for creating a new Profile and its associated User. */
+        CreateProfileRequest: {
+            /** Documento nacional */
+            national_document?: string | null;
+            /** Dirección */
+            address?: string | null;
+            /**
+             * Fecha de nacimiento
+             * Format: date
+             */
+            birth_date?: string | null;
+            /** Teléfono */
+            phone?: string | null;
+            /** Format: email */
+            email: string;
+            first_name: string;
+            last_name: string;
+            password: string;
         };
         Email: {
             /** Format: email */
@@ -3390,11 +3429,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
+        requestBody: {
             content: {
-                "application/json": components["schemas"]["ProfileRequest"];
-                "application/x-www-form-urlencoded": components["schemas"]["ProfileRequest"];
-                "multipart/form-data": components["schemas"]["ProfileRequest"];
+                "application/json": components["schemas"]["CreateProfileRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CreateProfileRequest"];
+                "multipart/form-data": components["schemas"]["CreateProfileRequest"];
             };
         };
         responses: {
@@ -3403,7 +3442,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["CreateProfile"];
                 };
             };
         };
