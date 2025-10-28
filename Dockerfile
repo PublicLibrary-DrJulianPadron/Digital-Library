@@ -1,0 +1,15 @@
+FROM oven/bun:1.1.17 as builder
+
+WORKDIR /app
+
+COPY package.json bun.lockb ./
+RUN bun install 
+
+COPY . .
+RUN bun run build
+
+FROM nginx:stable-alpine
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 80
