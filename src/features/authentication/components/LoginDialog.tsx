@@ -64,9 +64,10 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Ocurrió un error inesperado",
+        description: error.response?.data || "Ocurrió un error inesperado",
         variant: "destructive",
       });
+      console.log(error.response?.data);
     } finally {
       setIsLoading(false);
     }
