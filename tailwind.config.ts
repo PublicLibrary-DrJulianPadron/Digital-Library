@@ -56,7 +56,7 @@ export default {
 				// Colores de la biblioteca venezolana
 				'biblioteca-blue': '#003366',
 				'biblioteca-red': '#CC0000',
-				'biblioteca-gold': '#FFD700',
+				'biblioteca-gold': '#ffe23bff',
 				'biblioteca-gray': '#333333',
 				'biblioteca-light': '#F0F0F0',
 				sidebar: {
