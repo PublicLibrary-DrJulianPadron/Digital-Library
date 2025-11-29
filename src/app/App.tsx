@@ -29,61 +29,63 @@ import DetallesUsuario from "../features/users/pages/UserDetailsPage";
 import UserProfilePage from "../features/content-management/pages/ProfileFormPage";
 import MisPrestamos from "../features/loans/pages/MyLoansPage";
 import NotFound from "../pages/NotFound";
-
+import { ErrorBoundary } from "../common/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 export const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <SidebarProvider>
-            <div className="min-h-screen flex w-full">
-              <AppSidebar />
-              <main className="flex-1 flex flex-col">
-                <AppHeader />
-                <div className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/usuario/me" element={<DetallesUsuario />} />
-                    <Route path="/salas" element={<Catalog />} />
-                    <Route path="/libro/:slug" element={<BookPage />} />
-                    <Route path="/historia" element={<HistoriaPage />} />
-                    <Route path="/prestamo/sala" element={<PrestamoSala />} />
-                    <Route path="/gestion/coleccion" element={<CollectionPage />} />
-                    <Route path="/gestion/libro/create" element={<BookFormPage />} />
-                    <Route path="/gestion/libro/:slug" element={<BookFormPage />} />
-                    <Route path="/gestion/video/create" element={<VideoFormPage />} />
-                    <Route path="/gestion/video/:slug" element={<VideoFormPage />} />
-                    <Route path="/gestion/generos" element={<GenresManagementPage />} />
-                    <Route path="/gestion/generos/create" element={<GenreFormPage />} />
-                    <Route path="/gestion/generos/:slug" element={<GenreFormPage />} />
-                    <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
-                    <Route path="/gestion/lenguajes/create" element={<LanguageFormPage />} />
-                    <Route path="/gestion/lenguajes/:id" element={<LanguageFormPage />} />
-                    <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
-                    <Route path="/gestion/materiales/create" element={<MaterialFormPage />} />
-                    <Route path="/gestion/materiales/:id" element={<MaterialFormPage />} />
-                    <Route path="/gestion/autores" element={<AuthorManagementPage />} />
-                    <Route path="/gestion/autores/create" element={<AuthorFormPage />} />
-                    <Route path="/gestion/autores/:slug" element={<AuthorFormPage />} />
-                    <Route path="/gestion/usuarios" element={<ProfileManagementPage />} />
-                    <Route path="/gestion/usuarios/create" element={<ProfileFormPage />} />
-                    <Route path="/gestion/usuarios/:id" element={<ProfileFormPage />} />
-                    <Route path="/estadisticas" element={<Estadisticas />} />
-                    {/* <Route path="/mis-prestamos" element={<MisPrestamos />} /> */}
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </div>
-              </main>
-            </div>
-          </SidebarProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <SidebarProvider>
+              <div className="min-h-screen flex w-full">
+                <AppSidebar />
+                <main className="flex-1 flex flex-col">
+                  <AppHeader />
+                  <div className="flex-1">
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/usuario/me" element={<DetallesUsuario />} />
+                      <Route path="/salas" element={<Catalog />} />
+                      <Route path="/libro/:slug" element={<BookPage />} />
+                      <Route path="/historia" element={<HistoriaPage />} />
+                      <Route path="/prestamo/sala" element={<PrestamoSala />} />
+                      <Route path="/gestion/coleccion" element={<CollectionPage />} />
+                      <Route path="/gestion/libro/create" element={<BookFormPage />} />
+                      <Route path="/gestion/libro/:slug" element={<BookFormPage />} />
+                      <Route path="/gestion/video/create" element={<VideoFormPage />} />
+                      <Route path="/gestion/video/:slug" element={<VideoFormPage />} />
+                      <Route path="/gestion/generos" element={<GenresManagementPage />} />
+                      <Route path="/gestion/generos/create" element={<GenreFormPage />} />
+                      <Route path="/gestion/generos/:slug" element={<GenreFormPage />} />
+                      <Route path="/gestion/lenguajes" element={<LanguageManagementPage />} />
+                      <Route path="/gestion/lenguajes/create" element={<LanguageFormPage />} />
+                      <Route path="/gestion/lenguajes/:id" element={<LanguageFormPage />} />
+                      <Route path="/gestion/materiales" element={<MaterialManagementPage />} />
+                      <Route path="/gestion/materiales/create" element={<MaterialFormPage />} />
+                      <Route path="/gestion/materiales/:id" element={<MaterialFormPage />} />
+                      <Route path="/gestion/autores" element={<AuthorManagementPage />} />
+                      <Route path="/gestion/autores/create" element={<AuthorFormPage />} />
+                      <Route path="/gestion/autores/:slug" element={<AuthorFormPage />} />
+                      <Route path="/gestion/usuarios" element={<ProfileManagementPage />} />
+                      <Route path="/gestion/usuarios/create" element={<ProfileFormPage />} />
+                      <Route path="/gestion/usuarios/:id" element={<ProfileFormPage />} />
+                      <Route path="/estadisticas" element={<Estadisticas />} />
+                      {/* <Route path="/mis-prestamos" element={<MisPrestamos />} /> */}
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </div>
+                </main>
+              </div>
+            </SidebarProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }

@@ -20,7 +20,7 @@ const processQueue = (error: any, newToken = null) => {
 
 export function createApi() {
   const api = ky.create({
-    prefixUrl: import.meta.env.VITE_API_BASE_URL + 'api',
+    prefixUrl: import.meta.env.VITE_API_BASE_URL,
     credentials: 'include',
     retry: {
       limit: 0,
@@ -52,7 +52,7 @@ export function createApi() {
 
             try {
               await ky.post('token/refresh/', {
-                prefixUrl: import.meta.env.VITE_API_BASE_URL + 'api',
+                prefixUrl: import.meta.env.VITE_API_BASE_URL,
                 credentials: 'include'
               });
 

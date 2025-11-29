@@ -17,7 +17,7 @@ import { RootState } from '@/app/store';
  * @returns The result of the fetchBaseQuery call.
  */
 const baseQuery = fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL + 'api',
+    baseUrl: import.meta.env.VITE_API_BASE_URL,
     credentials: 'include',
     prepareHeaders: (headers) => {
         const csrfToken = getCookie('csrftoken');
