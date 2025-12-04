@@ -1,13 +1,13 @@
 import { SearchSection } from "@/features/homepage/components/SearchSection";
-import { FeaturedBooks } from "@/features/books/components/FeaturedBooks";
+import { FeaturedBooks } from "@/features/content/components/FeaturedBooks";
 import { ServicesSection } from "@/features/homepage/components/ServicesSection";
 import { NewsSection } from "@/features/homepage/components/NewsSection";
 import { Footer } from "@/common/components/layout/Footer";
 const Index = () => {
   return <div className="min-h-screen">
       {/* Hero Section con búsqueda */}
-      <section className="relative bg-gradient-to-br from-biblioteca-blue to-biblioteca-red/10 text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 celosia-decoration opacity-20 bg-zinc-400"></div>
+      <section className="relative bg-white bg-[url('/julian_padron.png')] bg-center bg-contain opacity-100 text-white py-20 overflow-hidden bg-no-repeat">
+        <div className="absolute inset-0 bg-black bg-opacity-35"></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
           <div className="max-w-4xl mx-auto">

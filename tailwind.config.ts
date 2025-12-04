@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -53,12 +52,13 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Colores de la biblioteca venezolana
 				'biblioteca-blue': '#003366',
 				'biblioteca-red': '#CC0000',
-				'biblioteca-gold': '#FFD700',
+				'biblioteca-gold': '#ffe23bff',
 				'biblioteca-gray': '#333333',
 				'biblioteca-light': '#F0F0F0',
+				'biblioteca-light-blue': '#005f73',
+				'biblioteca-off-white': '#e9d8a6',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

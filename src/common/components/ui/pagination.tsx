@@ -1,3 +1,4 @@
+// src/common/components/ui/pagination.tsx
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
@@ -49,7 +50,7 @@ const PaginationLink = ({
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({
-        variant: isActive ? "outline" : "ghost",
+        variant: isActive ? "page" : "ghost",
         size,
       }),
       className
@@ -70,7 +71,7 @@ const PaginationPrevious = ({
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span>Anterior</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -85,7 +86,7 @@ const PaginationNext = ({
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
+    <span>Siguiente</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )
@@ -101,10 +102,88 @@ const PaginationEllipsis = ({
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
+    <span className="sr-only">Mas paginas</span>
   </span>
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
+
+interface PaginationProps {
+  currentPage: number;
+  maxPage: number;
+  onPageChange: (pageNumber: number) => void;
+}
+
+const PaginationComponent: React.FC<PaginationProps> = ({ currentPage, maxPage, onPageChange }) => {
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = [];
+    const maxVisiblePages = 5;
+    const sidePages = 1;
+
+    if (maxPage <= maxVisiblePages) {
+      for (let i = 1; i <= maxPage; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      if (currentPage > sidePages + 2) {
+        pages.push('ellipsis');
+      }
+
+      const startPage = Math.max(2, currentPage - sidePages);
+      const endPage = Math.min(maxPage - 1, currentPage + sidePages);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (currentPage < maxPage - sidePages - 1) {
+        pages.push('ellipsis');
+      }
+      pages.push(maxPage);
+    }
+
+    return pages;
+  };
+
+  const pages = getPageNumbers();
+
+  return (
+    <Pagination className="mt-4">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" onClick={(e) => {
+            e.preventDefault();
+            if (currentPage > 1) onPageChange(currentPage - 1);
+          }} />
+        </PaginationItem>
+        {pages.map((pageNumber, index) => (
+          <PaginationItem key={index}>
+            {pageNumber === 'ellipsis' ? (
+              <PaginationEllipsis />
+            ) : (
+              <PaginationLink
+                href="#"
+                isActive={currentPage === pageNumber}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (typeof pageNumber === 'number') onPageChange(pageNumber);
+                }}
+              >
+                {pageNumber}
+              </PaginationLink>
+            )}
+          </PaginationItem>
+        ))}
+        <PaginationItem>
+          <PaginationNext href="#" onClick={(e) => {
+            e.preventDefault();
+            if (currentPage < maxPage) onPageChange(currentPage + 1);
+          }} />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+};
 
 export {
   Pagination,
@@ -114,4 +193,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationComponent,
 }
