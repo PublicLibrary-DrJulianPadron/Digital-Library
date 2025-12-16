@@ -17,7 +17,7 @@ import { RootState } from '@/app/store';
  * @returns The result of the fetchBaseQuery call.
  */
 const baseQuery = fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
+    baseUrl: import.meta.env.VITE_API_URL,
     credentials: 'include',
     prepareHeaders: (headers) => {
         const csrfToken = getCookie('csrftoken');
@@ -57,7 +57,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
 export const apiSlice = createApi({
     reducerPath: 'api',
-    tagTypes: ['User','Profiles', 'Books', 'Languages', 'Loans', 'MaterialTypes', 'Genres', 'Authors', 'Videos'],
+    tagTypes: ['User', 'Profiles', 'Books', 'Languages', 'Loans', 'MaterialTypes', 'Genres', 'Authors', 'Videos'],
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
 });
