@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { SidebarTrigger } from "@/common/components/ui/sidebar";
 import { UserProfile } from "@/features/authentication/components/LogInButton";
+import GoogleLogin from "@/features/authentication/components/GoogleLogin";
 import { IconButton } from "@/common/components/ui/icon-button";
 import { SearchIcon, XIcon } from "lucide-react";
 
@@ -12,6 +13,7 @@ export const AppHeader = () => {
             <div className="flex w-full md:w-auto items-center justify-between md:justify-start gap-4">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger className="text-foreground hover:text-primary" />
+                    <GoogleLogin />
                 </div>
                 <div className="flex md:hidden items-center gap-2">
                     <IconButton
