@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/common/components/ui/tooltip"
+import { Capability } from '@/features/authentication/types/user_roles'
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -29,6 +30,7 @@ export interface SubMenuItem {
   url: string;
   icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
   requiresAuth: boolean;
+  capability?: Capability;
 }
 
 export interface MenuItem {
@@ -37,6 +39,7 @@ export interface MenuItem {
   url: string;
   icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref">>;
   requiresAuth: boolean;
+  capability?: Capability;
   children?: SubMenuItem[];
 }
 
@@ -624,7 +627,7 @@ const SidebarMenuAction = React.forwardRef<
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+        "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
         className
       )}
       {...props}

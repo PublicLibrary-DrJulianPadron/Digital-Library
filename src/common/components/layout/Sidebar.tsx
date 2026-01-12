@@ -6,36 +6,11 @@ import {
   SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
-import {
-  Home, BookOpen, Calendar, Clock, BarChart3, LibraryBig, Users, Book,
-  BookType, Languages, ScrollText, ChevronDown, ChevronRight, User
-} from "lucide-react";
+import { BookOpen, ChevronDown, ChevronRight } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
-
-const allMenuItems: MenuItem[] = [
-  { group: "Navegación", title: "Inicio", url: "/", icon: Home, requiresAuth: false },
-  {
-    group: "Navegación", title: "Salas", url: "/salas", icon: BookOpen, requiresAuth: false},
-  { group: "Navegación", title: "Historia", url: "/historia", icon: Clock, requiresAuth: false },
-  { group: "Administración", title: "Préstamo Sala", url: "/prestamo/sala", icon: Calendar, requiresAuth: true },
-  {
-    group: "Administración",
-    title: "Gestión de Contenido",
-    url: "", // ✅ aligned with App routes
-    icon: Book,
-    requiresAuth: true,
-    children: [
-      { title: "Colección", url: "/gestion/coleccion", icon: LibraryBig, requiresAuth: true },
-      { title: "Géneros", url: "/gestion/generos", icon: BookType, requiresAuth: true },
-      { title: "Lenguajes", url: "/gestion/lenguajes", icon: Languages, requiresAuth: true },
-      { title: "Materiales", url: "/gestion/materiales", icon: ScrollText, requiresAuth: true },
-      { title: "Autores", url: "/gestion/autores", icon: User, requiresAuth: true }, // ✅ fixed author icon
-    ]
-  },
-  // { group: "Administración", title: "Estadísticas", url: "/estadisticas", icon: BarChart3, requiresAuth: true },
-  { group: "Administración", title: "Gestión de Usuarios", url: "/gestion/usuarios", icon: Users, requiresAuth: true },
-];
+import { SIDEBAR_ITEMS } from './Sidebar.config';
+import { hasCapability } from '@/features/authentication/types/user_roles';
 
 type GroupedMenuItems = {
   [key: string]: MenuItem[];
@@ -43,12 +18,30 @@ type GroupedMenuItems = {
 
 export function AppSidebar() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const userRole = useSelector((state: RootState) => state.auth.userRole);
   const { data: salas } = useGetSalaWithGenresQuery();
   const [expandedSalas, setExpandedSalas] = useState<Record<string, boolean>>({});
 
-  const visibleItems = allMenuItems.filter(item => !item.requiresAuth || isAuthenticated);
+  // Filter items based on authentication and capability
+  const visibleItems = SIDEBAR_ITEMS.filter(item => {
+    // Check authentication requirement
+    if (item.requiresAuth && !isAuthenticated) return false;
+    // Check capability requirement (if specified)
+    if (item.capability && !hasCapability(userRole, item.capability)) return false;
+    return true;
+  });
 
-  const groupedItems = visibleItems.reduce((acc: GroupedMenuItems, item) => {
+  // Filter children based on capability
+  const filteredItems = visibleItems.map(item => {
+    if (!item.children) return item;
+    const filteredChildren = item.children.filter(child => {
+      if (child.capability && !hasCapability(userRole, child.capability)) return false;
+      return true;
+    });
+    return { ...item, children: filteredChildren };
+  });
+
+  const groupedItems = filteredItems.reduce((acc: GroupedMenuItems, item) => {
     (acc[item.group] = acc[item.group] || []).push(item);
     return acc;
   }, {} as GroupedMenuItems);
@@ -83,15 +76,15 @@ export function AppSidebar() {
               <SidebarMenu>
                 {items.map(item => (
                   <div key={item.title}>
-                    {item.title === "Salas" ? (
+                    {item.title === "Rooms" ? (
                       <SidebarMenuDropdown
-                        label="Salas"
+                        label="Rooms"
                         icon={<BookOpen size={18} />}
                       >
                         <SidebarMenuDropdownItem>
                           <Link to="/salas" className="flex items-center gap-3 w-full h-full">
                             <BookOpen size={18} />
-                            <span>Todos los libros</span>
+                            <span>All Books</span>
                           </Link>
                         </SidebarMenuDropdownItem>
 
@@ -126,7 +119,7 @@ export function AppSidebar() {
                           </div>
                         ))}
                       </SidebarMenuDropdown>
-                    ) : item.children ? (
+                    ) : item.children && item.children.length > 0 ? (
                       <SidebarMenuDropdown
                         label={item.title}
                         icon={<item.icon size={18} />}

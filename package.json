@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api-types": "openapi-typescript http://localhost:8000/api/schema/ --output src/common/types/generated-api-types.ts"
+    "generate-api-types": "openapi-typescript http://localhost:8070/schema/ --output src/common/types/generated-api-types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
