@@ -414,6 +414,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/library/genres/salas/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Returns a list of all existing 'salas' and the number of genre entries in each. */
+        get: operations["library_genres_salas_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/library/genres/with_books/": {
         parameters: {
             query?: never;
@@ -1167,6 +1184,11 @@ export interface components {
             slug?: string;
         };
         MinimalProfile: {
+            /**
+             * ID único
+             * Format: uuid
+             */
+            readonly id: string;
             readonly user: components["schemas"]["User"];
             /** Documento nacional */
             national_document?: string | null;
@@ -2673,6 +2695,24 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PaginatedMinimalBookList"];
                 };
+            };
+        };
+    };
+    library_genres_salas_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of all unique 'salas' and the number of genre entries in each. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

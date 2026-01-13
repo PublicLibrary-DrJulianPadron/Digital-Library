@@ -13,6 +13,11 @@ export type PaginatedBookList = components["schemas"]["PaginatedMinimalBookList"
 export type SalaWithGenres = components['schemas']['SalaWithGenres'];
 export type SalaWithGenresList = SalaWithGenres[];
 
+export type SalaEntry = {
+  sala: string;
+  entries: number;
+};
+
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getGenres: builder.query<
@@ -71,6 +76,16 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       providesTags: (_result, _error, arg) =>
         arg ? [{ type: 'Genres', slug: JSON.stringify(arg) }] : [{ type: 'Genres', slug: 'LIST' }],
     }),
+    getSalas: builder.query<SalaEntry[], void>({
+      query: () => `library/genres/salas/`,
+      providesTags: (result) =>
+        result
+          ? [
+            ...result.map(({ sala }) => ({ type: 'Genres' as const, id: `SALA_${sala}` })),
+            { type: 'Genres', id: 'SALAS_LIST' },
+          ]
+          : [{ type: 'Genres', id: 'SALAS_LIST' }],
+    }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({
         url: `library/genres/`,
@@ -111,6 +126,7 @@ export const {
   useGetBooksByGenreSlugQuery,
   useGetGenreBySlugQuery,
   useGetSalaWithGenresQuery,
+  useGetSalasQuery,
   useCreateGenreMutation,
   useUpdateGenreMutation,
   usePartialUpdateGenreMutation,
