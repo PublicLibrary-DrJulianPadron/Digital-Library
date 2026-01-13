@@ -4,6 +4,42 @@
  */
 
 export interface paths {
+    "/auth/google/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description class used for social authentications
+         *     example usage for facebook with access_token
+         *     -------------
+         *     from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+         *
+         *     class FacebookLogin(SocialLoginView):
+         *         adapter_class = FacebookOAuth2Adapter
+         *     -------------
+         *
+         *     example usage for facebook with code
+         *
+         *     -------------
+         *     from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+         *     from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+         *
+         *     class FacebookLogin(SocialLoginView):
+         *         adapter_class = FacebookOAuth2Adapter
+         *         client_class = OAuth2Client
+         *         callback_url = 'localhost:8000'
+         *     ------------- */
+        post: operations["auth_google_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/booking/admin/blocked-schedules/": {
         parameters: {
             query?: never;
@@ -802,6 +838,14 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Serializer for login/signup response with user data. */
+        AuthResponse: {
+            first_name: string;
+            last_name: string;
+            /** Format: email */
+            email: string;
+            readonly groups: string;
+        };
         /** @description Serializer for the Author model. */
         Author: {
             readonly id: number;
@@ -1604,6 +1648,16 @@ export interface components {
             /** Apellidos */
             last_name?: string;
         };
+        SocialLogin: {
+            access_token?: string;
+            code?: string;
+            id_token?: string;
+        };
+        SocialLoginRequest: {
+            access_token?: string;
+            code?: string;
+            id_token?: string;
+        };
         /**
          * @description * `Active` - Activo
          *     * `Returned` - Returned
@@ -1671,6 +1725,31 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    auth_google_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["SocialLoginRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SocialLoginRequest"];
+                "multipart/form-data": components["schemas"]["SocialLoginRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SocialLogin"];
+                };
+            };
+        };
+    };
     booking_admin_blocked_schedules_list: {
         parameters: {
             query?: {
@@ -3261,7 +3340,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
             };
             /** @description Invalid input or missing fields (e.g., email, password). */
             400: {
@@ -3584,7 +3665,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
             };
             /** @description Invalid input data. This could be due to missing required fields, invalid data formats, or a user with the same email already existing. */
             400: {

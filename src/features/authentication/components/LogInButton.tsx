@@ -16,19 +16,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avat
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
 import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
-import { useGetUserQuery } from "@/features/content-management/api/userApiSlice";
 
 export function UserProfile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
-  const { data: profileData, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserQuery({ page_size: 1 }, {
-    skip: !isAuthenticated,
-  });
+  const [signOut, { isLoading: isSignOutLoading }] = useSignOutMutation();
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -78,17 +75,11 @@ export function UserProfile() {
     return name.length > 0 ? name : "User Profile";
   };
 
-  if (isProfileLoading) {
-    return <div>Loading...</div>;
-  }
+  // Use user data from Redux state (populated by login response)
+  const firstName = user?.first_name || "";
+  const lastName = user?.last_name || "";
 
-  const userProfile = profileData?.results?.[0]?.user;
-
-
-  if (isAuthenticated && !!userProfile) {
-    const firstName = userProfile?.first_name || "";
-    const lastName = userProfile?.last_name || "";
-
+  if (isAuthenticated && user) {
     return (
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
