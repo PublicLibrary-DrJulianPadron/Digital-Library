@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store";
-import { getCookie } from '@/common/lib/utils'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,43 +14,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
-import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
 
 export function UserProfile() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [signOut, { isLoading: isSignOutLoading }] = useSignOutMutation();
-
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const csrfToken = getCookie('csrftoken');
-      const isCurrentlyAuthenticated = !!csrfToken;
-
-      if (isAuthenticated && !isCurrentlyAuthenticated) {
-        dispatch(clearIsAuthenticated());
-      } else if (!isAuthenticated && isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    };
-
-    checkAuthStatus();
-    const intervalId = setInterval(checkAuthStatus, 1000);
-    return () => clearInterval(intervalId);
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    if (!showLoginDialog && !isAuthenticated) {
-      const isCurrentlyAuthenticated = !!getCookie('csrftoken');
-      if (isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    }
-  }, [showLoginDialog, isAuthenticated, dispatch]);
 
   const handleSignOut = async () => {
     try {
@@ -70,9 +41,11 @@ export function UserProfile() {
     return (firstInitial + lastInitial).toUpperCase() || "NN";
   };
 
-  const getUserName = (firstName = "", lastName = "") => {
+  const getUserName = (firstName = "", lastName = "", email = "") => {
     const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-    return name.length > 0 ? name : "User Profile";
+    if (name.length > 0) return name;
+    if (email.length > 0) return email;
+    return "User Profile";
   };
 
   // Use user data from Redux state (populated by login response)
@@ -94,7 +67,7 @@ export function UserProfile() {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuLabel className="text-foreground">
-            {getUserName(firstName, lastName)}
+            {getUserName(firstName, lastName, user?.email)}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/usuario/me")}>
