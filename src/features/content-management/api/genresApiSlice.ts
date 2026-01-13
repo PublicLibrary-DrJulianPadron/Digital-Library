@@ -11,7 +11,12 @@ export type PaginatedBookList = components["schemas"]["PaginatedMinimalBookList"
 
 // Assuming the API returns a list of genres where each genre has an associated list of books.
 export type SalaWithGenres = components['schemas']['SalaWithGenres'];
-export type SalaWithGenresList = SalaWithGenres[];
+export type PaginatedSalaWithGenres = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SalaWithGenres[];
+};
 
 export type SalaEntry = {
   sala: string;
@@ -69,7 +74,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
     }),
     getSalaWithGenres: builder.query<
-      SalaWithGenresList,
+      PaginatedSalaWithGenres,
       { page?: number; page_size?: number; book_page_size?: number; sala?: string } | void
     >({
       query: (params) => ({

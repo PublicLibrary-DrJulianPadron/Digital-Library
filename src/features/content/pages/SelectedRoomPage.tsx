@@ -1,18 +1,34 @@
-import React from 'react';
-import { useGetSalasQuery } from '@/features/content-management/api/genresApiSlice';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/common/components/ui/button';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
+import { AlertCircle, ArrowLeft, BookOpen, ChevronRight } from 'lucide-react';
+import { BookCard } from '@/features/content/components/BookCard';
+import { ReturnButton } from "@/common/components/ui/return-button";
+import { PaginationComponent } from "@/common/components/ui/pagination";
 
-const RoomsPage = () => {
-    const { data: salas, isLoading, isError } = useGetSalasQuery();
+/**
+ * Page displaying the selected room with its genres and books.
+ * The books are organized horizontally within each genre section.
+ */
+const SelectedRoomPage = () => {
+    const { roomName } = useParams<{ roomName: string }>();
     const navigate = useNavigate();
+    const [page, setPage] = useState(1);
+    const pageSize = 20;
+
+    // Fetch genres and books for the specific sala (room)
+    const { data: salas, isLoading, isError } = useGetSalaWithGenresQuery({
+        page: page,
+        page_size: pageSize,
+        book_page_size: 10,
+        sala: roomName,
+    });
 
     if (isLoading) {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-biblioteca-blue"></div>
-                <p className="mt-4 text-biblioteca-blue font-medium italic">Cargando salas...</p>
+                <p className="mt-4 text-biblioteca-blue font-medium italic">Cargando sala {roomName}...</p>
             </div>
         );
     }
@@ -21,70 +37,106 @@ const RoomsPage = () => {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
                 <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-                <h2 className="text-2xl font-bold text-gray-800">Error al cargar las salas</h2>
+                <h2 className="text-2xl font-bold text-gray-800">Error al cargar la sala</h2>
                 <p className="text-gray-600">Por favor, intente de nuevo más tarde.</p>
+                <ReturnButton />
             </div>
         );
     }
 
+    // Since we filtered by sala, the first element should be our room
+    const roomData = salas?.results?.find(s => s.sala === roomName) || (salas?.results && salas.results.length > 0 ? salas.results[0] : null);
+
+    if (!roomData) {
+        return (
+            <div className="container mx-auto p-8 text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 font-medium">No se encontró información para la sala {roomName}.</p>
+                <ReturnButton />
+            </div>
+        );
+    }
+
+    const count = salas?.count ?? 0;
+    const maxPage = Math.ceil(count / pageSize);
+
+    const handlePageChange = (pageNumber: number) => {
+        setPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
-        <div className="container mx-auto p-8">
-            <header className="mb-12 text-center">
-                <h1 className="text-4xl font-extrabold text-biblioteca-blue mb-4 tracking-tight">
-                    Nuestras Salas
-                </h1>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                    Explore los diferentes espacios dedicados al conocimiento y la cultura.
-                    Cada sala cuenta con una colección única esperando ser descubierta.
-                </p>
-                <div className="mt-6 flex justify-center">
-                    <div className="h-1.5 w-24 bg-biblioteca-gold rounded-full"></div>
+        <div className="container mx-auto px-4 py-8">
+            <header className="mb-12">
+                <ReturnButton />
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 m-4">
+                    <div>
+                        <h1 className="text-4xl font-extrabold text-biblioteca-blue mb-2 tracking-tight uppercase">
+                            {roomData.sala}
+                        </h1>
+                        <div className="h-1.5 w-24 bg-biblioteca-gold rounded-full"></div>
+                    </div>
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {salas?.map((item) => (
-                    <button
-                        key={item.sala}
-                        onClick={() => navigate(`/sala/${item.sala}`)}
-                        className="group relative flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
-                    >
-                        <div className="absolute top-0 left-0 w-full h-1.5 bg-biblioteca-gold scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-
-                        <div className="p-4 rounded-full bg-biblioteca-blue/5 group-hover:bg-biblioteca-blue/10 transition-colors duration-300 mb-4">
-                            <BookOpen className="h-8 w-8 text-biblioteca-blue" />
+            <div className="space-y-16">
+                {roomData.genres?.map((genre) => (
+                    <section key={genre.slug} className="relative">
+                        {/* Genre Label - Rounded box as per sketch */}
+                        <div className="mb-6 flex items-center justify-between">
+                            <div className="bg-white border-2 border-biblioteca-blue rounded-xl px-6 py-2 shadow-sm">
+                                <h2 className="text-xl font-bold text-biblioteca-blue uppercase tracking-wider">
+                                    {genre.label}
+                                </h2>
+                            </div>
+                            <Link
+                                to={`/catalogo?genero=${genre.slug}`}
+                                className="text-sm font-semibold text-biblioteca-blue hover:text-biblioteca-gold flex items-center transition-colors"
+                            >
+                                Ver todo
+                                <ChevronRight className="ml-1 h-4 w-4" />
+                            </Link>
                         </div>
 
-                        <h3 className="text-xl font-bold text-biblioteca-blue group-hover:text-biblioteca-gold transition-colors duration-300 text-center uppercase tracking-wide">
-                            {item.sala}
-                        </h3>
-
-                        <div className="mt-4 flex items-center text-sm font-medium text-gray-500 group-hover:text-biblioteca-blue transition-colors duration-300">
-                            <span className="bg-gray-100 group-hover:bg-biblioteca-blue/10 px-3 py-1 rounded-full text-xs">
-                                {item.entries} libros
-                            </span>
+                        {/* Horizontal Scrollable Container */}
+                        <div className="relative group">
+                            <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide snap-x scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
+                                {genre.books?.map((book) => (
+                                    <div key={book.id} className="flex-none w-[160px] sm:w-[200px] snap-start">
+                                        <BookCard book={book} />
+                                    </div>
+                                ))}
+                                {(!genre.books || genre.books.length === 0) && (
+                                    <div className="w-full py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center">
+                                        <p className="text-gray-400 italic">No hay libros disponibles en este género</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-
-                        <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <span className="text-biblioteca-blue text-sm font-semibold flex items-center">
-                                Entrar a la sala
-                                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="9 5l7 7-7 7" />
-                                </svg>
-                            </span>
-                        </div>
-                    </button>
+                    </section>
                 ))}
             </div>
 
-            {!salas || salas.length === 0 && (
+            {roomData.genres?.length === 0 && (
                 <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium">No se encontraron salas disponibles.</p>
+                    <p className="text-gray-500 font-medium">Esta sala aún no tiene géneros con libros asignados.</p>
+                </div>
+            )}
+
+            {count > pageSize && (
+                <div className="flex justify-center mt-12 pb-8">
+                    <PaginationComponent
+                        currentPage={page}
+                        maxPage={maxPage}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
             )}
         </div>
     );
 };
 
-export default RoomsPage;
+export default SelectedRoomPage;
+
+
