@@ -11,6 +11,8 @@ import BookPage from "../features/content/pages/BookPage";
 import BookFormPage from "../features/content-management/pages/BookFormPage";
 import VideoFormPage from "../features/content-management/pages/VideoFormPage";
 import Catalog from "../features/content/pages/CatalogPage";
+import RoomsPage from "../features/content/pages/RoomsPage";
+import SelectedRoomPage from "../features/content/pages/SelectedRoomPage";
 import CollectionPage from "../features/content-management/pages/CollectionManagementPage";
 import PrestamoSala from "../features/room-bookings/pages/RoomBookingPage";
 import HistoriaPage from "../features/homepage/pages/HistoryPage";
@@ -50,7 +52,8 @@ export const App = () => {
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/usuario/me" element={<DetallesUsuario />} />
-                      <Route path="/salas" element={<Catalog />} />
+                      <Route path="/salas" element={<RoomsPage />} />
+                      <Route path="/sala/:roomName" element={<SelectedRoomPage />} />
                       <Route path="/libro/:slug" element={<BookPage />} />
                       <Route path="/historia" element={<HistoriaPage />} />
                       <Route path="/prestamo/sala" element={<PrestamoSala />} />

@@ -23,7 +23,7 @@ export const SIDEBAR_ITEMS: MenuItem[] = [
     },
     {
         group: "Navigation",
-        title: "Rooms",
+        title: "Salas",
         url: "/salas",
         icon: BookOpen,
         requiresAuth: false

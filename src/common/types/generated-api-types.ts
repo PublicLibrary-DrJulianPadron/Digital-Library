@@ -2718,14 +2718,23 @@ export interface operations {
     };
     library_genres_with_books_retrieve: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Global number of books per genre (defaults to 5 if not specified per genre) */
+                book_page_size?: number;
+                /** @description Genre page number */
+                page?: number;
+                /** @description Number of genres per page */
+                page_size?: number;
+                /** @description Filter genres by sala */
+                sala?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description List of salas, each containing genres with paginated books. */
+            /** @description List of salas, each containing genres with paginated books. Supports genre pagination and filtering by sala. */
             200: {
                 headers: {
                     [name: string]: unknown;

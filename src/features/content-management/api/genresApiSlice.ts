@@ -68,10 +68,13 @@ export const genresApiSlice = apiSlice.injectEndpoints({
       query: (slug) => `library/genres/${slug}/`,
       providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
     }),
-    getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number> | void>({
+    getSalaWithGenres: builder.query<
+      SalaWithGenresList,
+      { page?: number; page_size?: number; book_page_size?: number; sala?: string } | void
+    >({
       query: (params) => ({
-        url: `library/genres/with_books`,
-        ...(params && Object.keys(params).length > 0 ? { params } : {}),
+        url: `library/genres/with_books/`,
+        params: params || {},
       }),
       providesTags: (_result, _error, arg) =>
         arg ? [{ type: 'Genres', slug: JSON.stringify(arg) }] : [{ type: 'Genres', slug: 'LIST' }],

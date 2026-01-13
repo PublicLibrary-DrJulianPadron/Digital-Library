@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import {
@@ -6,9 +6,8 @@ import {
   SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
-import { BookOpen, ChevronDown, ChevronRight } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { Link } from 'react-router-dom';
-import { useGetSalaWithGenresQuery } from '@/features/content-management/api/genresApiSlice';
 import { SIDEBAR_ITEMS } from './Sidebar.config';
 import { hasCapability } from '@/features/authentication/types/user_roles';
 
@@ -19,8 +18,6 @@ type GroupedMenuItems = {
 export function AppSidebar() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const userRole = useSelector((state: RootState) => state.auth.userRole);
-  const { data: salas } = useGetSalaWithGenresQuery();
-  const [expandedSalas, setExpandedSalas] = useState<Record<string, boolean>>({});
 
   // Filter items based on authentication and capability
   const visibleItems = SIDEBAR_ITEMS.filter(item => {
@@ -45,10 +42,6 @@ export function AppSidebar() {
     (acc[item.group] = acc[item.group] || []).push(item);
     return acc;
   }, {} as GroupedMenuItems);
-
-  const toggleSala = (salaName: string) => {
-    setExpandedSalas(prev => ({ ...prev, [salaName]: !prev[salaName] }));
-  };
 
   return (
     <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
@@ -76,50 +69,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 {items.map(item => (
                   <div key={item.title}>
-                    {item.title === "Rooms" ? (
-                      <SidebarMenuDropdown
-                        label="Rooms"
-                        icon={<BookOpen size={18} />}
-                      >
-                        <SidebarMenuDropdownItem>
-                          <Link to="/salas" className="flex items-center gap-3 w-full h-full">
-                            <BookOpen size={18} />
-                            <span>All Books</span>
-                          </Link>
-                        </SidebarMenuDropdownItem>
-
-                        {salas?.map((sala) => (
-                          <div key={sala.sala}>
-                            <button
-                              onClick={() => toggleSala(sala.sala)}
-                              className="flex items-center justify-between w-full px-2 py-1 text-left hover:bg-biblioteca-blue/50 text-white"
-                            >
-                              <span>{sala.sala}</span>
-                              {expandedSalas[sala.sala] ? (
-                                <ChevronDown size={14} />
-                              ) : (
-                                <ChevronRight size={14} />
-                              )}
-                            </button>
-
-                            {expandedSalas[sala.sala] && (
-                              <ul className="pl-4 mt-1 space-y-1">
-                                {sala.genres.map((genre) => (
-                                  <li key={genre.slug}>
-                                    <Link
-                                      to={`/salas?genre=${genre.slug}`}
-                                      className="block w-full pl-6 pr-2 py-1 text-sm text-white hover:bg-biblioteca-blue/50 whitespace-normal break-words leading-snug"
-                                    >
-                                      {genre.label}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        ))}
-                      </SidebarMenuDropdown>
-                    ) : item.children && item.children.length > 0 ? (
+                    {item.children && item.children.length > 0 ? (
                       <SidebarMenuDropdown
                         label={item.title}
                         icon={<item.icon size={18} />}
