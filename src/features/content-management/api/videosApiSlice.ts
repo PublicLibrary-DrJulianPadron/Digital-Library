@@ -3,8 +3,8 @@ import type { components, paths } from "@/common/types/generated-api-types";
 
 export type Video = components["schemas"]["Video"];
 export type MinimalVideo = components["schemas"]["MinimalVideo"];
-export type VideoRequest = paths["/api/library/videos/{slug}/"]["put"]["requestBody"]["content"]["multipart/form-data"];
-export type PatchedVideoRequest = paths["/api/library/videos/{slug}/"]["patch"]["requestBody"]["content"]["multipart/form-data"];
+export type VideoRequest = paths["/library/videos/{slug}/"]["put"]["requestBody"]["content"]["multipart/form-data"];
+export type PatchedVideoRequest = paths["/library/videos/{slug}/"]["patch"]["requestBody"]["content"]["multipart/form-data"];
 export type VideosList = components["schemas"]["PaginatedMinimalVideoList"];
 
 
@@ -24,7 +24,7 @@ export const videosApiSlice = apiSlice.injectEndpoints({
           });
         }
         return {
-          url: `/library/videos/`,
+          url: `library/videos/`,
           params,
         };
       },
@@ -43,12 +43,12 @@ export const videosApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: "Videos", id: "LIST" }],
     }),
     getVideoBySlug: builder.query<Video, string>({
-      query: (slug) => `/library/videos/${slug}/`,
+      query: (slug) => `library/videos/${slug}/`,
       providesTags: (result, error, slug) => [{ type: "Videos", id: slug }],
     }),
     updateVideo: builder.mutation<Video, { slug: string; body: VideoRequest }>({
       query: ({ slug, body }) => ({
-        url: `/library/videos/${slug}/`,
+        url: `library/videos/${slug}/`,
         method: "PUT",
         body: body,
       }),
@@ -56,7 +56,7 @@ export const videosApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateVideo: builder.mutation<Video, { slug: string; body: PatchedVideoRequest }>({
       query: ({ slug, body }) => ({
-        url: `/library/videos/${slug}/`,
+        url: `library/videos/${slug}/`,
         method: "PATCH",
         body: body,
       }),
@@ -64,7 +64,7 @@ export const videosApiSlice = apiSlice.injectEndpoints({
     }),
     deleteVideo: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/videos/${slug}/`,
+        url: `library/videos/${slug}/`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, slug) => [{ type: 'Videos', id: slug }, { type: 'Videos', id: 'LIST' }],

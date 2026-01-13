@@ -18,7 +18,7 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
         if (page) params.append("page", page.toString());
         if (page_size) params.append("page_size", page_size.toString());
         if (search) params.append("search", search);
-        return `/library/material-types/?${params.toString()}`;
+        return `library/material-types/?${params.toString()}`;
       },
       providesTags: (result) =>
         result
@@ -33,14 +33,14 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
     }),
     createMaterialType: builder.mutation<MaterialType, MaterialTypeRequest>({
       query: (newMaterialType) => ({
-        url: `/library/material-types/`,
+        url: `library/material-types/`,
         method: 'POST',
         body: newMaterialType,
       }),
       invalidatesTags: [{ type: 'MaterialTypes', id: 'LIST' }],
     }),
     getMaterialTypeBySlug: builder.query<MaterialType, string>({
-      query: (slug) => `/library/material-types/${slug}/`,
+      query: (slug) => `library/material-types/${slug}/`,
       providesTags: (result, error, slug) => [{ type: 'MaterialTypes', slug }],
     }),
     updateMaterialType: builder.mutation<MaterialType, { slug: string; body: MaterialTypeRequest }>({
@@ -61,7 +61,7 @@ export const materialTypesApiSlice = apiSlice.injectEndpoints({
     }),
     deleteMaterialType: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/material-types/${slug}/`,
+        url: `library/material-types/${slug}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, slug) => [{ type: 'MaterialTypes', slug }, { type: 'MaterialTypes', id: 'LIST' }],

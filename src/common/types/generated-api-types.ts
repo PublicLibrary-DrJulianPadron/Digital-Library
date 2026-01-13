@@ -1167,11 +1167,6 @@ export interface components {
             slug?: string;
         };
         MinimalProfile: {
-            /**
-             * ID único
-             * Format: uuid
-             */
-            readonly id: string;
             readonly user: components["schemas"]["User"];
             /** Documento nacional */
             national_document?: string | null;

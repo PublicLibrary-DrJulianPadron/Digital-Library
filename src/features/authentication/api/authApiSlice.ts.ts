@@ -1,4 +1,4 @@
-// src/features/authentication/store/authApiSlice.ts
+// src/features/authentication/api/authApiSlice.ts.ts
 import { apiSlice } from '@/common/api/apiSlice';
 import type { components } from '@/common/types/generated-api-types';
 import { deleteCookie } from '@/common/lib/utils'
@@ -12,6 +12,18 @@ export interface AuthUserResponse {
     last_name: string;
     email: string;
     groups: string[];
+}
+
+export interface UserProfileResponse {
+    user: {
+        first_name: string;
+        last_name: string;
+        email: string;
+    };
+    national_document: string | null;
+    address: string | null;
+    birth_date: string | null;
+    phone: string | null;
 }
 
 export const authApiSlice = apiSlice.injectEndpoints({
@@ -45,8 +57,18 @@ export const authApiSlice = apiSlice.injectEndpoints({
                 }
             },
         }),
+        getUserProfile: builder.query<UserProfileResponse, void>({
+            query: () => 'user/',
+            transformResponse: (response: UserProfileResponse[]) => response[0],
+        }),
     }),
     overrideExisting: false,
 });
 
-export const { useLogInMutation, useSignUpMutation, useSignOutMutation } = authApiSlice;
+export const {
+    useLogInMutation,
+    useSignUpMutation,
+    useSignOutMutation,
+    useGetUserProfileQuery,
+    useLazyGetUserProfileQuery
+} = authApiSlice;

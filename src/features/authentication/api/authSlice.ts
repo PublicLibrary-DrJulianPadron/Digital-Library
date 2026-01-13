@@ -1,12 +1,13 @@
 // src/features/authentication/store/authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { authApiSlice, AuthUserResponse } from './authApiSlice.ts';
+import { authApiSlice, AuthUserResponse, UserProfileResponse } from './authApiSlice.ts';
 import type { AppRole } from '../types/user_roles';
 
 interface AuthState {
   isAuthenticated: boolean;
   userRole: AppRole | null;
   user: AuthUserResponse | null;
+  profile: UserProfileResponse | null;
   error: string | null;
 }
 
@@ -14,6 +15,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   userRole: null,
   user: null,
+  profile: null,
   error: null,
 };
 
@@ -31,10 +33,14 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<AuthUserResponse | null>) => {
       state.user = action.payload;
     },
+    setProfile: (state, action: PayloadAction<UserProfileResponse | null>) => {
+      state.profile = action.payload;
+    },
     clearIsAuthenticated: (state) => {
       state.isAuthenticated = false;
       state.userRole = null;
       state.user = null;
+      state.profile = null;
       state.error = null;
     },
   },
@@ -72,10 +78,20 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.userRole = null;
         state.user = null;
+        state.profile = null;
         state.error = action.error?.message ?? 'Unknown error';
+      })
+      .addMatcher(authApiSlice.endpoints.getUserProfile.matchFulfilled, (state, action) => {
+        state.profile = action.payload;
+        if (action.payload.user) {
+          state.user = {
+            ...action.payload.user,
+            groups: state.user?.groups ?? []
+          };
+        }
       });
   },
 });
 
-export const { setIsAuthenticated, setUserRole, setUser, clearIsAuthenticated } = authSlice.actions;
+export const { setIsAuthenticated, setUserRole, setUser, setProfile, clearIsAuthenticated } = authSlice.actions;
 export default authSlice.reducer;

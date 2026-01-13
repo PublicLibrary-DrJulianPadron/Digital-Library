@@ -22,7 +22,7 @@ export const profileApiSlice = apiSlice.injectEndpoints({
                 if (search) {
                     params += `&search=${encodeURIComponent(search)}`;
                 }
-                return `/profiles/?${params}`;
+                return `profiles/?${params}`;
             },
             providesTags: (result) =>
                 result
@@ -36,12 +36,12 @@ export const profileApiSlice = apiSlice.injectEndpoints({
                     : [{ type: "Profiles", id: "LIST" }],
         }),
         getProfileById: builder.query<Profile, string>({
-            query: (id) => `/profiles/${id}/`,
+            query: (id) => `profiles/${id}/`,
             providesTags: (result, error, id) => [{ type: "Profiles", id }],
         }),
-        createProfile: builder.mutation<CreateProfileRequest, {formData: FormData}>({
+        createProfile: builder.mutation<CreateProfileRequest, { formData: FormData }>({
             query: (formData) => ({
-                url: "/profiles/",
+                url: "profiles/",
                 method: "POST",
                 formData,
             }),

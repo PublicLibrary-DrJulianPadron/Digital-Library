@@ -33,7 +33,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
         if (sala) {
           params += `&sala=${encodeURIComponent(sala)}`;
         }
-        return `/library/genres/?${params}`; // Add params to URL
+        return `library/genres/?${params}`; // Add params to URL
       },
       providesTags: (result) =>
         result?.results
@@ -53,19 +53,19 @@ export const genresApiSlice = apiSlice.injectEndpoints({
         if (page) params.append('page', String(page));
         if (page_size) params.append('page_size', String(page_size));
 
-        const url = slug ? `/library/genres/${slug}/books/?${params.toString()}` : `/library/books/?${params.toString()}`;
+        const url = slug ? `library/genres/${slug}/books/?${params.toString()}` : `library/books/?${params.toString()}`;
         return url;
       },
       providesTags: (_result, _error, { slug }) =>
         slug ? [{ type: 'Genres', slug }] : [{ type: 'Books', id: 'LIST' }],
     }),
     getGenreBySlug: builder.query<Genre, string>({
-      query: (slug) => `/library/genres/${slug}/`,
+      query: (slug) => `library/genres/${slug}/`,
       providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
     }),
     getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number> | void>({
       query: (params) => ({
-        url: `/library/genres/with_books`,
+        url: `library/genres/with_books`,
         ...(params && Object.keys(params).length > 0 ? { params } : {}),
       }),
       providesTags: (_result, _error, arg) =>
@@ -73,7 +73,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({
-        url: `/library/genres/`,
+        url: `library/genres/`,
         method: 'POST',
         body: newGenre,
       }),
@@ -81,7 +81,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     updateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
       query: ({ slug, data }) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'PUT',
         body: data,
       }),
@@ -89,7 +89,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
       query: ({ slug, data }) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'PATCH',
         body: data,
       }),
@@ -97,7 +97,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     deleteGenre: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, slug) => [{ type: 'Genres', slug }, { type: 'Genres', id: 'LIST' }],
