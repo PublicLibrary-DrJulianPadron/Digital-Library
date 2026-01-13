@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/common/components/ui/sidebar";
 import { AppSidebar } from "../common/components/layout/Sidebar";
 import { AppHeader } from "../common/components/layout/Header";
+import { Footer } from "../common/components/layout/Footer";
 import Index from "../features/homepage/pages/Index";
 import BookPage from "../features/content/pages/BookPage";
 import BookFormPage from "../features/content-management/pages/BookFormPage";
@@ -83,6 +84,7 @@ export const App = () => {
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </div>
+                  <Footer />
                 </main>
               </div>
             </SidebarProvider>

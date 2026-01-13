@@ -2,7 +2,6 @@ import { SearchSection } from "@/features/homepage/components/SearchSection";
 import { FeaturedBooks } from "@/features/content/components/FeaturedBooks";
 import { ServicesSection } from "@/features/homepage/components/ServicesSection";
 import { NewsSection } from "@/features/homepage/components/NewsSection";
-import { Footer } from "@/common/components/layout/Footer";
 const Index = () => {
   return <div className="min-h-screen">
       {/* Hero Section con búsqueda */}
@@ -52,8 +51,6 @@ const Index = () => {
       {/* Noticias y eventos */}
       <NewsSection />
       
-      {/* Footer */}
-      <Footer />
     </div>;
 };
 export default Index;
