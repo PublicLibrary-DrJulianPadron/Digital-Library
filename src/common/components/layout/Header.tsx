@@ -15,12 +15,6 @@ export const AppHeader = () => {
                     <SidebarTrigger className="text-foreground hover:text-interface" />
                 </div>
                 <div className="flex md:hidden items-center gap-2">
-                    <IconButton
-                        onClick={() => setIsSearchVisible(!isSearchVisible)}
-                        className="text-white hover:text-interface"
-                    >
-                        {isSearchVisible ? <XIcon className="h-5 w-5" /> : <SearchIcon className="h-5 w-5" />}
-                    </IconButton>
                     <UserProfile />
                     <ConfigurationButton />
                 </div>

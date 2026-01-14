@@ -8,9 +8,9 @@ export default function HistoriaPage() {
       {/* Hero Section */}
       <section className="relative h-[70vh] overflow-hidden">
         <div className="absolute inset-0">
-          <img 
-            src={bibliotecaHistoria} 
-            alt="Biblioteca Pública Central Dr. Julián Padrón" 
+          <img
+            src={bibliotecaHistoria}
+            alt="Biblioteca Pública Central Dr. Julián Padrón"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-biblioteca-blue/90 via-biblioteca-blue/40 to-transparent" />
@@ -20,7 +20,7 @@ export default function HistoriaPage() {
             <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 drop-shadow-2xl">
               Nuestra Historia
             </h1>
-            <p className="text-xl md:text-2xl text-biblioteca-gold font-medium drop-shadow-lg">
+            <p className="text-xl md:text-2xl text-highlight-gold font-medium drop-shadow-lg">
               Más de medio siglo sirviendo a la comunidad de Maturín
             </p>
           </div>
@@ -34,7 +34,7 @@ export default function HistoriaPage() {
             Una Institución con Historia
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            La Biblioteca Pública Central Dr. Julián Padrón ha sido el corazón cultural y educativo 
+            La Biblioteca Pública Central Dr. Julián Padrón ha sido el corazón cultural y educativo
             de Maturín, promoviendo el conocimiento y la cultura en nuestra comunidad.
           </p>
         </div>
@@ -50,8 +50,8 @@ export default function HistoriaPage() {
                 <h3 className="text-2xl font-display font-bold text-foreground">Fundación</h3>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Establecida oficialmente en <strong className="text-biblioteca-blue">1968</strong>, nuestra biblioteca 
-                nació con la visión de democratizar el acceso al conocimiento en la región oriental 
+                Establecida oficialmente en <strong className="text-highlight-blue">1968</strong>, nuestra biblioteca
+                nació con la visión de democratizar el acceso al conocimiento en la región oriental
                 de Venezuela, específicamente en la capital del estado Monagas.
               </p>
             </CardContent>
@@ -67,8 +67,8 @@ export default function HistoriaPage() {
                 <h3 className="text-2xl font-display font-bold text-foreground">Ubicación Estratégica</h3>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Ubicada en la <strong className="text-biblioteca-gold">Av. Orinoco con Calle Libertador</strong>, 
-                en el corazón de Maturín, nuestra posición privilegiada la convierte en un punto 
+                Ubicada en la <strong className="text-highlight-gold">Av. Orinoco con Calle Libertador</strong>,
+                en el corazón de Maturín, nuestra posición privilegiada la convierte en un punto
                 de encuentro accesible para toda la comunidad.
               </p>
             </CardContent>
@@ -84,8 +84,8 @@ export default function HistoriaPage() {
                 <h3 className="text-2xl font-display font-bold text-foreground">Dr. Julián Padrón</h3>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Lleva el nombre del <strong className="text-green-600">Dr. Julián Padrón</strong>, 
-                destacado intelectual y educador venezolano que dedicó su vida a la promoción 
+                Lleva el nombre del <strong className="text-highlight-green">Dr. Julián Padrón</strong>,
+                destacado intelectual y educador venezolano que dedicó su vida a la promoción
                 de la educación y la cultura en el oriente del país.
               </p>
             </CardContent>
@@ -101,8 +101,8 @@ export default function HistoriaPage() {
                 <h3 className="text-2xl font-display font-bold text-foreground">Servicio Comunitario</h3>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Durante más de <strong className="text-purple-600">55 años</strong>, hemos servido 
-                a estudiantes, investigadores, profesionales y ciudadanos de todas las edades, 
+                Durante más de <strong className="text-highlight-purple">55 años</strong>, hemos servido
+                a estudiantes, investigadores, profesionales y ciudadanos de todas las edades,
                 consolidándonos como un pilar fundamental de la educación en Monagas.
               </p>
             </CardContent>
@@ -119,8 +119,8 @@ export default function HistoriaPage() {
                 <h3 className="text-3xl font-display font-bold">Misión</h3>
               </div>
               <p className="text-lg leading-relaxed text-white/90">
-                Facilitar el acceso universal al conocimiento y la información, promoviendo 
-                la lectura, la investigación y el desarrollo cultural de nuestra comunidad 
+                Facilitar el acceso universal al conocimiento y la información, promoviendo
+                la lectura, la investigación y el desarrollo cultural de nuestra comunidad
                 a través de servicios bibliotecarios de calidad.
               </p>
             </CardContent>
@@ -134,8 +134,8 @@ export default function HistoriaPage() {
                 <h3 className="text-3xl font-display font-bold">Visión</h3>
               </div>
               <p className="text-lg leading-relaxed text-white/90">
-                Ser reconocida como la principal institución de información y cultura 
-                del oriente venezolano, adaptándose a las nuevas tecnologías mientras 
+                Ser reconocida como la principal institución de información y cultura
+                del oriente venezolano, adaptándose a las nuevas tecnologías mientras
                 preservamos el valor de la lectura y el conocimiento.
               </p>
             </CardContent>
@@ -150,25 +150,25 @@ export default function HistoriaPage() {
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
-                <div className="text-4xl font-bold text-biblioteca-blue mb-2 group-hover:scale-110 transition-transform">
+                <div className="text-4xl font-bold text-highlight-blue mb-2 group-hover:scale-110 transition-transform">
                   55+
                 </div>
                 <div className="text-muted-foreground font-medium">Años de Servicio</div>
               </div>
               <div className="group">
-                <div className="text-4xl font-bold text-biblioteca-gold mb-2 group-hover:scale-110 transition-transform">
+                <div className="text-4xl font-bold text-highlight-gold mb-2 group-hover:scale-110 transition-transform">
                   50K+
                 </div>
                 <div className="text-muted-foreground font-medium">Libros en Colección</div>
               </div>
               <div className="group">
-                <div className="text-4xl font-bold text-green-600 mb-2 group-hover:scale-110 transition-transform">
+                <div className="text-4xl font-bold text-highlight-green mb-2 group-hover:scale-110 transition-transform">
                   100K+
                 </div>
                 <div className="text-muted-foreground font-medium">Usuarios Atendidos</div>
               </div>
               <div className="group">
-                <div className="text-4xl font-bold text-purple-600 mb-2 group-hover:scale-110 transition-transform">
+                <div className="text-4xl font-bold text-highlight-purple mb-2 group-hover:scale-110 transition-transform">
                   365
                 </div>
                 <div className="text-muted-foreground font-medium">Días al Año</div>
@@ -185,12 +185,12 @@ export default function HistoriaPage() {
             Un Legado que Continúa
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-            Hoy, la Biblioteca Pública Central Dr. Julián Padrón se mantiene como un faro 
-            de conocimiento en Maturín, adaptándose a los tiempos modernos mientras preserva 
-            su esencia: ser un espacio donde el saber no tiene fronteras y donde cada visitante 
+            Hoy, la Biblioteca Pública Central Dr. Julián Padrón se mantiene como un faro
+            de conocimiento en Maturín, adaptándose a los tiempos modernos mientras preserva
+            su esencia: ser un espacio donde el saber no tiene fronteras y donde cada visitante
             encuentra las herramientas para su crecimiento personal y profesional.
           </p>
-          <div className="text-lg font-medium text-biblioteca-blue">
+          <div className="text-lg font-medium text-highlight-blue">
             "El conocimiento es el único tesoro que crece cuando se comparte"
           </div>
         </div>

@@ -48,6 +48,12 @@
     --sidebar-ring: 45 100% 50%;
 
     --interface-color: #003366;
+
+    /* Semantic Highlight Colors */
+    --highlight-blue: #003366;
+    --highlight-green: #16a34a;
+    --highlight-purple: #9333ea;
+    --highlight-gold: #ffe23b;
   }
 
   .dark {
@@ -86,6 +92,12 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Semantic Highlight Colors (Dark Mode) */
+    --highlight-blue: #60a5fa;
+    --highlight-green: #4ade80;
+    --highlight-purple: #c084fc;
+    --highlight-gold: #facc15;
   }
 }
 

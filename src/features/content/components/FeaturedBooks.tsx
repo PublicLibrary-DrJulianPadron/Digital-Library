@@ -35,13 +35,13 @@ const featuredBooks = [
 
 export function FeaturedBooks() {
   return (
-    <section className="py-16 bg-biblioteca-light/30">
+    <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="font-display text-3xl font-bold text-biblioteca-blue mb-4">
+          <h2 className="font-display text-3xl font-bold text-primary mb-4">
             Libros Destacados
           </h2>
-          <p className="text-biblioteca-gray max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Descubre las obras más populares y recomendadas de nuestra colección
           </p>
         </div>
@@ -56,54 +56,52 @@ export function FeaturedBooks() {
                   className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     variant="secondary"
-                    className="bg-white/90 hover:bg-white text-biblioteca-red"
+                    className="bg-white/90 hover:bg-white text-destructive"
                   >
                     <Heart className="w-4 h-4" />
                   </Button>
                 </div>
                 {!book.available && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="bg-biblioteca-red text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-destructive text-white px-3 py-1 rounded-full text-sm font-medium">
                       No Disponible
                     </span>
                   </div>
                 )}
               </div>
-              
+
               <CardContent className="p-6">
                 <div className="flex items-center gap-2 mb-2">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(book.rating)
-                          ? 'text-biblioteca-gold fill-biblioteca-gold'
+                      className={`w-4 h-4 ${i < Math.floor(book.rating)
+                          ? 'text-highlight-gold fill-highlight-gold'
                           : 'text-gray-300'
-                      }`}
+                        }`}
                     />
                   ))}
-                  <span className="text-sm text-biblioteca-gray">({book.rating})</span>
+                  <span className="text-sm text-muted-foreground">({book.rating})</span>
                 </div>
-                
-                <h3 className="font-display text-lg font-semibold text-biblioteca-blue mb-2">
+
+                <h3 className="font-display text-lg font-semibold text-primary mb-2">
                   {book.title}
                 </h3>
-                <p className="text-biblioteca-red font-medium mb-3">
+                <p className="text-destructive font-medium mb-3">
                   {book.author}
                 </p>
-                <p className="text-biblioteca-gray text-sm mb-4 line-clamp-3">
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                   {book.description}
                 </p>
-                
-                <Button 
-                  className={`w-full ${
-                    book.available 
-                      ? 'bg-biblioteca-blue hover:bg-biblioteca-blue/90 text-white' 
+
+                <Button
+                  className={`w-full ${book.available
+                      ? 'bg-primary hover:bg-primary/90 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                    }`}
                   disabled={!book.available}
                 >
                   <BookOpen className="mr-2 w-4 h-4" />

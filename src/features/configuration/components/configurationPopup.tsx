@@ -103,10 +103,10 @@ const ConfigurationForm = ({
     const { interfaceColor, theme, fontSize, dyslexic, language } = configuration;
 
     const colors = [
-        { name: "blue", class: "bg-blue-600" },
-        { name: "purple", class: "bg-purple-600" },
-        { name: "red", class: "bg-red-600" },
-        { name: "teal", class: "bg-teal-600" },
+        { name: "#003366", class: "bg-biblioteca-blue" },
+        { name: "#ffe23bff", class: "bg-biblioteca-gold" },
+        { name: "#CC0000", class: "bg-biblioteca-red" },
+        { name: "#005f73", class: "bg-biblioteca-light-blue" },
     ];
 
     return (

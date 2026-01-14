@@ -12,7 +12,7 @@ interface ConfigurationState {
 }
 
 const initialState: ConfigurationState = {
-    interfaceColor: "blue",
+    interfaceColor: "#003366",
     theme: "light",
     fontSize: 16,
     dyslexic: false,
