@@ -52,6 +52,7 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				interface: 'var(--interface-color)',
 				'biblioteca-blue': '#003366',
 				'biblioteca-red': '#CC0000',
 				'biblioteca-gold': '#ffe23bff',

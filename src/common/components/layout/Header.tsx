@@ -12,12 +12,12 @@ export const AppHeader = () => {
         <header className="bg-background border-b border-border px-3 py-3 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
             <div className="flex w-full md:w-auto items-center justify-between md:justify-start gap-4">
                 <div className="flex items-center gap-4">
-                    <SidebarTrigger className="text-foreground hover:text-primary" />
+                    <SidebarTrigger className="text-foreground hover:text-interface" />
                 </div>
                 <div className="flex md:hidden items-center gap-2">
                     <IconButton
                         onClick={() => setIsSearchVisible(!isSearchVisible)}
-                        className="text-white hover:text-primary"
+                        className="text-white hover:text-interface"
                     >
                         {isSearchVisible ? <XIcon className="h-5 w-5" /> : <SearchIcon className="h-5 w-5" />}
                     </IconButton>

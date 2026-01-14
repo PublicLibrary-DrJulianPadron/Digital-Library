@@ -46,6 +46,8 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 210 100% 15%;
     --sidebar-ring: 45 100% 50%;
+
+    --interface-color: #003366;
   }
 
   .dark {

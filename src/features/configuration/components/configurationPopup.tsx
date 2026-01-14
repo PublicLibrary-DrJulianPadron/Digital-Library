@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -25,44 +24,33 @@ import {
 import { Moon, Sun, Monitor, Type, RotateCcw } from "lucide-react";
 import { cn } from "@/common/lib/utils";
 import { useIsMobile } from "@/common/hooks/use-mobile";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    selectConfiguration,
+    setInterfaceColor,
+    setTheme,
+    setFontSize,
+    setDyslexic,
+    setLanguage,
+    resetConfiguration,
+    Theme,
+} from "@/features/configuration/configurationSlice";
 
 interface ConfigurationPopupProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-type Theme = "light" | "dark" | "auto";
-
 export const ConfigurationPopup = ({
     open,
     onOpenChange,
 }: ConfigurationPopupProps) => {
     const isMobile = useIsMobile();
-
-    // Local state for configuration
-    const [interfaceColor, setInterfaceColor] = useState<string>("blue");
-    const [theme, setTheme] = useState<Theme>("light");
-    const [fontSize, setFontSize] = useState<number>(16);
-    const [dyslexic, setDyslexic] = useState<boolean>(false);
-    const [language, setLanguage] = useState<string>("English (US)");
+    const dispatch = useDispatch();
+    const configuration = useSelector(selectConfiguration);
 
     const handleReset = () => {
-        setInterfaceColor("blue");
-        setTheme("light");
-        setFontSize(16);
-        setDyslexic(false);
-        setLanguage("English (US)");
-    };
-
-    const handleSave = () => {
-        console.log("Configuration Saved:", {
-            interfaceColor,
-            theme,
-            fontSize,
-            dyslexic,
-            language,
-        });
-        onOpenChange(false);
+        dispatch(resetConfiguration());
     };
 
     if (isMobile) {
@@ -73,18 +61,9 @@ export const ConfigurationPopup = ({
                         <DrawerTitle>Configuration</DrawerTitle>
                     </DrawerHeader>
                     <ConfigurationForm
-                        interfaceColor={interfaceColor}
-                        setInterfaceColor={setInterfaceColor}
-                        theme={theme}
-                        setTheme={setTheme}
-                        fontSize={fontSize}
-                        setFontSize={setFontSize}
-                        dyslexic={dyslexic}
-                        setDyslexic={setDyslexic}
-                        language={language}
-                        setLanguage={setLanguage}
+                        configuration={configuration}
+                        dispatch={dispatch}
                         handleReset={handleReset}
-                        handleSave={handleSave}
                         isMobile={true}
                     />
                 </DrawerContent>
@@ -99,18 +78,9 @@ export const ConfigurationPopup = ({
                     <DialogTitle className="text-xl font-bold">Configuration</DialogTitle>
                 </DialogHeader>
                 <ConfigurationForm
-                    interfaceColor={interfaceColor}
-                    setInterfaceColor={setInterfaceColor}
-                    theme={theme}
-                    setTheme={setTheme}
-                    fontSize={fontSize}
-                    setFontSize={setFontSize}
-                    dyslexic={dyslexic}
-                    setDyslexic={setDyslexic}
-                    language={language}
-                    setLanguage={setLanguage}
+                    configuration={configuration}
+                    dispatch={dispatch}
                     handleReset={handleReset}
-                    handleSave={handleSave}
                 />
             </DialogContent>
         </Dialog>
@@ -118,36 +88,20 @@ export const ConfigurationPopup = ({
 };
 
 interface ConfigurationFormProps {
-    interfaceColor: string;
-    setInterfaceColor: (color: string) => void;
-    theme: Theme;
-    setTheme: (theme: Theme) => void;
-    fontSize: number;
-    setFontSize: (size: number) => void;
-    dyslexic: boolean;
-    setDyslexic: (dyslexic: boolean) => void;
-    language: string;
-    setLanguage: (lang: string) => void;
+    configuration: ReturnType<typeof selectConfiguration>;
+    dispatch: ReturnType<typeof useDispatch>;
     handleReset: () => void;
-    handleSave: () => void;
     isMobile?: boolean;
 }
 
 const ConfigurationForm = ({
-    interfaceColor,
-    setInterfaceColor,
-    theme,
-    setTheme,
-    fontSize,
-    setFontSize,
-    dyslexic,
-    setDyslexic,
-    language,
-    setLanguage,
+    configuration,
+    dispatch,
     handleReset,
-    handleSave,
     isMobile = false,
 }: ConfigurationFormProps) => {
+    const { interfaceColor, theme, fontSize, dyslexic, language } = configuration;
+
     const colors = [
         { name: "blue", class: "bg-blue-600" },
         { name: "purple", class: "bg-purple-600" },
@@ -167,7 +121,7 @@ const ConfigurationForm = ({
                         {colors.map((color) => (
                             <button
                                 key={color.name}
-                                onClick={() => setInterfaceColor(color.name)}
+                                onClick={() => dispatch(setInterfaceColor(color.name))}
                                 className={cn(
                                     "w-10 h-10 rounded-full transition-all ring-offset-2 ring-offset-background",
                                     color.class,
@@ -193,7 +147,7 @@ const ConfigurationForm = ({
                                 "flex flex-col items-center justify-center p-3 h-auto gap-2 hover:bg-accent/50",
                                 theme === "light" && "border-primary bg-primary/5 text-primary hover:bg-primary/10"
                             )}
-                            onClick={() => setTheme("light")}
+                            onClick={() => dispatch(setTheme("light"))}
                         >
                             <Sun className="w-6 h-6" />
                             <span className="text-xs font-medium">Light</span>
@@ -204,7 +158,7 @@ const ConfigurationForm = ({
                                 "flex flex-col items-center justify-center p-3 h-auto gap-2 hover:bg-accent/50",
                                 theme === "dark" && "border-primary bg-primary/5 text-primary hover:bg-primary/10"
                             )}
-                            onClick={() => setTheme("dark")}
+                            onClick={() => dispatch(setTheme("dark"))}
                         >
                             <Moon className="w-6 h-6" />
                             <span className="text-xs font-medium">Dark</span>
@@ -215,7 +169,7 @@ const ConfigurationForm = ({
                                 "flex flex-col items-center justify-center p-3 h-auto gap-2 hover:bg-accent/50",
                                 theme === "auto" && "border-primary bg-primary/5 text-primary hover:bg-primary/10"
                             )}
-                            onClick={() => setTheme("auto")}
+                            onClick={() => dispatch(setTheme("auto"))}
                         >
                             <Monitor className="w-6 h-6" />
                             <span className="text-xs font-medium">Auto</span>
@@ -237,7 +191,7 @@ const ConfigurationForm = ({
                         <div className="px-2">
                             <Slider
                                 value={[fontSize]}
-                                onValueChange={(value) => setFontSize(value[0])}
+                                onValueChange={(value) => dispatch(setFontSize(value[0]))}
                                 max={24}
                                 min={12}
                                 step={1}
@@ -265,7 +219,7 @@ const ConfigurationForm = ({
                         </div>
                         <Switch
                             checked={dyslexic}
-                            onCheckedChange={setDyslexic}
+                            onCheckedChange={(checked) => dispatch(setDyslexic(checked))}
                         />
                     </div>
                 </section>
@@ -275,7 +229,7 @@ const ConfigurationForm = ({
                     <Label className="uppercase text-muted-foreground tracking-wider text-xs font-semibold">
                         Language
                     </Label>
-                    <Select value={language} onValueChange={setLanguage}>
+                    <Select value={language} onValueChange={(value) => dispatch(setLanguage(value))}>
                         <SelectTrigger className="w-full text-base">
                             <SelectValue placeholder="Select Language" />
                         </SelectTrigger>
@@ -299,9 +253,6 @@ const ConfigurationForm = ({
                 >
                     <RotateCcw className="w-4 h-4 mr-2" />
                     Reset
-                </Button>
-                <Button onClick={handleSave}>
-                    Save Changes
                 </Button>
             </div>
         </>

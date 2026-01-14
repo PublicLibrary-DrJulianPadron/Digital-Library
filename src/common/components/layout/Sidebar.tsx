@@ -44,7 +44,7 @@ export function AppSidebar() {
   }, {} as GroupedMenuItems);
 
   return (
-    <Sidebar className="border-r border-sidebar-border bg-biblioteca-blue">
+    <Sidebar className="border-r border-sidebar-border bg-interface">
       <SidebarHeader className="border-b border-sidebar-border/20">
         <div className="flex flex-col items-center py-4">
           <div className="w-12 h-12 bg-biblioteca-gold rounded-full flex items-center justify-center mb-2 bg-zinc-50">
