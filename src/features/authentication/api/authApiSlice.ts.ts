@@ -1,49 +1,74 @@
-// src/features/authentication/store/authApiSlice.ts
+// src/features/authentication/api/authApiSlice.ts.ts
 import { apiSlice } from '@/common/api/apiSlice';
-import type { AuthSuccessResponse } from '@/common/api/apiClient';
 import type { components } from '@/common/types/generated-api-types';
 import { deleteCookie } from '@/common/lib/utils'
 
 export type LoginRequest = components['schemas']['LoginRequest'];
 export type SignUpRequest = components['schemas']['SingUpRequest'];
 
+// New response type matching backend
+export interface AuthUserResponse {
+    first_name: string;
+    last_name: string;
+    email: string;
+    groups: string[];
+}
+
+export interface UserProfileResponse {
+    user: {
+        first_name: string;
+        last_name: string;
+        email: string;
+    };
+    national_document: string | null;
+    address: string | null;
+    birth_date: string | null;
+    phone: string | null;
+}
+
 export const authApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        logIn: builder.mutation<AuthSuccessResponse, LoginRequest>({
+        logIn: builder.mutation<AuthUserResponse, LoginRequest>({
             query: (payload) => ({
                 url: 'login/',
                 method: 'POST',
                 body: payload,
-                providesTags: (result, error, id) => [{ type: "User", id }],
             }),
         }),
-        signUp: builder.mutation<AuthSuccessResponse, SignUpRequest>({
+        signUp: builder.mutation<AuthUserResponse, SignUpRequest>({
             query: (payload) => ({
                 url: 'signup/',
                 method: 'POST',
                 body: payload,
-                providesTags: (result, error, id) => [{ type: "User", id }],
             }),
         }),
-        signOut: builder.mutation<AuthSuccessResponse, void>({
+        signOut: builder.mutation<void, void>({
             query: () => ({
                 url: 'signout/',
                 method: 'POST',
                 body: {},
             }),
-            invalidatesTags: [{ type: "User", id: "LIST" }],
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled;
                     deleteCookie('csrftoken');
-                    dispatch(apiSlice.util.invalidateTags(['User']));
                 } catch (error) {
                     console.error('Logout failed:', error);
                 }
             },
         }),
+        getUserProfile: builder.query<UserProfileResponse, void>({
+            query: () => 'user/',
+            transformResponse: (response: UserProfileResponse[]) => response[0],
+        }),
     }),
     overrideExisting: false,
 });
 
-export const { useLogInMutation, useSignUpMutation, useSignOutMutation } = authApiSlice;
+export const {
+    useLogInMutation,
+    useSignUpMutation,
+    useSignOutMutation,
+    useGetUserProfileQuery,
+    useLazyGetUserProfileQuery
+} = authApiSlice;

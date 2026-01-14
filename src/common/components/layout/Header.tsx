@@ -3,6 +3,7 @@ import { SidebarTrigger } from "@/common/components/ui/sidebar";
 import { UserProfile } from "@/features/authentication/components/LogInButton";
 import { IconButton } from "@/common/components/ui/icon-button";
 import { SearchIcon, XIcon } from "lucide-react";
+import ConfigurationButton from "@/common/components/ui/configurationButton";
 
 export const AppHeader = () => {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -21,11 +22,13 @@ export const AppHeader = () => {
                         {isSearchVisible ? <XIcon className="h-5 w-5" /> : <SearchIcon className="h-5 w-5" />}
                     </IconButton>
                     <UserProfile />
+                    <ConfigurationButton />
                 </div>
             </div>
 
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center gap-1">
                 <UserProfile />
+                <ConfigurationButton />
             </div>
         </header>
     );

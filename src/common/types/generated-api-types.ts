@@ -4,7 +4,43 @@
  */
 
 export interface paths {
-    "/api/booking/admin/blocked-schedules/": {
+    "/auth/google/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description class used for social authentications
+         *     example usage for facebook with access_token
+         *     -------------
+         *     from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+         *
+         *     class FacebookLogin(SocialLoginView):
+         *         adapter_class = FacebookOAuth2Adapter
+         *     -------------
+         *
+         *     example usage for facebook with code
+         *
+         *     -------------
+         *     from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+         *     from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+         *
+         *     class FacebookLogin(SocialLoginView):
+         *         adapter_class = FacebookOAuth2Adapter
+         *         client_class = OAuth2Client
+         *         callback_url = 'localhost:8000'
+         *     ------------- */
+        post: operations["auth_google_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/booking/admin/blocked-schedules/": {
         parameters: {
             query?: never;
             header?: never;
@@ -14,7 +50,7 @@ export interface paths {
         /** @description Admin View:
          *     - Can list and filter ALL blocked schedules (active or inactive)
          *     - Can perform bulk restore and bulk soft-delete operations */
-        get: operations["api_booking_admin_blocked_schedules_list"];
+        get: operations["booking_admin_blocked_schedules_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -23,7 +59,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/booking/admin/blocked-schedules/{id}/": {
+    "/booking/admin/blocked-schedules/{id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -33,7 +69,7 @@ export interface paths {
         /** @description Admin View:
          *     - Can list and filter ALL blocked schedules (active or inactive)
          *     - Can perform bulk restore and bulk soft-delete operations */
-        get: operations["api_booking_admin_blocked_schedules_retrieve"];
+        get: operations["booking_admin_blocked_schedules_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -42,7 +78,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/booking/admin/blocked-schedules/bulk_delete/": {
+    "/booking/admin/blocked-schedules/bulk_delete/": {
         parameters: {
             query?: never;
             header?: never;
@@ -54,14 +90,14 @@ export interface paths {
         /** @description Admin View:
          *     - Can list and filter ALL blocked schedules (active or inactive)
          *     - Can perform bulk restore and bulk soft-delete operations */
-        post: operations["api_booking_admin_blocked_schedules_bulk_delete_create"];
+        post: operations["booking_admin_blocked_schedules_bulk_delete_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/booking/admin/blocked-schedules/bulk_restore/": {
+    "/booking/admin/blocked-schedules/bulk_restore/": {
         parameters: {
             query?: never;
             header?: never;
@@ -73,14 +109,14 @@ export interface paths {
         /** @description Admin View:
          *     - Can list and filter ALL blocked schedules (active or inactive)
          *     - Can perform bulk restore and bulk soft-delete operations */
-        post: operations["api_booking_admin_blocked_schedules_bulk_restore_create"];
+        post: operations["booking_admin_blocked_schedules_bulk_restore_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/booking/blocked-schedules/": {
+    "/booking/blocked-schedules/": {
         parameters: {
             query?: never;
             header?: never;
@@ -93,7 +129,7 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        get: operations["api_booking_blocked_schedules_list"];
+        get: operations["booking_blocked_schedules_list"];
         put?: never;
         /** @description Public/Client View:
          *     - Lists only ACTIVE blocked schedules
@@ -101,14 +137,14 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        post: operations["api_booking_blocked_schedules_create"];
+        post: operations["booking_blocked_schedules_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/booking/blocked-schedules/{id}/": {
+    "/booking/blocked-schedules/{id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -121,14 +157,14 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        get: operations["api_booking_blocked_schedules_retrieve"];
+        get: operations["booking_blocked_schedules_retrieve"];
         /** @description Public/Client View:
          *     - Lists only ACTIVE blocked schedules
          *     - Public access to list
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        put: operations["api_booking_blocked_schedules_update"];
+        put: operations["booking_blocked_schedules_update"];
         post?: never;
         /** @description Public/Client View:
          *     - Lists only ACTIVE blocked schedules
@@ -136,7 +172,7 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        delete: operations["api_booking_blocked_schedules_destroy"];
+        delete: operations["booking_blocked_schedules_destroy"];
         options?: never;
         head?: never;
         /** @description Public/Client View:
@@ -145,10 +181,10 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        patch: operations["api_booking_blocked_schedules_partial_update"];
+        patch: operations["booking_blocked_schedules_partial_update"];
         trace?: never;
     };
-    "/api/booking/blocked-schedules/{id}/restore/": {
+    "/booking/blocked-schedules/{id}/restore/": {
         parameters: {
             query?: never;
             header?: never;
@@ -163,46 +199,46 @@ export interface paths {
          *     - Authenticated users can create/update/delete
          *     - Delete = soft delete (mark inactive)
          *     - Restore single schedule if needed */
-        post: operations["api_booking_blocked_schedules_restore_create"];
+        post: operations["booking_blocked_schedules_restore_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/booking/room-bookings/": {
+    "/booking/room-bookings/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_booking_room_bookings_list"];
+        get: operations["booking_room_bookings_list"];
         put?: never;
-        post: operations["api_booking_room_bookings_create"];
+        post: operations["booking_room_bookings_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/booking/room-bookings/{id}/": {
+    "/booking/room-bookings/{id}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_booking_room_bookings_retrieve"];
-        put: operations["api_booking_room_bookings_update"];
+        get: operations["booking_room_bookings_retrieve"];
+        put: operations["booking_room_bookings_update"];
         post?: never;
-        delete: operations["api_booking_room_bookings_destroy"];
+        delete: operations["booking_room_bookings_destroy"];
         options?: never;
         head?: never;
-        patch: operations["api_booking_room_bookings_partial_update"];
+        patch: operations["booking_room_bookings_partial_update"];
         trace?: never;
     };
-    "/api/booking/room-bookings/{id}/restore/": {
+    "/booking/room-bookings/{id}/restore/": {
         parameters: {
             query?: never;
             header?: never;
@@ -211,14 +247,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["api_booking_room_bookings_restore_create"];
+        post: operations["booking_room_bookings_restore_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/authors/": {
+    "/library/authors/": {
         parameters: {
             query?: never;
             header?: never;
@@ -229,20 +265,20 @@ export interface paths {
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_authors_list"];
+        get: operations["library_authors_list"];
         put?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        post: operations["api_library_authors_create"];
+        post: operations["library_authors_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/authors/{slug}/": {
+    "/library/authors/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -253,28 +289,28 @@ export interface paths {
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_authors_retrieve"];
+        get: operations["library_authors_retrieve"];
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        put: operations["api_library_authors_update"];
+        put: operations["library_authors_update"];
         post?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        delete: operations["api_library_authors_destroy"];
+        delete: operations["library_authors_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for managing authors.
          *     - list: List and search for authors.
          *     - retrieve: Get detailed information for a single author by slug.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        patch: operations["api_library_authors_partial_update"];
+        patch: operations["library_authors_partial_update"];
         trace?: never;
     };
-    "/api/library/books/": {
+    "/library/books/": {
         parameters: {
             query?: never;
             header?: never;
@@ -285,20 +321,20 @@ export interface paths {
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_books_list"];
+        get: operations["library_books_list"];
         put?: never;
         /** @description A ViewSet for managing books.
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        post: operations["api_library_books_create"];
+        post: operations["library_books_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/books/{slug}/": {
+    "/library/books/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -309,83 +345,67 @@ export interface paths {
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        get: operations["api_library_books_retrieve"];
+        get: operations["library_books_retrieve"];
         /** @description A ViewSet for managing books.
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        put: operations["api_library_books_update"];
+        put: operations["library_books_update"];
         post?: never;
         /** @description A ViewSet for managing books.
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        delete: operations["api_library_books_destroy"];
+        delete: operations["library_books_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for managing books.
          *     - list: List and search for books.
          *     - retrieve: Get detailed information for a single book.
          *     - create, update, destroy: For authenticated users with write permissions. */
-        patch: operations["api_library_books_partial_update"];
+        patch: operations["library_books_partial_update"];
         trace?: never;
     };
-    "/api/library/genres/": {
+    "/library/genres/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_library_genres_list"];
+        get: operations["library_genres_list"];
         put?: never;
-        post: operations["api_library_genres_create"];
+        post: operations["library_genres_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/genres/{slug}/": {
+    "/library/genres/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_library_genres_retrieve"];
-        put: operations["api_library_genres_update"];
+        get: operations["library_genres_retrieve"];
+        put: operations["library_genres_update"];
         post?: never;
-        delete: operations["api_library_genres_destroy"];
+        delete: operations["library_genres_destroy"];
         options?: never;
         head?: never;
-        patch: operations["api_library_genres_partial_update"];
+        patch: operations["library_genres_partial_update"];
         trace?: never;
     };
-    "/api/library/genres/{slug}/books/": {
+    "/library/genres/{slug}/books/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_library_genres_books_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/library/genres/with_books/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["api_library_genres_with_books_retrieve"];
+        get: operations["library_genres_books_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -394,67 +414,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/languages/": {
+    "/library/genres/salas/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing languages. */
-        get: operations["api_library_languages_list"];
+        /** @description Returns a list of all existing 'salas' and the number of genre entries in each. */
+        get: operations["library_genres_salas_retrieve"];
         put?: never;
-        /** @description A ViewSet for managing languages. */
-        post: operations["api_library_languages_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/languages/{slug}/": {
+    "/library/genres/with_books/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** @description A ViewSet for managing languages. */
-        get: operations["api_library_languages_retrieve"];
-        /** @description A ViewSet for managing languages. */
-        put: operations["api_library_languages_update"];
-        post?: never;
-        /** @description A ViewSet for managing languages. */
-        delete: operations["api_library_languages_destroy"];
-        options?: never;
-        head?: never;
-        /** @description A ViewSet for managing languages. */
-        patch: operations["api_library_languages_partial_update"];
-        trace?: never;
-    };
-    "/api/library/loans/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description A ViewSet for managing loans.
-         *     - Admins can view all loans.
-         *     - Regular users can only view their own loans. */
-        get: operations["api_library_loans_list"];
+        get: operations["library_genres_with_books_retrieve"];
         put?: never;
-        /** @description A ViewSet for managing loans.
-         *     - Admins can view all loans.
-         *     - Regular users can only view their own loans. */
-        post: operations["api_library_loans_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/loans/{id}/": {
+    "/library/languages/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for managing languages. */
+        get: operations["library_languages_list"];
+        put?: never;
+        /** @description A ViewSet for managing languages. */
+        post: operations["library_languages_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/library/languages/{slug}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for managing languages. */
+        get: operations["library_languages_retrieve"];
+        /** @description A ViewSet for managing languages. */
+        put: operations["library_languages_update"];
+        post?: never;
+        /** @description A ViewSet for managing languages. */
+        delete: operations["library_languages_destroy"];
+        options?: never;
+        head?: never;
+        /** @description A ViewSet for managing languages. */
+        patch: operations["library_languages_partial_update"];
+        trace?: never;
+    };
+    "/library/loans/": {
         parameters: {
             query?: never;
             header?: never;
@@ -464,25 +495,47 @@ export interface paths {
         /** @description A ViewSet for managing loans.
          *     - Admins can view all loans.
          *     - Regular users can only view their own loans. */
-        get: operations["api_library_loans_retrieve"];
+        get: operations["library_loans_list"];
+        put?: never;
         /** @description A ViewSet for managing loans.
          *     - Admins can view all loans.
          *     - Regular users can only view their own loans. */
-        put: operations["api_library_loans_update"];
+        post: operations["library_loans_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/library/loans/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
+        get: operations["library_loans_retrieve"];
+        /** @description A ViewSet for managing loans.
+         *     - Admins can view all loans.
+         *     - Regular users can only view their own loans. */
+        put: operations["library_loans_update"];
         post?: never;
         /** @description A ViewSet for managing loans.
          *     - Admins can view all loans.
          *     - Regular users can only view their own loans. */
-        delete: operations["api_library_loans_destroy"];
+        delete: operations["library_loans_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for managing loans.
          *     - Admins can view all loans.
          *     - Regular users can only view their own loans. */
-        patch: operations["api_library_loans_partial_update"];
+        patch: operations["library_loans_partial_update"];
         trace?: never;
     };
-    "/api/library/loans/history_admin/": {
+    "/library/loans/history_admin/": {
         parameters: {
             query?: never;
             header?: never;
@@ -490,7 +543,7 @@ export interface paths {
             cookie?: never;
         };
         /** @description Retrieves a complete loan history (for admins only). */
-        get: operations["api_library_loans_history_admin_retrieve"];
+        get: operations["library_loans_history_admin_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -499,7 +552,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/library/material-types/": {
+    "/library/material-types/": {
         parameters: {
             query?: never;
             header?: never;
@@ -507,17 +560,17 @@ export interface paths {
             cookie?: never;
         };
         /** @description A ViewSet for managing material types. */
-        get: operations["api_library_material_types_list"];
+        get: operations["library_material_types_list"];
         put?: never;
         /** @description A ViewSet for managing material types. */
-        post: operations["api_library_material_types_create"];
+        post: operations["library_material_types_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/material-types/{slug}/": {
+    "/library/material-types/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -525,19 +578,19 @@ export interface paths {
             cookie?: never;
         };
         /** @description A ViewSet for managing material types. */
-        get: operations["api_library_material_types_retrieve"];
+        get: operations["library_material_types_retrieve"];
         /** @description A ViewSet for managing material types. */
-        put: operations["api_library_material_types_update"];
+        put: operations["library_material_types_update"];
         post?: never;
         /** @description A ViewSet for managing material types. */
-        delete: operations["api_library_material_types_destroy"];
+        delete: operations["library_material_types_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for managing material types. */
-        patch: operations["api_library_material_types_partial_update"];
+        patch: operations["library_material_types_partial_update"];
         trace?: never;
     };
-    "/api/library/videos/": {
+    "/library/videos/": {
         parameters: {
             query?: never;
             header?: never;
@@ -545,17 +598,17 @@ export interface paths {
             cookie?: never;
         };
         /** @description A ViewSet for viewing and editing video instances. */
-        get: operations["api_library_videos_list"];
+        get: operations["library_videos_list"];
         put?: never;
         /** @description Handles the creation of a new video with file uploads. */
-        post: operations["api_library_videos_create"];
+        post: operations["library_videos_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/library/videos/{slug}/": {
+    "/library/videos/{slug}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -563,19 +616,19 @@ export interface paths {
             cookie?: never;
         };
         /** @description A ViewSet for viewing and editing video instances. */
-        get: operations["api_library_videos_retrieve"];
+        get: operations["library_videos_retrieve"];
         /** @description Handles the update of an existing video, including file uploads. */
-        put: operations["api_library_videos_update"];
+        put: operations["library_videos_update"];
         post?: never;
         /** @description A ViewSet for viewing and editing video instances. */
-        delete: operations["api_library_videos_destroy"];
+        delete: operations["library_videos_destroy"];
         options?: never;
         head?: never;
         /** @description A ViewSet for viewing and editing video instances. */
-        patch: operations["api_library_videos_partial_update"];
+        patch: operations["library_videos_partial_update"];
         trace?: never;
     };
-    "/api/login/": {
+    "/login/": {
         parameters: {
             query?: never;
             header?: never;
@@ -588,14 +641,14 @@ export interface paths {
          * User login
          * @description Authenticate a user, returning a success message in the body and JWT tokens via HTTP-only cookies.
          */
-        post: operations["api_login_create"];
+        post: operations["login_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/password_change/": {
+    "/password_change/": {
         parameters: {
             query?: never;
             header?: never;
@@ -608,14 +661,14 @@ export interface paths {
          * Update user password
          * @description Allows an authenticated user to update their password by providing the current (old) password and the new password.Validates the old password and enforces password policies on the new one.
          */
-        post: operations["api_password_change_create"];
+        post: operations["password_change_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/password_reset/": {
+    "/password_reset/": {
         parameters: {
             query?: never;
             header?: never;
@@ -627,14 +680,14 @@ export interface paths {
         /** @description An Api View which provides a method to request a password reset token based on an e-mail address
          *
          *     Sends a signal reset_password_token_created when a reset token was created */
-        post: operations["api_password_reset_create"];
+        post: operations["password_reset_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/password_reset/confirm/": {
+    "/password_reset/confirm/": {
         parameters: {
             query?: never;
             header?: never;
@@ -644,14 +697,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description An Api View which provides a method to reset a password based on a unique token */
-        post: operations["api_password_reset_confirm_create"];
+        post: operations["password_reset_confirm_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/password_reset/validate_token/": {
+    "/password_reset/validate_token/": {
         parameters: {
             query?: never;
             header?: never;
@@ -661,14 +714,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** @description An Api View which provides a method to verify that a token is valid */
-        post: operations["api_password_reset_validate_token_create"];
+        post: operations["password_reset_validate_token_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/profiles/": {
+    "/profiles/": {
         parameters: {
             query?: never;
             header?: never;
@@ -676,17 +729,17 @@ export interface paths {
             cookie?: never;
         };
         /** @description API endpoint that allows a profile to be created, viewed, or edited. */
-        get: operations["api_profiles_list"];
+        get: operations["profiles_list"];
         put?: never;
         /** @description Handle the creation of a new user profile. */
-        post: operations["api_profiles_create"];
+        post: operations["profiles_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/profiles/{id}/": {
+    "/profiles/{id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -694,19 +747,19 @@ export interface paths {
             cookie?: never;
         };
         /** @description API endpoint that allows a profile to be created, viewed, or edited. */
-        get: operations["api_profiles_retrieve"];
+        get: operations["profiles_retrieve"];
         /** @description API endpoint that allows a profile to be created, viewed, or edited. */
-        put: operations["api_profiles_update"];
+        put: operations["profiles_update"];
         post?: never;
         /** @description API endpoint that allows a profile to be created, viewed, or edited. */
-        delete: operations["api_profiles_destroy"];
+        delete: operations["profiles_destroy"];
         options?: never;
         head?: never;
         /** @description API endpoint that allows a profile to be created, viewed, or edited. */
-        patch: operations["api_profiles_partial_update"];
+        patch: operations["profiles_partial_update"];
         trace?: never;
     };
-    "/api/signout/": {
+    "/signout/": {
         parameters: {
             query?: never;
             header?: never;
@@ -719,14 +772,14 @@ export interface paths {
          * User signout
          * @description Logs a user out by deleting their authentication tokens (access and refresh) and CSRF token from HTTP-only cookies.
          */
-        post: operations["api_signout_create"];
+        post: operations["signout_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/signup/": {
+    "/signup/": {
         parameters: {
             query?: never;
             header?: never;
@@ -739,14 +792,14 @@ export interface paths {
          * User registration
          * @description Register a new user. On successful registration, a success message is returned in the body, and JWT tokens are set in HTTP-only cookies.
          */
-        post: operations["api_signup_create"];
+        post: operations["signup_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/token/refresh/": {
+    "/token/refresh/": {
         parameters: {
             query?: never;
             header?: never;
@@ -759,49 +812,57 @@ export interface paths {
          * Refresh access token
          * @description Generates a new short-lived access token using the refresh token stored in an HttpOnly cookie. The new access token is also returned via an HttpOnly cookie.
          */
-        post: operations["api_token_refresh_create"];
+        post: operations["token_refresh_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/user/": {
+    "/user/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_user_list"];
+        get: operations["user_list"];
         put?: never;
-        post: operations["api_user_create"];
+        post: operations["user_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/user/{id}/": {
+    "/user/{id}/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["api_user_retrieve"];
-        put: operations["api_user_update"];
+        get: operations["user_retrieve"];
+        put: operations["user_update"];
         post?: never;
-        delete: operations["api_user_destroy"];
+        delete: operations["user_destroy"];
         options?: never;
         head?: never;
-        patch: operations["api_user_partial_update"];
+        patch: operations["user_partial_update"];
         trace?: never;
     };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Serializer for login/signup response with user data. */
+        AuthResponse: {
+            first_name: string;
+            last_name: string;
+            /** Format: email */
+            email: string;
+            readonly groups: string;
+        };
         /** @description Serializer for the Author model. */
         Author: {
             readonly id: number;
@@ -909,7 +970,7 @@ export interface components {
             material_type?: string | null;
             language?: string;
         };
-        /** @description A serializer for creating a new Profile and its associated User. */
+        /** @description A serializer for creating or updating a new Profile and its associated User. */
         CreateProfile: {
             /** Documento nacional */
             national_document?: string | null;
@@ -923,7 +984,7 @@ export interface components {
             /** Teléfono */
             phone?: string | null;
         };
-        /** @description A serializer for creating a new Profile and its associated User. */
+        /** @description A serializer for creating or updating a new Profile and its associated User. */
         CreateProfileRequest: {
             /** Documento nacional */
             national_document?: string | null;
@@ -1604,6 +1665,16 @@ export interface components {
             /** Apellidos */
             last_name?: string;
         };
+        SocialLogin: {
+            access_token?: string;
+            code?: string;
+            id_token?: string;
+        };
+        SocialLoginRequest: {
+            access_token?: string;
+            code?: string;
+            id_token?: string;
+        };
         /**
          * @description * `Active` - Activo
          *     * `Returned` - Returned
@@ -1671,16 +1742,41 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    api_booking_admin_blocked_schedules_list: {
+    auth_google_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["SocialLoginRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SocialLoginRequest"];
+                "multipart/form-data": components["schemas"]["SocialLoginRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SocialLogin"];
+                };
+            };
+        };
+    };
+    booking_admin_blocked_schedules_list: {
         parameters: {
             query?: {
                 date?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
                 reason?: string;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -1699,12 +1795,12 @@ export interface operations {
             };
         };
     };
-    api_booking_admin_blocked_schedules_retrieve: {
+    booking_admin_blocked_schedules_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1721,7 +1817,7 @@ export interface operations {
             };
         };
     };
-    api_booking_admin_blocked_schedules_bulk_delete_create: {
+    booking_admin_blocked_schedules_bulk_delete_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -1746,7 +1842,7 @@ export interface operations {
             };
         };
     };
-    api_booking_admin_blocked_schedules_bulk_restore_create: {
+    booking_admin_blocked_schedules_bulk_restore_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -1771,16 +1867,16 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_list: {
+    booking_blocked_schedules_list: {
         parameters: {
             query?: {
                 date?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
                 reason?: string;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -1799,7 +1895,7 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_create: {
+    booking_blocked_schedules_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -1824,12 +1920,12 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_retrieve: {
+    booking_blocked_schedules_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1846,12 +1942,12 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_update: {
+    booking_blocked_schedules_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1874,12 +1970,12 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_destroy: {
+    booking_blocked_schedules_destroy: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1895,12 +1991,12 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_partial_update: {
+    booking_blocked_schedules_partial_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1923,12 +2019,12 @@ export interface operations {
             };
         };
     };
-    api_booking_blocked_schedules_restore_create: {
+    booking_blocked_schedules_restore_create: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Blocked Schedule. */
+                /** @description Un Cadena UUID que identifique este Blocked Schedule. */
                 id: string;
             };
             cookie?: never;
@@ -1951,16 +2047,16 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_list: {
+    booking_room_bookings_list: {
         parameters: {
             query?: {
                 event_date?: string;
                 event_type?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
                 status?: string;
             };
@@ -1980,7 +2076,7 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_create: {
+    booking_room_bookings_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2005,12 +2101,12 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_retrieve: {
+    booking_room_bookings_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Room Booking. */
+                /** @description Un Cadena UUID que identifique este Room Booking. */
                 id: string;
             };
             cookie?: never;
@@ -2027,12 +2123,12 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_update: {
+    booking_room_bookings_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Room Booking. */
+                /** @description Un Cadena UUID que identifique este Room Booking. */
                 id: string;
             };
             cookie?: never;
@@ -2055,12 +2151,12 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_destroy: {
+    booking_room_bookings_destroy: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Room Booking. */
+                /** @description Un Cadena UUID que identifique este Room Booking. */
                 id: string;
             };
             cookie?: never;
@@ -2076,12 +2172,12 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_partial_update: {
+    booking_room_bookings_partial_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Room Booking. */
+                /** @description Un Cadena UUID que identifique este Room Booking. */
                 id: string;
             };
             cookie?: never;
@@ -2104,12 +2200,12 @@ export interface operations {
             };
         };
     };
-    api_booking_room_bookings_restore_create: {
+    booking_room_bookings_restore_create: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Room Booking. */
+                /** @description Un Cadena UUID que identifique este Room Booking. */
                 id: string;
             };
             cookie?: never;
@@ -2132,15 +2228,15 @@ export interface operations {
             };
         };
     };
-    api_library_authors_list: {
+    library_authors_list: {
         parameters: {
             query?: {
                 name?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2159,7 +2255,7 @@ export interface operations {
             };
         };
     };
-    api_library_authors_create: {
+    library_authors_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2184,7 +2280,7 @@ export interface operations {
             };
         };
     };
-    api_library_authors_retrieve: {
+    library_authors_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2205,7 +2301,7 @@ export interface operations {
             };
         };
     };
-    api_library_authors_update: {
+    library_authors_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2232,7 +2328,7 @@ export interface operations {
             };
         };
     };
-    api_library_authors_destroy: {
+    library_authors_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -2252,7 +2348,7 @@ export interface operations {
             };
         };
     };
-    api_library_authors_partial_update: {
+    library_authors_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2279,17 +2375,17 @@ export interface operations {
             };
         };
     };
-    api_library_books_list: {
+    library_books_list: {
         parameters: {
             query?: {
                 authors__name?: string;
                 genres__label?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
                 publication_date?: string;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2308,7 +2404,7 @@ export interface operations {
             };
         };
     };
-    api_library_books_create: {
+    library_books_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2331,7 +2427,7 @@ export interface operations {
             };
         };
     };
-    api_library_books_retrieve: {
+    library_books_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2352,7 +2448,7 @@ export interface operations {
             };
         };
     };
-    api_library_books_update: {
+    library_books_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2377,7 +2473,7 @@ export interface operations {
             };
         };
     };
-    api_library_books_destroy: {
+    library_books_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -2397,7 +2493,7 @@ export interface operations {
             };
         };
     };
-    api_library_books_partial_update: {
+    library_books_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2422,18 +2518,18 @@ export interface operations {
             };
         };
     };
-    api_library_genres_list: {
+    library_genres_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
                 /** @description Filter genres by sala */
                 sala?: string;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2452,7 +2548,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_create: {
+    library_genres_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2477,7 +2573,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_retrieve: {
+    library_genres_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2498,7 +2594,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_update: {
+    library_genres_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2525,7 +2621,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_destroy: {
+    library_genres_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -2545,7 +2641,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_partial_update: {
+    library_genres_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2572,16 +2668,16 @@ export interface operations {
             };
         };
     };
-    api_library_genres_books_list: {
+    library_genres_books_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2602,7 +2698,7 @@ export interface operations {
             };
         };
     };
-    api_library_genres_with_books_retrieve: {
+    library_genres_salas_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2611,7 +2707,34 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of salas, each containing genres with paginated books. */
+            /** @description List of all unique 'salas' and the number of genre entries in each. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    library_genres_with_books_retrieve: {
+        parameters: {
+            query?: {
+                /** @description Global number of books per genre (defaults to 5 if not specified per genre) */
+                book_page_size?: number;
+                /** @description Genre page number */
+                page?: number;
+                /** @description Number of genres per page */
+                page_size?: number;
+                /** @description Filter genres by sala */
+                sala?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of salas, each containing genres with paginated books. Supports genre pagination and filtering by sala. */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2622,16 +2745,16 @@ export interface operations {
             };
         };
     };
-    api_library_languages_list: {
+    library_languages_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2650,7 +2773,7 @@ export interface operations {
             };
         };
     };
-    api_library_languages_create: {
+    library_languages_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2675,7 +2798,7 @@ export interface operations {
             };
         };
     };
-    api_library_languages_retrieve: {
+    library_languages_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2696,7 +2819,7 @@ export interface operations {
             };
         };
     };
-    api_library_languages_update: {
+    library_languages_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2723,7 +2846,7 @@ export interface operations {
             };
         };
     };
-    api_library_languages_destroy: {
+    library_languages_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -2743,7 +2866,7 @@ export interface operations {
             };
         };
     };
-    api_library_languages_partial_update: {
+    library_languages_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -2770,15 +2893,15 @@ export interface operations {
             };
         };
     };
-    api_library_loans_list: {
+    library_loans_list: {
         parameters: {
             query?: {
                 book?: string;
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
                 /** @description * `Active` - Activo
                  *     * `Returned` - Returned
@@ -2802,7 +2925,7 @@ export interface operations {
             };
         };
     };
-    api_library_loans_create: {
+    library_loans_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2827,12 +2950,12 @@ export interface operations {
             };
         };
     };
-    api_library_loans_retrieve: {
+    library_loans_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this loan. */
+                /** @description Un Cadena UUID que identifique este loan. */
                 id: string;
             };
             cookie?: never;
@@ -2849,12 +2972,12 @@ export interface operations {
             };
         };
     };
-    api_library_loans_update: {
+    library_loans_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this loan. */
+                /** @description Un Cadena UUID que identifique este loan. */
                 id: string;
             };
             cookie?: never;
@@ -2877,12 +3000,12 @@ export interface operations {
             };
         };
     };
-    api_library_loans_destroy: {
+    library_loans_destroy: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this loan. */
+                /** @description Un Cadena UUID que identifique este loan. */
                 id: string;
             };
             cookie?: never;
@@ -2898,12 +3021,12 @@ export interface operations {
             };
         };
     };
-    api_library_loans_partial_update: {
+    library_loans_partial_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this loan. */
+                /** @description Un Cadena UUID que identifique este loan. */
                 id: string;
             };
             cookie?: never;
@@ -2926,7 +3049,7 @@ export interface operations {
             };
         };
     };
-    api_library_loans_history_admin_retrieve: {
+    library_loans_history_admin_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -2945,16 +3068,16 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_list: {
+    library_material_types_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -2973,7 +3096,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_create: {
+    library_material_types_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -2998,7 +3121,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_retrieve: {
+    library_material_types_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -3019,7 +3142,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_update: {
+    library_material_types_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -3046,7 +3169,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_destroy: {
+    library_material_types_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -3066,7 +3189,7 @@ export interface operations {
             };
         };
     };
-    api_library_material_types_partial_update: {
+    library_material_types_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -3093,16 +3216,16 @@ export interface operations {
             };
         };
     };
-    api_library_videos_list: {
+    library_videos_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -3121,7 +3244,7 @@ export interface operations {
             };
         };
     };
-    api_library_videos_create: {
+    library_videos_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3146,7 +3269,7 @@ export interface operations {
             };
         };
     };
-    api_library_videos_retrieve: {
+    library_videos_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -3167,7 +3290,7 @@ export interface operations {
             };
         };
     };
-    api_library_videos_update: {
+    library_videos_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -3194,7 +3317,7 @@ export interface operations {
             };
         };
     };
-    api_library_videos_destroy: {
+    library_videos_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -3214,7 +3337,7 @@ export interface operations {
             };
         };
     };
-    api_library_videos_partial_update: {
+    library_videos_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -3241,7 +3364,7 @@ export interface operations {
             };
         };
     };
-    api_login_create: {
+    login_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3261,7 +3384,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
             };
             /** @description Invalid input or missing fields (e.g., email, password). */
             400: {
@@ -3279,7 +3404,7 @@ export interface operations {
             };
         };
     };
-    api_password_change_create: {
+    password_change_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3319,7 +3444,7 @@ export interface operations {
             };
         };
     };
-    api_password_reset_create: {
+    password_reset_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3344,7 +3469,7 @@ export interface operations {
             };
         };
     };
-    api_password_reset_confirm_create: {
+    password_reset_confirm_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3369,7 +3494,7 @@ export interface operations {
             };
         };
     };
-    api_password_reset_validate_token_create: {
+    password_reset_validate_token_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3394,16 +3519,16 @@ export interface operations {
             };
         };
     };
-    api_profiles_list: {
+    profiles_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -3422,7 +3547,7 @@ export interface operations {
             };
         };
     };
-    api_profiles_create: {
+    profiles_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3447,12 +3572,12 @@ export interface operations {
             };
         };
     };
-    api_profiles_retrieve: {
+    profiles_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3469,12 +3594,12 @@ export interface operations {
             };
         };
     };
-    api_profiles_update: {
+    profiles_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3497,12 +3622,12 @@ export interface operations {
             };
         };
     };
-    api_profiles_destroy: {
+    profiles_destroy: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3518,12 +3643,12 @@ export interface operations {
             };
         };
     };
-    api_profiles_partial_update: {
+    profiles_partial_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3546,7 +3671,7 @@ export interface operations {
             };
         };
     };
-    api_signout_create: {
+    signout_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3564,7 +3689,7 @@ export interface operations {
             };
         };
     };
-    api_signup_create: {
+    signup_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3584,7 +3709,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AuthResponse"];
+                };
             };
             /** @description Invalid input data. This could be due to missing required fields, invalid data formats, or a user with the same email already existing. */
             400: {
@@ -3595,7 +3722,7 @@ export interface operations {
             };
         };
     };
-    api_token_refresh_create: {
+    token_refresh_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3620,16 +3747,16 @@ export interface operations {
             };
         };
     };
-    api_user_list: {
+    user_list: {
         parameters: {
             query?: {
-                /** @description Which field to use when ordering the results. */
+                /** @description Qué campo usar para ordenar los resultados. */
                 ordering?: string;
-                /** @description A page number within the paginated result set. */
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
                 page?: number;
-                /** @description Number of results to return per page. */
+                /** @description Número de resultados a devolver por página. */
                 page_size?: number;
-                /** @description A search term. */
+                /** @description Un término de búsqueda. */
                 search?: string;
             };
             header?: never;
@@ -3648,7 +3775,7 @@ export interface operations {
             };
         };
     };
-    api_user_create: {
+    user_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -3673,12 +3800,12 @@ export interface operations {
             };
         };
     };
-    api_user_retrieve: {
+    user_retrieve: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3695,12 +3822,12 @@ export interface operations {
             };
         };
     };
-    api_user_update: {
+    user_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3723,12 +3850,12 @@ export interface operations {
             };
         };
     };
-    api_user_destroy: {
+    user_destroy: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;
@@ -3744,12 +3871,12 @@ export interface operations {
             };
         };
     };
-    api_user_partial_update: {
+    user_partial_update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description A UUID string identifying this Perfil. */
+                /** @description Un Cadena UUID que identifique este Perfil. */
                 id: string;
             };
             cookie?: never;

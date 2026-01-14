@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Settings, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store";
-import { getCookie } from '@/common/lib/utils'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,46 +14,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
-import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
-import { useGetUserQuery } from "@/features/content-management/api/userApiSlice";
 
 export function UserProfile() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
-  const { data: profileData, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserQuery({ page_size: 1 }, {
-    skip: !isAuthenticated,
-  });
-
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const csrfToken = getCookie('csrftoken');
-      const isCurrentlyAuthenticated = !!csrfToken;
-
-      if (isAuthenticated && !isCurrentlyAuthenticated) {
-        dispatch(clearIsAuthenticated());
-      } else if (!isAuthenticated && isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    };
-
-    checkAuthStatus();
-    const intervalId = setInterval(checkAuthStatus, 1000);
-    return () => clearInterval(intervalId);
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    if (!showLoginDialog && !isAuthenticated) {
-      const isCurrentlyAuthenticated = !!getCookie('csrftoken');
-      if (isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    }
-  }, [showLoginDialog, isAuthenticated, dispatch]);
+  const [signOut, { isLoading: isSignOutLoading }] = useSignOutMutation();
 
   const handleSignOut = async () => {
     try {
@@ -73,22 +41,18 @@ export function UserProfile() {
     return (firstInitial + lastInitial).toUpperCase() || "NN";
   };
 
-  const getUserName = (firstName = "", lastName = "") => {
+  const getUserName = (firstName = "", lastName = "", email = "") => {
     const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-    return name.length > 0 ? name : "User Profile";
+    if (name.length > 0) return name;
+    if (email.length > 0) return email;
+    return "User Profile";
   };
 
-  if (isProfileLoading) {
-    return <div>Loading...</div>;
-  }
+  // Use user data from Redux state (populated by login response)
+  const firstName = user?.first_name || "";
+  const lastName = user?.last_name || "";
 
-  const userProfile = profileData?.results?.[0]?.user;
-
-
-  if (isAuthenticated && !!userProfile) {
-    const firstName = userProfile?.first_name || "";
-    const lastName = userProfile?.last_name || "";
-
+  if (isAuthenticated && user) {
     return (
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
@@ -103,16 +67,16 @@ export function UserProfile() {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuLabel className="text-foreground">
-            {getUserName(firstName, lastName)}
+            {getUserName(firstName, lastName, user?.email)}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/usuario/me")}>
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/mis-prestamos")}>
+          <DropdownMenuItem disabled={true}>
             <BookOpen className="mr-2 h-4 w-4" />
-            <span>Mis Préstamos</span>
+            <span>Mis Préstamos (proximamente)</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate("/configuracion")}>
             <Settings className="mr-2 h-4 w-4" />

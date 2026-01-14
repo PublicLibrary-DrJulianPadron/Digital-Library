@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/common/components/ui/card";
 import { Calendar, MapPin, Users, BookOpen, Award, Building } from "lucide-react";
-import bibliotecaHistoria from "@/assets/biblioteca-historia.jpg";
+import bibliotecaHistoria from "/history_background.jpg";
 
 export default function HistoriaPage() {
   return (

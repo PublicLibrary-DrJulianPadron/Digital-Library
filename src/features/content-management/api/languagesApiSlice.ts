@@ -16,7 +16,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
         if (page_size) params.append('page_size', page_size.toString());
         if (search) params.append('search', search);
         if (sala) params.append('sala', sala);
-        return `/library/languages/?${params.toString()}`;
+        return `library/languages/?${params.toString()}`;
       },
       transformResponse: (response: any) =>
         Array.isArray(response) ? response : response.results ?? [],
@@ -33,14 +33,14 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
     }),
     createLanguage: builder.mutation<Language, LanguageRequest>({
       query: (newLanguage) => ({
-        url: `/library/languages/`,
+        url: `library/languages/`,
         method: 'POST',
         body: newLanguage,
       }),
       invalidatesTags: [{ type: 'Languages', id: 'LIST' }],
     }),
     getLanguageBySlug: builder.query<Language, string>({
-      query: (slug) => `/library/languages/${slug}/`,
+      query: (slug) => `library/languages/${slug}/`,
       providesTags: (result, error, slug) => [{ type: 'Languages', slug }],
     }),
     updateLanguage: builder.mutation<Language, { slug: string; body: LanguageRequest }>({
@@ -61,7 +61,7 @@ export const languagesApiSlice = apiSlice.injectEndpoints({
     }),
     deleteLanguage: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/languages/${slug}/`,
+        url: `library/languages/${slug}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (result, error, slug) => [{ type: 'Languages', slug }, { type: 'Languages', id: 'LIST' }],

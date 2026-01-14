@@ -1,14 +1,21 @@
 // src/features/authentication/store/authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { authApiSlice } from './authApiSlice.ts';
+import { authApiSlice, AuthUserResponse, UserProfileResponse } from './authApiSlice.ts';
+import type { AppRole } from '../types/user_roles';
 
 interface AuthState {
   isAuthenticated: boolean;
+  userRole: AppRole | null;
+  user: AuthUserResponse | null;
+  profile: UserProfileResponse | null;
   error: string | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
+  userRole: null,
+  user: null,
+  profile: null,
   error: null,
 };
 
@@ -20,39 +27,71 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
     },
+    setUserRole: (state, action: PayloadAction<AppRole | null>) => {
+      state.userRole = action.payload;
+    },
+    setUser: (state, action: PayloadAction<AuthUserResponse | null>) => {
+      state.user = action.payload;
+    },
+    setProfile: (state, action: PayloadAction<UserProfileResponse | null>) => {
+      state.profile = action.payload;
+    },
     clearIsAuthenticated: (state) => {
       state.isAuthenticated = false;
+      state.userRole = null;
+      state.user = null;
+      state.profile = null;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addMatcher(authApiSlice.endpoints.logIn.matchFulfilled, (state, action) => {
-        state.isAuthenticated = !!action.payload;
+        state.isAuthenticated = true;
+        state.user = action.payload;
         state.error = null;
       })
       .addMatcher(authApiSlice.endpoints.logIn.matchRejected, (state, action) => {
         state.isAuthenticated = false;
+        state.userRole = null;
+        state.user = null;
         state.error = action.error?.message ?? 'Unknown error';
       })
       .addMatcher(authApiSlice.endpoints.signUp.matchFulfilled, (state, action) => {
-        state.isAuthenticated = !!action.payload;
+        state.isAuthenticated = true;
+        state.user = action.payload;
         state.error = null;
       })
       .addMatcher(authApiSlice.endpoints.signUp.matchRejected, (state, action) => {
         state.isAuthenticated = false;
+        state.userRole = null;
+        state.user = null;
         state.error = action.error?.message ?? 'Unknown error';
       })
       .addMatcher(authApiSlice.endpoints.signOut.matchFulfilled, (state) => {
         state.isAuthenticated = false;
+        state.userRole = null;
+        state.user = null;
         state.error = null;
       })
       .addMatcher(authApiSlice.endpoints.signOut.matchRejected, (state, action) => {
         state.isAuthenticated = false;
+        state.userRole = null;
+        state.user = null;
+        state.profile = null;
         state.error = action.error?.message ?? 'Unknown error';
+      })
+      .addMatcher(authApiSlice.endpoints.getUserProfile.matchFulfilled, (state, action) => {
+        state.profile = action.payload;
+        if (action.payload.user) {
+          state.user = {
+            ...action.payload.user,
+            groups: state.user?.groups ?? []
+          };
+        }
       });
   },
 });
 
-export const { setIsAuthenticated, clearIsAuthenticated } = authSlice.actions;
+export const { setIsAuthenticated, setUserRole, setUser, setProfile, clearIsAuthenticated } = authSlice.actions;
 export default authSlice.reducer;

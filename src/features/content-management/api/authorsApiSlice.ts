@@ -23,7 +23,7 @@ export const authorsApiSlice = apiSlice.injectEndpoints({
                 if (search) {
                     params += `&search=${encodeURIComponent(search)}`;
                 }
-                return `/library/authors/?${params}`;
+                return `library/authors/?${params}`;
             },
             providesTags: (result) =>
                 result
@@ -38,13 +38,13 @@ export const authorsApiSlice = apiSlice.injectEndpoints({
         }),
 
         getAuthorBySlug: builder.query<Author, string>({
-            query: (slug) => `/library/authors/${slug}/`,
+            query: (slug) => `library/authors/${slug}/`,
             providesTags: (result, error, slug) => [{ type: "Authors", id: slug }],
         }),
 
         createAuthor: builder.mutation<Author, Partial<Author>>({
             query: (body) => ({
-                url: "/library/authors/",
+                url: "library/authors/",
                 method: "POST",
                 body,
             }),
@@ -56,7 +56,7 @@ export const authorsApiSlice = apiSlice.injectEndpoints({
             { slug: string; data: Partial<Author> }
         >({
             query: ({ slug, data }) => ({
-                url: `/library/authors/${slug}/`,
+                url: `library/authors/${slug}/`,
                 method: "PUT",
                 body: data,
             }),
@@ -65,7 +65,7 @@ export const authorsApiSlice = apiSlice.injectEndpoints({
 
         deleteAuthor: builder.mutation<{ success: boolean }, string>({
             query: (slug) => ({
-                url: `/library/authors/${slug}/`,
+                url: `library/authors/${slug}/`,
                 method: "DELETE",
             }),
             invalidatesTags: (result, error, slug) => [{ type: "Authors", slug }],
