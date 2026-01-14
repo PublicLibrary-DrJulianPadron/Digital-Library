@@ -27,8 +27,8 @@ const SelectedRoomPage = () => {
     if (isLoading) {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-biblioteca-blue"></div>
-                <p className="mt-4 text-biblioteca-blue font-medium italic">Cargando sala {roomName}...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <p className="mt-4 text-primary font-medium italic">Cargando sala {roomName}...</p>
             </div>
         );
     }
@@ -37,8 +37,8 @@ const SelectedRoomPage = () => {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
                 <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-                <h2 className="text-2xl font-bold text-gray-800">Error al cargar la sala</h2>
-                <p className="text-gray-600">Por favor, intente de nuevo más tarde.</p>
+                <h2 className="text-2xl font-bold text-foreground">Error al cargar la sala</h2>
+                <p className="text-muted-foreground">Por favor, intente de nuevo más tarde.</p>
                 <ReturnButton />
             </div>
         );
@@ -49,9 +49,9 @@ const SelectedRoomPage = () => {
 
     if (!roomData) {
         return (
-            <div className="container mx-auto p-8 text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">No se encontró información para la sala {roomName}.</p>
+            <div className="container mx-auto p-8 text-center py-20 bg-muted/30 rounded-2xl border-2 border-dashed border-border">
+                <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground font-medium">No se encontró información para la sala {roomName}.</p>
                 <ReturnButton />
             </div>
         );
@@ -71,10 +71,10 @@ const SelectedRoomPage = () => {
                 <ReturnButton />
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 m-4">
                     <div>
-                        <h1 className="text-4xl font-extrabold text-biblioteca-blue mb-2 tracking-tight uppercase">
+                        <h1 className="text-4xl font-extrabold text-primary mb-2 tracking-tight uppercase">
                             {roomData.sala}
                         </h1>
-                        <div className="h-1.5 w-24 bg-biblioteca-gold rounded-full"></div>
+                        <div className="h-1.5 w-24 bg-accent rounded-full"></div>
                     </div>
                 </div>
             </header>
@@ -84,14 +84,14 @@ const SelectedRoomPage = () => {
                     <section key={genre.slug} className="relative">
                         {/* Genre Label - Rounded box as per sketch */}
                         <div className="mb-6 flex items-center justify-between">
-                            <div className="bg-white border-2 border-biblioteca-blue rounded-xl px-6 py-2 shadow-sm">
-                                <h2 className="text-xl font-bold text-biblioteca-blue uppercase tracking-wider">
+                            <div className="bg-card border-2 border-primary rounded-xl px-6 py-2 shadow-sm">
+                                <h2 className="text-xl font-bold text-primary uppercase tracking-wider">
                                     {genre.label}
                                 </h2>
                             </div>
                             <Link
                                 to={`/catalogo?genero=${genre.slug}`}
-                                className="text-sm font-semibold text-biblioteca-blue hover:text-biblioteca-gold flex items-center transition-colors"
+                                className="text-sm font-semibold text-primary hover:text-accent flex items-center transition-colors"
                             >
                                 Ver todo
                                 <ChevronRight className="ml-1 h-4 w-4" />
@@ -107,8 +107,8 @@ const SelectedRoomPage = () => {
                                     </div>
                                 ))}
                                 {(!genre.books || genre.books.length === 0) && (
-                                    <div className="w-full py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center">
-                                        <p className="text-gray-400 italic">No hay libros disponibles en este género</p>
+                                    <div className="w-full py-12 bg-muted/30 rounded-xl border border-dashed border-border flex items-center justify-center">
+                                        <p className="text-muted-foreground italic">No hay libros disponibles en este género</p>
                                     </div>
                                 )}
                             </div>
@@ -118,9 +118,9 @@ const SelectedRoomPage = () => {
             </div>
 
             {roomData.genres?.length === 0 && (
-                <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                    <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium">Esta sala aún no tiene géneros con libros asignados.</p>
+                <div className="text-center py-20 bg-muted/30 rounded-2xl border-2 border-dashed border-border">
+                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">Esta sala aún no tiene géneros con libros asignados.</p>
                 </div>
             )}
 

@@ -49,7 +49,7 @@ const Index = () => {
     </section>
 
     {/* Sección de búsqueda */}
-    <SearchSection />
+    {/* <SearchSection /> */}
 
     {/* Libros destacados */}
     {/* <FeaturedBooks /> */}
