@@ -3,7 +3,10 @@ import { useGetSalasQuery } from '@/features/content-management/api/genresApiSli
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, AlertCircle, ArrowRight } from 'lucide-react';
 
+import { useTranslation } from "react-i18next";
+
 const RoomsPage = () => {
+    const { t } = useTranslation();
     const { data: salas, isLoading, isError } = useGetSalasQuery();
     const navigate = useNavigate();
 
@@ -11,7 +14,7 @@ const RoomsPage = () => {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <p className="mt-4 text-primary font-medium italic">Cargando salas...</p>
+                <p className="mt-4 text-primary font-medium italic">{t('rooms.loading')}</p>
             </div>
         );
     }
@@ -20,8 +23,8 @@ const RoomsPage = () => {
         return (
             <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
                 <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-                <h2 className="text-2xl font-bold text-foreground">Error al cargar las salas</h2>
-                <p className="text-muted-foreground">Por favor, intente de nuevo más tarde.</p>
+                <h2 className="text-2xl font-bold text-foreground">{t('rooms.error_title')}</h2>
+                <p className="text-muted-foreground">{t('rooms.error_message')}</p>
             </div>
         );
     }
@@ -30,12 +33,12 @@ const RoomsPage = () => {
         <main className="flex-1 px-6 md:px-12 py-6 md:py-10">
             <section className="mb-12 md:mb-16 text-center">
                 <h2 className="font-display text-4xl md:text-5xl mb-4 text-biblioteca-blue dark:text-primary ">
-                    <span>Nuestras <span className="text-biblioteca-gold dark:text-highlight-gold italic">Salas</span></span>
+                    <span>{t('rooms.title_prefix')} <span className="text-biblioteca-gold dark:text-highlight-gold italic">{t('rooms.title_highlight')}</span></span>
                 </h2>
                 <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-8"></div>
 
                 <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground max-w-lg mx-auto leading-relaxed">
-                    Explore los diferentes espacios dedicados al conocimiento y la cultura. Cada sala cuenta con una colección única esperando ser descubierta.
+                    {t('rooms.description')}
                 </p>
             </section>
 
@@ -73,7 +76,7 @@ const RoomsPage = () => {
             {!salas || salas.length === 0 && (
                 <div className="text-center py-20 bg-muted rounded-2xl border-2 border-dashed border-border mt-12 max-w-3xl mx-auto">
                     <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <p className="text-muted-foreground font-medium">No se encontraron salas disponibles.</p>
+                    <p className="text-muted-foreground font-medium">{t('rooms.empty')}</p>
                 </div>
             )}
         </main>

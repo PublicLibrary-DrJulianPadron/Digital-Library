@@ -2,14 +2,16 @@ import React from 'react';
 import { Calendar, MapPin, Users, BookOpen, Award, Building, ArrowRight } from "lucide-react";
 import bibliotecaHistoria from "/history_background.jpg";
 import { ReturnButton } from "@/common/components/ui/return-button";
+import { useTranslation } from "react-i18next";
 
 export default function HistoriaPage() {
+  const { t } = useTranslation();
   const historicalMilestones = [
     {
-      title: "Fundación",
+      title: t('history.milestones.foundation.title'),
       icon: Calendar,
-      content: "Establecida oficialmente en 1968, nacimos con la visión de democratizar el acceso al conocimiento en la región oriental.",
-      highlight: "1968",
+      content: t('history.milestones.foundation.content'),
+      highlight: t('history.milestones.foundation.highlight'),
       colorTheme: {
         iconBg: "bg-[#003366]", // Biblioteca Blue
         iconColor: "text-white",
@@ -19,10 +21,10 @@ export default function HistoriaPage() {
       }
     },
     {
-      title: "Ubicación Estratégica",
+      title: t('history.milestones.location.title'),
       icon: MapPin,
-      content: "Ubicada en la Av. Orinoco con Calle Libertador, somos el corazón cultural de Maturín.",
-      highlight: "Av. Orinoco con Calle Libertador",
+      content: t('history.milestones.location.content'),
+      highlight: t('history.milestones.location.highlight'),
       colorTheme: {
         iconBg: "bg-[#ffe23b]", // Biblioteca Gold
         iconColor: "text-black",
@@ -32,10 +34,10 @@ export default function HistoriaPage() {
       }
     },
     {
-      title: "Dr. Julián Padrón",
+      title: t('history.milestones.patron.title'),
       icon: Award,
-      content: "En honor al Dr. Julián Padrón, destacado intelectual y educador venezolano.",
-      highlight: "Dr. Julián Padrón",
+      content: t('history.milestones.patron.content'),
+      highlight: t('history.milestones.patron.highlight'),
       colorTheme: {
         iconBg: "bg-[#16a34a]", // Green
         iconColor: "text-white",
@@ -45,10 +47,10 @@ export default function HistoriaPage() {
       }
     },
     {
-      title: "Servicio Comunitario",
+      title: t('history.milestones.community.title'),
       icon: Users,
-      content: "Más de 55 años sirviendo a estudiantes, investigadores y ciudadanos de todas las edades.",
-      highlight: "55 años",
+      content: t('history.milestones.community.content'),
+      highlight: t('history.milestones.community.highlight'),
       colorTheme: {
         iconBg: "bg-[#9333ea]", // Purple
         iconColor: "text-white",
@@ -65,13 +67,13 @@ export default function HistoriaPage() {
       <section className="px-6 md:px-12 py-16 md:py-10 text-center relative overflow-hidden">
 
         <h1 className="font-display text-4xl md:text-5xl mb-4 text-biblioteca-blue dark:text-primary tracking-tight">
-          Nuestra <span className="italic text-biblioteca-gold dark:text-highlight-gold">Historia</span>
+          {t('history.title_prefix')} <span className="italic text-biblioteca-gold dark:text-highlight-gold">{t('history.title_highlight')}</span>
         </h1>
 
         <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-8"></div>
 
         <p className="font-mono text-xs md:text-sm uppercase tracking-[0.2em] text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Más de medio siglo construyendo el futuro a través del conocimiento y la cultura en Maturín
+          {t('history.subtitle')}
         </p>
       </section>
 
@@ -116,21 +118,21 @@ export default function HistoriaPage() {
           <div className="space-y-16">
             <div className="relative">
               <h3 className="text-3xl font-display italic text-foreground mb-6">
-                Misión
+                {t('history.mission.title')}
               </h3>
               <div className="h-px w-12 bg-primary mb-6"></div>
               <p className="text-muted-foreground leading-relaxed text-lg font-light">
-                Facilitar el acceso universal al conocimiento y la información, promoviendo la lectura, la investigación y el desarrollo cultural de nuestra comunidad.
+                {t('history.mission.content')}
               </p>
             </div>
 
             <div className="relative">
               <h3 className="text-3xl font-display italic text-foreground mb-6">
-                Visión
+                {t('history.vision.title')}
               </h3>
               <div className="h-px w-12 bg-biblioteca-gold mb-6"></div>
               <p className="text-muted-foreground leading-relaxed text-lg font-light">
-                Ser reconocida como la principal institución de información y cultura del oriente venezolano, adaptándose a las nuevas tecnologías mientras preservamos el valor del saber.
+                {t('history.vision.content')}
               </p>
             </div>
           </div>
@@ -147,7 +149,7 @@ export default function HistoriaPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-60"></div>
               <div className="absolute bottom-0 left-0 p-8">
                 <p className="font-display text-2xl text-foreground italic">Dr. Julián Padrón</p>
-                <p className="font-mono text-xs text-primary mt-2">ICONO CULTURAL</p>
+                <p className="font-mono text-xs text-primary mt-2">{t('history.image_caption')}</p>
               </div>
             </div>
           </div>
@@ -159,10 +161,10 @@ export default function HistoriaPage() {
         <div className="max-w-3xl mx-auto">
           <BookOpen className="h-8 w-8 text-biblioteca-gold mx-auto mb-8 opacity-80" />
           <blockquote className="font-display text-3xl md:text-5xl font-medium leading-tight text-foreground mb-8">
-            "El conocimiento es el único tesoro que crece cuando se comparte"
+            {t('history.quote')}
           </blockquote>
           <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest">
-            — Legado Institucional
+            — {t('history.legacy')}
           </p>
 
           <div className="mt-12 flex justify-center">

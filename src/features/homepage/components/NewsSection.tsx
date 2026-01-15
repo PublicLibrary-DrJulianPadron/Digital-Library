@@ -27,21 +27,24 @@ const news = [
   }
 ];
 
+import { useTranslation } from "react-i18next";
+
 export function NewsSection() {
+  const { t } = useTranslation();
   return (
     <section className="py-16 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="font-display text-3xl font-bold text-primary mb-4">
-              Noticias y Eventos
+              {t('homepage.news.title')}
             </h2>
             <p className="text-muted-foreground">
-              Mantente al día con las últimas novedades de nuestra biblioteca
+              {t('homepage.news.subtitle')}
             </p>
           </div>
           <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-            Ver todas
+            {t('homepage.news.view_all')}
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
         </div>
@@ -68,7 +71,7 @@ export function NewsSection() {
                   {item.excerpt}
                 </p>
                 <Button variant="ghost" className="text-primary hover:text-destructive p-0">
-                  Leer más
+                  {t('homepage.news.read_more')}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </CardContent>

@@ -6,11 +6,14 @@ import { BookCard } from '@/features/content/components/BookCard';
 import { ReturnButton } from "@/common/components/ui/return-button";
 import { PaginationComponent } from "@/common/components/ui/pagination";
 
+import { useTranslation } from "react-i18next";
+
 /**
  * Page displaying the selected room with its genres and books.
  * The books are organized horizontally within each genre section.
  */
 const SelectedRoomPage = () => {
+  const { t } = useTranslation();
   const { roomName } = useParams<{ roomName: string }>();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
@@ -28,7 +31,7 @@ const SelectedRoomPage = () => {
     return (
       <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="mt-4 text-primary font-medium italic">Cargando sala {roomName}...</p>
+        <p className="mt-4 text-primary font-medium italic">{t('rooms.loading_single', { roomName })}</p>
       </div>
     );
   }
@@ -37,8 +40,8 @@ const SelectedRoomPage = () => {
     return (
       <div className="container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh]">
         <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold text-foreground">Error al cargar la sala</h2>
-        <p className="text-muted-foreground">Por favor, intente de nuevo más tarde.</p>
+        <h2 className="text-2xl font-bold text-foreground">{t('rooms.error_single_title')}</h2>
+        <p className="text-muted-foreground">{t('rooms.error_single_message')}</p>
         <div className="mt-4">
           <ReturnButton />
         </div>
@@ -53,7 +56,7 @@ const SelectedRoomPage = () => {
     return (
       <div className="container mx-auto p-8 text-center py-20 bg-muted/30 rounded-2xl border-2 border-dashed border-border">
         <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-muted-foreground font-medium">No se encontró información para la sala {roomName}.</p>
+        <p className="text-muted-foreground font-medium">{t('rooms.empty_single', { roomName })}</p>
         <div className="mt-4">
           <ReturnButton />
         </div>
@@ -93,7 +96,7 @@ const SelectedRoomPage = () => {
             <div className="flex items-end justify-between mb-8 pb-4 border-b border-muted">
               <div>
                 <span className="block text-[10px] font-mono text-primary mb-2">
-                  COLLECTION {String(index + 1).padStart(2, '0')}
+                  {t('rooms.collection_label')} {String(index + 1).padStart(2, '0')}
                 </span>
                 <h3 className="text-xl md:text-1xl font-mono uppercase tracking-widest text-foreground">
                   {genre.label}
@@ -103,7 +106,7 @@ const SelectedRoomPage = () => {
                 to={`/catalogo?genero=${genre.slug}`}
                 className="text-[10px] font-mono text-muted-foreground hover:text-primary transition-colors flex items-center"
               >
-                VIEW ALL <ChevronRight className="ml-1 h-4 w-4" />
+                {t('rooms.view_all')} <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
             </div>
 
@@ -119,7 +122,7 @@ const SelectedRoomPage = () => {
               {(!genre.books || genre.books.length === 0) && (
                 <div className="col-span-full py-12 border border-dashed border-border rounded flex items-center justify-center">
                   <p className="text-xs font-mono text-muted-foreground italic">
-                    No hay libros disponibles en este género — Ghost Grid Active
+                    {t('rooms.empty_genre')}
                   </p>
                 </div>
               )}
@@ -131,7 +134,7 @@ const SelectedRoomPage = () => {
       {roomData.genres?.length === 0 && (
         <div className="mt-4 flex items-center justify-center py-8 border border-dashed border-border rounded">
           <p className="text-xs font-mono text-muted-foreground italic">
-            No hay géneros asignados a esta sala.
+            {t('rooms.no_genres')}
           </p>
         </div>
       )}

@@ -2,43 +2,47 @@
 import { Calendar, Clock, Users, Wifi } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/common/components/ui/card";
 
-const services = [
-  {
-    icon: Calendar,
-    title: "Préstamo de Sala",
-    description: "Reserva nuestras instalaciones para eventos académicos y culturales",
-    color: "bg-highlight-blue"
-  },
-  {
-    icon: Clock,
-    title: "Horario Extendido",
-    description: "Abierto de lunes a sábado con horarios flexibles para tu comodidad",
-    color: "bg-destructive"
-  },
-  {
-    icon: Users,
-    title: "Salas de Estudio",
-    description: "Espacios dedicados para estudio individual y grupal",
-    color: "bg-highlight-gold"
-  },
-  {
-    icon: Wifi,
-    title: "Acceso Digital",
-    description: "WiFi gratuito y acceso a recursos digitales y bases de datos",
-    color: "bg-highlight-blue"
-  }
-];
+import { useTranslation } from "react-i18next";
 
 export function ServicesSection() {
+  const { t } = useTranslation();
+
+  const services = [
+    {
+      icon: Calendar,
+      title: t('homepage.services.items.room_booking.title'),
+      description: t('homepage.services.items.room_booking.description'),
+      color: "bg-highlight-blue"
+    },
+    {
+      icon: Clock,
+      title: t('homepage.services.items.extended_hours.title'),
+      description: t('homepage.services.items.extended_hours.description'),
+      color: "bg-destructive"
+    },
+    {
+      icon: Users,
+      title: t('homepage.services.items.study_rooms.title'),
+      description: t('homepage.services.items.study_rooms.description'),
+      color: "bg-highlight-gold"
+    },
+    {
+      icon: Wifi,
+      title: t('homepage.services.items.digital_access.title'),
+      description: t('homepage.services.items.digital_access.description'),
+      color: "bg-highlight-blue"
+    }
+  ];
+
   return (
     <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl font-bold text-primary mb-4">
-            Nuestros Servicios
+            {t('homepage.services.title')}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Ofrecemos una amplia gama de servicios para apoyar tu educación y crecimiento personal
+            {t('homepage.services.subtitle')}
           </p>
         </div>
 

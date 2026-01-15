@@ -1,7 +1,10 @@
 
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
 
+import { useTranslation } from "react-i18next";
+
 export function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="bg-background text-foreground py-12 border-t border-muted">
       <div className="container mx-auto px-4">
@@ -14,13 +17,13 @@ export function Footer() {
               </div>
               <div>
                 <h3 className="font-display text-lg font-semibold">
-                  Biblioteca Pública Central
+                  {t('footer.brand.title')}
                 </h3>
-                <p className="text-muted-foreground text-sm">Dr. Julián Padrón</p>
+                <p className="text-muted-foreground text-sm">{t('footer.brand.subtitle')}</p>
               </div>
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
-              Democratizando el acceso al conocimiento y la cultura para toda la comunidad de Maturín y la región oriental de Venezuela.
+              {t('footer.brand.description')}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-primary hover:text-foreground transition-colors">
@@ -37,13 +40,13 @@ export function Footer() {
 
           {/* Información de contacto */}
           <div>
-            <h4 className="font-semibold text-primary mb-4">Contacto</h4>
+            <h4 className="font-semibold text-primary mb-4">{t('footer.contact.title')}</h4>
             <div className="space-y-3">
               <div className="flex items-start">
                 <MapPin className="w-5 h-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm">Av. Orinoco con Calle Libertador</p>
-                  <p className="text-sm text-muted-foreground">Maturín, Monagas, Venezuela</p>
+                  <p className="text-sm">{t('footer.contact.address_line1')}</p>
+                  <p className="text-sm text-muted-foreground">{t('footer.contact.address_line2')}</p>
                 </div>
               </div>
               <div className="flex items-center">
@@ -59,19 +62,19 @@ export function Footer() {
 
           {/* Horarios */}
           <div>
-            <h4 className="font-semibold text-primary mb-4">Horarios</h4>
+            <h4 className="font-semibold text-primary mb-4">{t('footer.hours.title')}</h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>Lunes - Viernes:</span>
+                <span>{t('footer.hours.weekdays')}:</span>
                 <span className="text-muted-foreground">7:00 - 18:00</span>
               </div>
               <div className="flex justify-between">
-                <span>Sábados:</span>
+                <span>{t('footer.hours.saturdays')}:</span>
                 <span className="text-muted-foreground">8:00 - 14:00</span>
               </div>
               <div className="flex justify-between">
-                <span>Domingos:</span>
-                <span className="text-muted-foreground">Cerrado</span>
+                <span>{t('footer.hours.sundays')}:</span>
+                <span className="text-muted-foreground">{t('footer.hours.closed')}</span>
               </div>
             </div>
           </div>
@@ -79,7 +82,7 @@ export function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 Biblioteca Pública Central Dr. Julián Padrón. Todos los derechos reservados.
+            {t('footer.copyright')}
           </p>
         </div>
       </div>

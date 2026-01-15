@@ -56,10 +56,10 @@ export function AppSidebar() {
             className="w-auto h-24 mb-2 object-contain filter drop-shadow-md"
           />
           <h2 className="font-display text-sm font-semibold text-white text-center leading-tight">
-            Biblioteca Pública Central
+            {t('sidebar.brand.title')}
           </h2>
           <p className="text-xs text-biblioteca-gold text-center">
-            Dr. Julián Padrón
+            {t('sidebar.brand.subtitle')}
           </p>
         </div>
       </SidebarHeader>
@@ -112,10 +112,10 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border/20 p-4">
         <div className="text-center">
           <p className="text-xs text-biblioteca-gold">
-            Calle Bermúdez, Complejo Cultural de Maturín
+            {t('sidebar.footer.address')}
           </p>
           <p className="text-xs text-white/80">
-            Maturín, Monagas, Venezuela
+            {t('sidebar.footer.city_state_country')}
           </p>
         </div>
       </SidebarFooter>

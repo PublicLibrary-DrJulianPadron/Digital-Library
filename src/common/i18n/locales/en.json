@@ -12,6 +12,134 @@
         "languages": "Languages",
         "materials": "Materials",
         "authors": "Authors",
-        "userManagement": "User Management"
+        "userManagement": "User Management",
+        "brand": {
+            "title": "Central Public Library",
+            "subtitle": "Dr. Julián Padrón"
+        },
+        "footer": {
+            "address": "Calle Bermúdez, Maturín Cultural Complex",
+            "city_state_country": "Maturín, Monagas, Venezuela"
+        }
+    },
+    "common": {
+        "return": "GO BACK"
+    },
+    "header": {
+        "title": "Central Public Library Dr. Julián Padrón"
+    },
+    "homepage": {
+        "hero": {
+            "location_label": "Maturín, Venezuela",
+            "title_line1": "Public Library",
+            "central": "Central",
+            "name": "Dr. Julián Padrón",
+            "description": "Democratizing access to knowledge and culture for the entire Maturín community.",
+            "address": "Calle Bermúdez, Maturín Cultural Complex",
+            "state_country": "Maturín, Monagas"
+        },
+        "services": {
+            "title": "Our Services",
+            "subtitle": "We offer a wide range of services to support your education and personal growth",
+            "items": {
+                "room_booking": {
+                    "title": "Room Booking",
+                    "description": "Book our facilities for academic and cultural events"
+                },
+                "extended_hours": {
+                    "title": "Extended Hours",
+                    "description": "Open Monday to Saturday with flexible hours for your convenience"
+                },
+                "study_rooms": {
+                    "title": "Study Rooms",
+                    "description": "Dedicated spaces for individual and group study"
+                },
+                "digital_access": {
+                    "title": "Digital Access",
+                    "description": "Free WiFi and access to digital resources and databases"
+                }
+            }
+        },
+        "news": {
+            "title": "News and Events",
+            "subtitle": "Stay up to date with the latest news from our library",
+            "view_all": "View all",
+            "read_more": "Read more"
+        }
+    },
+    "history": {
+        "title_prefix": "Our",
+        "title_highlight": "History",
+        "subtitle": "More than half a century building the future through knowledge and culture in Maturín",
+        "mission": {
+            "title": "Mission",
+            "content": "Facilitating universal access to knowledge and information, promoting reading, research, and cultural development in our community."
+        },
+        "vision": {
+            "title": "Vision",
+            "content": "To be recognized as the main institution of information and culture in eastern Venezuela, adapting to new technologies while preserving the value of knowledge."
+        },
+        "milestones": {
+            "foundation": {
+                "title": "Foundation",
+                "content": "Officially established in 1968, we born with the vision of democratizing access to knowledge in the eastern region.",
+                "highlight": "1968"
+            },
+            "location": {
+                "title": "Strategic Location",
+                "content": "Located at Av. Orinoco with Calle Libertador, we are the cultural heart of Maturín.",
+                "highlight": "Av. Orinoco with Calle Libertador"
+            },
+            "patron": {
+                "title": "Dr. Julián Padrón",
+                "content": "In honor of Dr. Julián Padrón, a prominent Venezuelan intellectual and educator.",
+                "highlight": "Dr. Julián Padrón"
+            },
+            "community": {
+                "title": "Community Service",
+                "content": "More than 55 years serving students, researchers, and citizens of all ages.",
+                "highlight": "55 years"
+            }
+        },
+        "image_caption": "CULTURAL ICON",
+        "quote": "\"Knowledge is the only treasure that grows when shared\"",
+        "legacy": "Institutional Legacy"
+    },
+    "rooms": {
+        "title_prefix": "Our",
+        "title_highlight": "Rooms",
+        "description": "Explore the different spaces dedicated to knowledge and culture. Each room has a unique collection waiting to be discovered.",
+        "loading": "Loading rooms...",
+        "error_title": "Error loading rooms",
+        "error_message": "Please try again later.",
+        "empty": "No rooms available.",
+        "loading_single": "Loading room {{roomName}}...",
+        "error_single_title": "Error loading room",
+        "error_single_message": "Please try again later.",
+        "empty_single": "No information found for room {{roomName}}.",
+        "collection_label": "COLLECTION",
+        "view_all": "VIEW ALL",
+        "empty_genre": "No books available in this genre — Ghost Grid Active",
+        "no_genres": "No genres assigned to this room."
+    },
+    "footer": {
+        "brand": {
+            "title": "Central Public Library",
+            "subtitle": "Dr. Julián Padrón",
+            "description": "Democratizing access to knowledge and culture for the entire Maturín community and the eastern region of Venezuela."
+        },
+        "contact": {
+            "title": "Contact",
+            "address_line1": "Av. Orinoco with Calle Libertador",
+            "address_line2": "Maturín, Monagas, Venezuela"
+        },
+        "hours": {
+            "title": "Hours",
+            "weekdays": "Monday - Friday",
+            "saturdays": "Saturdays",
+            "sundays": "Sundays",
+            "closed": "Closed"
+        },
+        "copyright": "© 2024 Central Public Library Dr. Julián Padrón. All rights reserved."
     }
 }
