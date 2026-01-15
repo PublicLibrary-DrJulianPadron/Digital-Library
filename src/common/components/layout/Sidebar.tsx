@@ -6,7 +6,8 @@ import {
   SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
   SidebarMenuDropdown, SidebarMenuDropdownItem
 } from "@/common/components/ui/sidebar";
-import { BookOpen } from "lucide-react";
+
+
 import { Link } from 'react-router-dom';
 import { SIDEBAR_ITEMS } from './Sidebar.config';
 import { hasCapability } from '@/features/authentication/types/user_roles';
@@ -47,9 +48,11 @@ export function AppSidebar() {
     <Sidebar className="border-r border-sidebar-border bg-interface">
       <SidebarHeader className="border-b border-sidebar-border/20">
         <div className="flex flex-col items-center py-4">
-          <div className="w-12 h-12 bg-biblioteca-gold rounded-full flex items-center justify-center mb-2 bg-zinc-50">
-            <BookOpen className="w-6 h-6 text-biblioteca-blue" />
-          </div>
+          <img
+            src="/julian_padron_transparent.png"
+            alt="Dr. Julián Padrón"
+            className="w-auto h-24 mb-2 object-contain filter drop-shadow-md"
+          />
           <h2 className="font-display text-sm font-semibold text-white text-center leading-tight">
             Biblioteca Pública Central
           </h2>

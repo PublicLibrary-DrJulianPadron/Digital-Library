@@ -113,7 +113,7 @@ const ConfigurationForm = ({
         <>
             <div className={cn("p-6 space-y-6 flex-1 overflow-y-auto", isMobile && "pb-4")}>
                 {/* Interface Color */}
-                <section className="space-y-4">
+                {/* <section className="space-y-4">
                     <Label className="uppercase text-muted-foreground tracking-wider text-xs font-semibold">
                         Interface Color
                     </Label>
@@ -133,7 +133,7 @@ const ConfigurationForm = ({
                             />
                         ))}
                     </div>
-                </section>
+                </section> */}
 
                 {/* Display Theme */}
                 <section className="space-y-4">
@@ -178,7 +178,7 @@ const ConfigurationForm = ({
                 </section>
 
                 {/* Font Settings */}
-                <section className="space-y-6">
+                {/* <section className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
                             <Label className="uppercase text-muted-foreground tracking-wider text-xs font-semibold">
@@ -222,7 +222,7 @@ const ConfigurationForm = ({
                             onCheckedChange={(checked) => dispatch(setDyslexic(checked))}
                         />
                     </div>
-                </section>
+                </section> */}
 
                 {/* Language */}
                 <section className="space-y-4">
@@ -234,10 +234,10 @@ const ConfigurationForm = ({
                             <SelectValue placeholder="Select Language" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="English (US)">English (US)</SelectItem>
                             <SelectItem value="Español (Venezuela)">
                                 Español (Venezuela)
                             </SelectItem>
+                            <SelectItem value="English (US)">English (US)</SelectItem>
                             <SelectItem value="Português">Português</SelectItem>
                             <SelectItem value="Français">Français</SelectItem>
                         </SelectContent>

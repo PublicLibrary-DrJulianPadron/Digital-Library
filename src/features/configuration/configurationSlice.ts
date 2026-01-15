@@ -16,7 +16,7 @@ const initialState: ConfigurationState = {
     theme: "light",
     fontSize: 16,
     dyslexic: false,
-    language: "English (US)",
+    language: "Español (Venezuela)",
 };
 
 export const configurationSlice = createSlice({

@@ -1,8 +1,7 @@
 import React from 'react';
 import { useGetSalasQuery } from '@/features/content-management/api/genresApiSlice';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/common/components/ui/button';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import { BookOpen, AlertCircle, ArrowRight } from 'lucide-react';
 
 const RoomsPage = () => {
     const { data: salas, isLoading, isError } = useGetSalasQuery();
@@ -28,62 +27,56 @@ const RoomsPage = () => {
     }
 
     return (
-        <div className="container mx-auto p-8">
-            <header className="mb-12 text-center">
-                <h1 className="text-4xl font-extrabold text-primary mb-4 tracking-tight">
-                    Nuestras Salas
-                </h1>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                    Explore los diferentes espacios dedicados al conocimiento y la cultura.
-                    Cada sala cuenta con una colección única esperando ser descubierta.
-                </p>
-                <div className="mt-6 flex justify-center">
-                    <div className="h-1.5 w-24 bg-highlight-gold rounded-full"></div>
-                </div>
-            </header>
+        <main className="flex-1 px-6 md:px-12 py-6 md:py-10">
+            <section className="mb-12 md:mb-16 text-center">
+                <h2 className="font-display text-4xl md:text-5xl mb-4 text-biblioteca-blue dark:text-primary ">
+                    <span>Nuestras <span className="text-biblioteca-gold dark:text-highlight-gold italic">Salas</span></span>
+                </h2>
+                <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-8"></div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <p className="font-mono text-sm uppercase tracking-widest text-muted-foreground max-w-lg mx-auto leading-relaxed">
+                    Explore los diferentes espacios dedicados al conocimiento y la cultura. Cada sala cuenta con una colección única esperando ser descubierta.
+                </p>
+            </section>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 {salas?.map((item) => (
-                    <button
+                    <div
                         key={item.sala}
                         onClick={() => navigate(`/sala/${item.sala}`)}
-                        className="group relative flex flex-col items-center justify-center p-8 bg-card rounded-2xl border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                        className="group relative flex flex-col items-center text-center border border-border p-8 bg-card hover:bg-muted/50 transition-all duration-500 overflow-hidden cursor-pointer"
                     >
-                        <div className="absolute top-0 left-0 w-full h-1.5 bg-highlight-gold scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                        {/* Decorative background grid effect could be added here if assets existed */}
+                        <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px] dark:bg-[radial-gradient(#fff_1px,transparent_1px)]"></div>
 
-                        <div className="p-4 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors duration-300 mb-4">
-                            <BookOpen className="h-8 w-8 text-primary" />
+                        <div className="relative w-20 h-20 mb-8 flex items-center justify-center bg-muted rounded-full border border-border group-hover:scale-105 transition-transform">
+                            <BookOpen className="h-8 w-8 text-biblioteca-blue dark:text-primary stroke-[1.5]" />
                         </div>
 
-                        <h3 className="text-xl font-bold text-primary group-hover:text-highlight-gold transition-colors duration-300 text-center uppercase tracking-wide">
+                        <h3 className="font-display text-xl mb-4 tracking-widest uppercase text-biblioteca-blue dark:text-primary">
                             {item.sala}
                         </h3>
 
-                        <div className="mt-4 flex items-center text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors duration-300">
-                            <span className="bg-muted group-hover:bg-primary/10 px-3 py-1 rounded-full text-xs">
-                                {item.entries} libros
+                        <div className="inline-flex items-center px-4 py-1.5 bg-muted border border-border rounded-full">
+                            <span className="font-mono text-[10px] tracking-tight text-muted-foreground">
+                                {item.entries} Generos
                             </span>
                         </div>
 
-                        <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <span className="text-primary text-sm font-semibold flex items-center">
-                                Entrar a la sala
-                                <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="9 5l7 7-7 7" />
-                                </svg>
-                            </span>
+                        <div className="mt-8 pt-6 border-t border-border/50 w-full flex justify-center">
+                            <ArrowRight className="h-5 w-5 text-muted-foreground/30 group-hover:text-primary transition-colors duration-300" />
                         </div>
-                    </button>
+                    </div>
                 ))}
             </div>
 
             {!salas || salas.length === 0 && (
-                <div className="text-center py-20 bg-muted rounded-2xl border-2 border-dashed border-border">
-                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <div className="text-center py-20 bg-muted rounded-2xl border-2 border-dashed border-border mt-12 max-w-3xl mx-auto">
+                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
                     <p className="text-muted-foreground font-medium">No se encontraron salas disponibles.</p>
                 </div>
             )}
-        </div>
+        </main>
     );
 };
 
