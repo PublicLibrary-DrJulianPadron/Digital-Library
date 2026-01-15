@@ -3,10 +3,10 @@ import type { components, paths, operations } from "@/common/types/generated-api
 
 export type Book = components["schemas"]["Book"];
 export type MinimalBook = components["schemas"]["MinimalBook"];
-export type BookRequest = paths["/api/library/books/{slug}/"]["put"]["requestBody"];
-export type PatchedBookRequest = paths["/api/library/books/{slug}/"]["patch"]["requestBody"];
+export type BookRequest = paths["/library/books/{slug}/"]["put"]["requestBody"];
+export type PatchedBookRequest = paths["/library/books/{slug}/"]["patch"]["requestBody"];
 export type BooksList = components["schemas"]["PaginatedMinimalBookList"];
-export type BooksListRequest = operations["api_library_authors_list"]["parameters"]["query"];
+export type BooksListRequest = operations["library_books_list"]["parameters"]["query"];
 
 export const booksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -24,7 +24,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
           });
         }
         return {
-          url: `/library/books/`,
+          url: `library/books/`,
           params,
         };
       },
@@ -36,19 +36,19 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     createBook: builder.mutation<Book, FormData>({
       query: (formData) => ({
-        url: `/library/books/`,
+        url: `library/books/`,
         method: "POST",
         body: formData,
       }),
       invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
     getBookBySlug: builder.query<Book, string>({
-      query: (slug) => `/library/books/${slug}/`,
+      query: (slug) => `library/books/${slug}/`,
       providesTags: (result, error, slug) => [{ type: "Books", id: 'LIST' }],
     }),
     updateBook: builder.mutation<Book, { slug: string; formData: FormData }>({
       query: ({ slug, formData }) => ({
-        url: `/library/books/${slug}/`,
+        url: `library/books/${slug}/`,
         method: "PUT",
         body: formData,
       }),
@@ -56,7 +56,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateBook: builder.mutation<Book, { slug: string; body: PatchedBookRequest }>({
       query: ({ slug, body }) => ({
-        url: `/library/books/${slug}/`,
+        url: `library/books/${slug}/`,
         method: "PATCH",
         body: body,
       }),
@@ -64,7 +64,7 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     }),
     deleteBook: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/books/${slug}/`,
+        url: `library/books/${slug}/`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, slug) => [{ type: 'Books', id: slug }, { type: 'Books', id: 'LIST' }],

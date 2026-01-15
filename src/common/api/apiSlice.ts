@@ -47,9 +47,7 @@ const baseQueryWithReauth: BaseQueryFn<
             // If refresh is successful, retry the original query
             result = await baseQuery(args, api, extraOptions);
         } else {
-            // If refresh fails, you may want to redirect to the login page
-            // You can dispatch a logout action here.
-            // api.dispatch(logout());
+            api.dispatch({ type: 'auth/clearIsAuthenticated' });
         }
     }
     return result;

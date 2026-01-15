@@ -11,7 +11,17 @@ export type PaginatedBookList = components["schemas"]["PaginatedMinimalBookList"
 
 // Assuming the API returns a list of genres where each genre has an associated list of books.
 export type SalaWithGenres = components['schemas']['SalaWithGenres'];
-export type SalaWithGenresList = SalaWithGenres[];
+export type PaginatedSalaWithGenres = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SalaWithGenres[];
+};
+
+export type SalaEntry = {
+  sala: string;
+  entries: number;
+};
 
 export const genresApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -33,7 +43,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
         if (sala) {
           params += `&sala=${encodeURIComponent(sala)}`;
         }
-        return `/library/genres/?${params}`; // Add params to URL
+        return `library/genres/?${params}`; // Add params to URL
       },
       providesTags: (result) =>
         result?.results
@@ -53,27 +63,40 @@ export const genresApiSlice = apiSlice.injectEndpoints({
         if (page) params.append('page', String(page));
         if (page_size) params.append('page_size', String(page_size));
 
-        const url = slug ? `/library/genres/${slug}/books/?${params.toString()}` : `/library/books/?${params.toString()}`;
+        const url = slug ? `library/genres/${slug}/books/?${params.toString()}` : `library/books/?${params.toString()}`;
         return url;
       },
       providesTags: (_result, _error, { slug }) =>
         slug ? [{ type: 'Genres', slug }] : [{ type: 'Books', id: 'LIST' }],
     }),
     getGenreBySlug: builder.query<Genre, string>({
-      query: (slug) => `/library/genres/${slug}/`,
+      query: (slug) => `library/genres/${slug}/`,
       providesTags: (_result, _error, slug) => [{ type: 'Genres', slug }],
     }),
-    getSalaWithGenres: builder.query<SalaWithGenresList, Record<string, number> | void>({
+    getSalaWithGenres: builder.query<
+      PaginatedSalaWithGenres,
+      { page?: number; page_size?: number; book_page_size?: number; sala?: string } | void
+    >({
       query: (params) => ({
-        url: `/library/genres/with_books`,
-        ...(params && Object.keys(params).length > 0 ? { params } : {}),
+        url: `library/genres/with_books/`,
+        params: params || {},
       }),
       providesTags: (_result, _error, arg) =>
         arg ? [{ type: 'Genres', slug: JSON.stringify(arg) }] : [{ type: 'Genres', slug: 'LIST' }],
     }),
+    getSalas: builder.query<SalaEntry[], void>({
+      query: () => `library/genres/salas/`,
+      providesTags: (result) =>
+        result
+          ? [
+            ...result.map(({ sala }) => ({ type: 'Genres' as const, id: `SALA_${sala}` })),
+            { type: 'Genres', id: 'SALAS_LIST' },
+          ]
+          : [{ type: 'Genres', id: 'SALAS_LIST' }],
+    }),
     createGenre: builder.mutation<Genre, GenreRequest>({
       query: (newGenre) => ({
-        url: `/library/genres/`,
+        url: `library/genres/`,
         method: 'POST',
         body: newGenre,
       }),
@@ -81,7 +104,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     updateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
       query: ({ slug, data }) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'PUT',
         body: data,
       }),
@@ -89,7 +112,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     partialUpdateGenre: builder.mutation<Genre, { slug: string; data: Partial<Genre> }>({
       query: ({ slug, data }) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'PATCH',
         body: data,
       }),
@@ -97,7 +120,7 @@ export const genresApiSlice = apiSlice.injectEndpoints({
     }),
     deleteGenre: builder.mutation<void, string>({
       query: (slug) => ({
-        url: `/library/genres/${slug}/`,
+        url: `library/genres/${slug}/`,
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, slug) => [{ type: 'Genres', slug }, { type: 'Genres', id: 'LIST' }],
@@ -111,6 +134,7 @@ export const {
   useGetBooksByGenreSlugQuery,
   useGetGenreBySlugQuery,
   useGetSalaWithGenresQuery,
+  useGetSalasQuery,
   useCreateGenreMutation,
   useUpdateGenreMutation,
   usePartialUpdateGenreMutation,

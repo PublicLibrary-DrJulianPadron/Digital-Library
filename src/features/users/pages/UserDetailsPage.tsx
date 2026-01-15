@@ -1,43 +1,47 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/common/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
-import { Badge } from '@/common/components/ui/badge';
-import { ArrowLeft, Mail, Phone, Calendar, Activity, User, CreditCard } from 'lucide-react';
+import { ReturnButton } from '@/common/components/ui/return-button';
+import { ArrowLeft, Mail, Phone, Calendar, Activity, User, CreditCard, MapPin } from 'lucide-react';
 import { useToast } from '@/common/hooks/use-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { fetchUserProfile } from "@/features/users/api/profileSlice";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/app/store";
+import { useGetUserProfileQuery } from "@/features/authentication/api/authApiSlice.ts";
+import { Loader2 } from 'lucide-react';
+import { useCurrentUser } from '../../authentication/hooks/useCurrentUser';
 
 export default function DetallesUsuario() {
-  const dispatch = useDispatch();
-  const UserProfile = useSelector((state: RootState) => state.profile.profile);
-  const { id } = useParams<{ id: string }>();
+  const { isLoading, isError } = useGetUserProfileQuery();
+  const { profile, displayName, email, initials } = useCurrentUser();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
+  if (isLoading) {
+    return (
+      <div className="flex h-[400px] w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-biblioteca-blue" />
+      </div>
+    );
+  }
 
-  
+  if (isError || !profile) {
+    return (
+      <div className="container mx-auto py-10 text-center">
+        <h2 className="text-2xl font-bold text-destructive">Error al cargar el perfil</h2>
+        <p className="mt-2 text-muted-foreground">No se pudo obtener la información del usuario.</p>
+        <Button className="mt-4" onClick={() => navigate(-1)}>Volver</Button>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto py-6 space-y-6">
+      <ReturnButton />
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          onClick={() => navigate('/gestion')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Volver a Gestión
-        </Button>
         <h1 className="text-3xl font-bold text-biblioteca-blue">Detalles del Usuario</h1>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Información Personal */}
-        <Card>
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5 text-biblioteca-blue" />
@@ -45,43 +49,57 @@ export default function DetallesUsuario() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-3">
+            <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Nombre Completo</label>
-                <p className="text-lg font-semibold">{UserProfile.user.first_name + ' ' + UserProfile.user.last_name}</p>
+                <p className="text-lg font-semibold">{displayName}</p>
               </div>
-              
+
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Cédula</label>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <p className="font-mono">{UserProfile.national_document}</p>
+                  <p className="font-mono">{profile.national_document || 'No registrada'}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-1 sm:col-span-2">
+                <label className="text-sm font-medium text-muted-foreground">Email</label>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <p className="break-all">{email}</p>
                 </div>
               </div>
 
               <div className="flex flex-col space-y-1">
-                <label className="text-sm font-medium text-muted-foreground">Email</label>
+                <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <p>{UserProfile.user.email}</p>
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <p>{profile.phone || 'No proporcionado'}</p>
                 </div>
               </div>
 
-              {UserProfile.phone && (
-                <div className="flex flex-col space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p>{UserProfile.phone}</p>
-                  </div>
+              <div className="flex flex-col space-y-1 sm:col-span-2">
+                <label className="text-sm font-medium text-muted-foreground">Dirección</label>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <p className="break-all">{profile.address || 'No proporcionada'}</p>
                 </div>
-              )}
+              </div>
+
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</label>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <p>{profile.birth_date ? format(new Date(profile.birth_date), 'PPP', { locale: es }) : 'No proporcionada'}</p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Estado y Actividad */}
-        {/* <Card>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-biblioteca-blue" />
@@ -90,50 +108,31 @@ export default function DetallesUsuario() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3">
-              <div className="flex flex-col space-y-1">
+              {/* <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Estado</label>
-                <Badge 
-                  variant={UserProfile ? "default" : "destructive"}
+                <Badge
+                  variant="default"
                   className="w-fit"
                 >
-                  {usuario.activo ? "Activo" : "Inactivo"}
+                  Activo
                 </Badge>
               </div>
 
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Préstamos Activos</label>
-                <Badge 
-                  variant={usuario.prestamos_activos > 0 ? "default" : "secondary"}
+                <Badge
+                  variant="secondary"
                   className="w-fit text-lg px-3 py-1"
                 >
-                  {usuario.prestamos_activos}
+                  0
                 </Badge>
+              </div> */}
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Esta funcionalidad estará disponible cuando se implemente el módulo de préstamos de libros.</p>
               </div>
-
-              <div className="flex flex-col space-y-1">
-                <label className="text-sm font-medium text-muted-foreground">Fecha de Registro</label>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <p>
-                    {format(new Date(usuario.fecha_registro), 'dd MMMM yyyy', { locale: es })}
-                  </p>
-                </div>
-              </div>
-
-              {usuario.ultima_actividad && (
-                <div className="flex flex-col space-y-1">
-                  <label className="text-sm font-medium text-muted-foreground">Última Actividad</label>
-                  <div className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                    <p>
-                      {format(new Date(usuario.ultima_actividad), 'dd MMMM yyyy, HH:mm', { locale: es })}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </CardContent>
-        </Card> */}
+        </Card>
       </div>
 
       {/* Historial de Préstamos */}

@@ -52,6 +52,7 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				interface: 'var(--interface-color)',
 				'biblioteca-blue': '#003366',
 				'biblioteca-red': '#CC0000',
 				'biblioteca-gold': '#ffe23bff',
@@ -68,6 +69,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				highlight: {
+					blue: 'var(--highlight-blue)',
+					green: 'var(--highlight-green)',
+					purple: 'var(--highlight-purple)',
+					gold: 'var(--highlight-gold)',
 				}
 			},
 			borderRadius: {

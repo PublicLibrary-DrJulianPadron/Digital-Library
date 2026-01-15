@@ -3,7 +3,7 @@ import { apiSlice } from "@/common/api/apiSlice";
 import type { components } from "@/common/types/generated-api-types";
 
 export type User = components["schemas"]["User"];
-export type UserList = components["schemas"]["PaginatedProfileList"];
+export type UserList = components["schemas"]["PaginatedMinimalProfileList"];
 export type UserRequest = components["schemas"]["UserRequest"];
 
 export const userApiSlice = apiSlice.injectEndpoints({
@@ -23,7 +23,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         if (search) {
           params += `&search=${encodeURIComponent(search)}`;
         }
-        return `/user/?${params}`;
+        return `user/?${params}`;
       },
       providesTags: (result) =>
         result
@@ -37,12 +37,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
           : [{ type: "User", id: "LIST" }],
     }),
     getUserById: builder.query<User, string>({
-      query: (id) => `/user/${id}/`,
+      query: (id) => `user/${id}/`,
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
     createUser: builder.mutation<User, Partial<UserRequest>>({
       query: (body) => ({
-        url: "/user/",
+        url: "user/",
         method: "POST",
         body,
       }),
@@ -53,7 +53,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
       { id: string; data: Partial<UserRequest> }
     >({
       query: ({ id, data }) => ({
-        url: `/user/${id}/`,
+        url: `user/${id}/`,
         method: "PUT",
         body: data,
       }),
@@ -61,7 +61,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
     deleteUser: builder.mutation<{ success: boolean }, string>({
       query: (id) => ({
-        url: `/user/${id}/`,
+        url: `user/${id}/`,
         method: "DELETE",
         body: { id },
       }),

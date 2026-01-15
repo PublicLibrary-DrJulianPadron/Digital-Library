@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Settings, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "@/app/store";
-import { getCookie } from '@/common/lib/utils'
+import { User, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,46 +12,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
-import { setIsAuthenticated, clearIsAuthenticated } from "@/features/authentication/api/authSlice.ts";
-import { useGetUserQuery } from "@/features/content-management/api/userApiSlice";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export function UserProfile() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { user, isAuthenticated, displayName, initials, email } = useCurrentUser();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [signOut, { isLoading: isSignOutLoading, isSuccess: isSignOutSuccess }] = useSignOutMutation();
-  const { data: profileData, isLoading: isProfileLoading, isSuccess: isProfileSuccess, isError, error } = useGetUserQuery({ page_size: 1 }, {
-    skip: !isAuthenticated,
-  });
-
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const csrfToken = getCookie('csrftoken');
-      const isCurrentlyAuthenticated = !!csrfToken;
-
-      if (isAuthenticated && !isCurrentlyAuthenticated) {
-        dispatch(clearIsAuthenticated());
-      } else if (!isAuthenticated && isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    };
-
-    checkAuthStatus();
-    const intervalId = setInterval(checkAuthStatus, 1000);
-    return () => clearInterval(intervalId);
-  }, [isAuthenticated, dispatch]);
-
-  useEffect(() => {
-    if (!showLoginDialog && !isAuthenticated) {
-      const isCurrentlyAuthenticated = !!getCookie('csrftoken');
-      if (isCurrentlyAuthenticated) {
-        dispatch(setIsAuthenticated());
-      }
-    }
-  }, [showLoginDialog, isAuthenticated, dispatch]);
+  const [signOut] = useSignOutMutation();
 
   const handleSignOut = async () => {
     try {
@@ -67,28 +33,7 @@ export function UserProfile() {
     }
   };
 
-  const getInitials = (firstName = "", lastName = "") => {
-    const firstInitial = firstName.trim().charAt(0) || "";
-    const lastInitial = lastName.trim().charAt(0) || "";
-    return (firstInitial + lastInitial).toUpperCase() || "NN";
-  };
-
-  const getUserName = (firstName = "", lastName = "") => {
-    const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-    return name.length > 0 ? name : "User Profile";
-  };
-
-  if (isProfileLoading) {
-    return <div>Loading...</div>;
-  }
-
-  const userProfile = profileData?.results?.[0]?.user;
-
-
-  if (isAuthenticated && !!userProfile) {
-    const firstName = userProfile?.first_name || "";
-    const lastName = userProfile?.last_name || "";
-
+  if (isAuthenticated && user) {
     return (
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
@@ -96,27 +41,23 @@ export function UserProfile() {
             <Avatar className="w-8 h-8 border-2 border-accent">
               <AvatarImage src={"/placeholder-user.jpg"} />
               <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
-                {getInitials(firstName, lastName)}
+                {initials}
               </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuLabel className="text-foreground">
-            {getUserName(firstName, lastName)}
+            {displayName}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/usuario/me")}>
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/mis-prestamos")}>
+          <DropdownMenuItem disabled={true}>
             <BookOpen className="mr-2 h-4 w-4" />
-            <span>Mis Préstamos</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/configuracion")}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Configuración</span>
+            <span>Mis Préstamos (proximamente)</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} className="hover:bg-destructive/10 text-destructive">
