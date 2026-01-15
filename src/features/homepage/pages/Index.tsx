@@ -33,7 +33,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-center items-center gap-6 text-highlight-gold/90 animate-fade-in text-sm tracking-wide">
             <div className="flex items-center gap-2">
               <span className="text-highlight-gold">📍</span>
-              <span>Av. Orinoco con Calle Libertador</span>
+              <span>Calle Bermúdez, Complejo Cultural de Maturín</span>
             </div>
             <div className="hidden md:block w-1 h-1 bg-highlight-gold rounded-full opacity-50"></div>
             <div className="flex items-center gap-2">

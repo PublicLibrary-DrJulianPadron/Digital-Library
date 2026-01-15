@@ -1,0 +1,17 @@
+{
+    "sidebar": {
+        "navigation": "Navegación",
+        "home": "Inicio",
+        "salas": "Salas",
+        "history": "Historia",
+        "administration": "Administración",
+        "roomBooking": "Préstamo de Salas",
+        "contentManagement": "Gestión de Contenido",
+        "collection": "Colección",
+        "genres": "Géneros",
+        "languages": "Idiomas",
+        "materials": "Materiales",
+        "authors": "Autores",
+        "userManagement": "Gestión de Usuarios"
+    }
+}

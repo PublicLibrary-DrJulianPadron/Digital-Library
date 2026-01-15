@@ -234,12 +234,10 @@ const ConfigurationForm = ({
                             <SelectValue placeholder="Select Language" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="Español (Venezuela)">
+                            <SelectItem value="es">
                                 Español (Venezuela)
                             </SelectItem>
-                            <SelectItem value="English (US)">English (US)</SelectItem>
-                            <SelectItem value="Português">Português</SelectItem>
-                            <SelectItem value="Français">Français</SelectItem>
+                            <SelectItem value="en">English (US)</SelectItem>
                         </SelectContent>
                     </Select>
                 </section>

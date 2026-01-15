@@ -2,8 +2,11 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectConfiguration } from '../configurationSlice';
 
+import { useTranslation } from 'react-i18next';
+
 export const ThemeSynchronizer = () => {
-    const { interfaceColor, theme } = useSelector(selectConfiguration);
+    const { interfaceColor, theme, language } = useSelector(selectConfiguration);
+    const { i18n } = useTranslation();
 
     // Initial Interface Color Sync
     useEffect(() => {
@@ -42,6 +45,11 @@ export const ThemeSynchronizer = () => {
         }
 
     }, [theme]);
+
+    // Language Sync
+    useEffect(() => {
+        i18n.changeLanguage(language);
+    }, [language, i18n]);
 
     return null;
 };

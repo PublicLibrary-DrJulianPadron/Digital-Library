@@ -15,22 +15,22 @@ import type { MenuItem } from "@/common/components/ui/sidebar";
 export const SIDEBAR_ITEMS: MenuItem[] = [
     // Navigation Group - Available to all users
     {
-        group: "Navigation",
-        title: "Home",
+        group: "sidebar.navigation",
+        title: "sidebar.home",
         url: "/",
         icon: Home,
         requiresAuth: false
     },
     {
-        group: "Navigation",
-        title: "Salas",
+        group: "sidebar.navigation",
+        title: "sidebar.salas",
         url: "/salas",
         icon: BookOpen,
         requiresAuth: false
     },
     {
-        group: "Navigation",
-        title: "History",
+        group: "sidebar.navigation",
+        title: "sidebar.history",
         url: "/historia",
         icon: Clock,
         requiresAuth: false
@@ -38,31 +38,31 @@ export const SIDEBAR_ITEMS: MenuItem[] = [
 
     // Administration Group - Requires specific capabilities
     {
-        group: "Administration",
-        title: "Room Booking",
+        group: "sidebar.administration",
+        title: "sidebar.roomBooking",
         url: "/prestamo/sala",
         icon: Calendar,
         requiresAuth: true,
         capability: Capability.MANAGE_ROOMS
     },
     {
-        group: "Administration",
-        title: "Content Management",
+        group: "sidebar.administration",
+        title: "sidebar.contentManagement",
         url: "",
         icon: Book,
         requiresAuth: true,
         capability: Capability.MANAGE_CONTENT,
         children: [
-            { title: "Collection", url: "/gestion/coleccion", icon: LibraryBig, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
-            { title: "Genres", url: "/gestion/generos", icon: BookType, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
-            { title: "Languages", url: "/gestion/lenguajes", icon: Languages, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
-            { title: "Materials", url: "/gestion/materiales", icon: ScrollText, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
-            { title: "Authors", url: "/gestion/autores", icon: User, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
+            { title: "sidebar.collection", url: "/gestion/coleccion", icon: LibraryBig, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
+            { title: "sidebar.genres", url: "/gestion/generos", icon: BookType, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
+            { title: "sidebar.languages", url: "/gestion/lenguajes", icon: Languages, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
+            { title: "sidebar.materials", url: "/gestion/materiales", icon: ScrollText, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
+            { title: "sidebar.authors", url: "/gestion/autores", icon: User, requiresAuth: true, capability: Capability.MANAGE_CONTENT },
         ]
     },
     {
-        group: "Administration",
-        title: "User Management",
+        group: "sidebar.administration",
+        title: "sidebar.userManagement",
         url: "/gestion/usuarios",
         icon: Users,
         requiresAuth: true,

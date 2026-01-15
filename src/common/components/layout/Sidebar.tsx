@@ -11,12 +11,14 @@ import {
 import { Link } from 'react-router-dom';
 import { SIDEBAR_ITEMS } from './Sidebar.config';
 import { hasCapability } from '@/features/authentication/types/user_roles';
+import { useTranslation } from 'react-i18next';
 
 type GroupedMenuItems = {
   [key: string]: MenuItem[];
 };
 
 export function AppSidebar() {
+  const { t } = useTranslation();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const userRole = useSelector((state: RootState) => state.auth.userRole);
 
@@ -66,7 +68,7 @@ export function AppSidebar() {
         {Object.entries(groupedItems).map(([groupName, items]) => (
           <SidebarGroup key={groupName}>
             <SidebarGroupLabel className="text-biblioteca-gold font-medium">
-              {groupName}
+              {t(groupName)}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -74,14 +76,14 @@ export function AppSidebar() {
                   <div key={item.title}>
                     {item.children && item.children.length > 0 ? (
                       <SidebarMenuDropdown
-                        label={item.title}
+                        label={t(item.title)}
                         icon={<item.icon size={18} />}
                       >
                         {item.children.map(child => (
                           <SidebarMenuDropdownItem key={child.title}>
                             <Link to={child.url} className="flex items-center gap-3 w-full h-full">
                               <child.icon size={18} />
-                              <span>{child.title}</span>
+                              <span>{t(child.title)}</span>
                             </Link>
                           </SidebarMenuDropdownItem>
                         ))}
@@ -94,7 +96,7 @@ export function AppSidebar() {
                         >
                           <Link to={item.url} className="flex items-center gap-3">
                             <item.icon size={18} />
-                            <span>{item.title}</span>
+                            <span>{t(item.title)}</span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

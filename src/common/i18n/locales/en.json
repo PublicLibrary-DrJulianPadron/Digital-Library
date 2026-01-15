@@ -1,0 +1,17 @@
+{
+    "sidebar": {
+        "navigation": "Navigation",
+        "home": "Home",
+        "salas": "Rooms",
+        "history": "History",
+        "administration": "Administration",
+        "roomBooking": "Room Booking",
+        "contentManagement": "Content Management",
+        "collection": "Collection",
+        "genres": "Genres",
+        "languages": "Languages",
+        "materials": "Materials",
+        "authors": "Authors",
+        "userManagement": "User Management"
+    }
+}
