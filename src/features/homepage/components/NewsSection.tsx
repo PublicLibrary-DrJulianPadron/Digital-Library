@@ -27,21 +27,24 @@ const news = [
   }
 ];
 
+import { useTranslation } from "react-i18next";
+
 export function NewsSection() {
+  const { t } = useTranslation();
   return (
-    <section className="py-16 bg-biblioteca-light/50">
+    <section className="py-16 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="font-display text-3xl font-bold text-biblioteca-blue mb-4">
-              Noticias y Eventos
+            <h2 className="font-display text-3xl font-bold text-primary mb-4">
+              {t('homepage.news.title')}
             </h2>
-            <p className="text-biblioteca-gray">
-              Mantente al día con las últimas novedades de nuestra biblioteca
+            <p className="text-muted-foreground">
+              {t('homepage.news.subtitle')}
             </p>
           </div>
-          <Button variant="outline" className="border-biblioteca-blue text-biblioteca-blue hover:bg-biblioteca-blue hover:text-white">
-            Ver todas
+          <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+            {t('homepage.news.view_all')}
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
         </div>
@@ -51,24 +54,24 @@ export function NewsSection() {
             <Card key={item.id} className="book-card-hover">
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="bg-biblioteca-gold/20 text-biblioteca-blue px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-highlight-gold/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
                     {item.category}
                   </span>
-                  <div className="flex items-center text-biblioteca-gray text-sm">
+                  <div className="flex items-center text-muted-foreground text-sm">
                     <Calendar className="w-4 h-4 mr-1" />
                     {new Date(item.date).toLocaleDateString('es-ES')}
                   </div>
                 </div>
-                <CardTitle className="text-biblioteca-blue font-display text-lg">
+                <CardTitle className="text-primary font-display text-lg">
                   {item.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-biblioteca-gray mb-4">
+                <p className="text-muted-foreground mb-4">
                   {item.excerpt}
                 </p>
-                <Button variant="ghost" className="text-biblioteca-blue hover:text-biblioteca-red p-0">
-                  Leer más
+                <Button variant="ghost" className="text-primary hover:text-destructive p-0">
+                  {t('homepage.news.read_more')}
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </CardContent>

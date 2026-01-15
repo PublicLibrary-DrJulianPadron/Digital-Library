@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Settings, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/app/store";
+import { User, BookOpen, LogIn as LogInIcon, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,15 +12,15 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/common/components/ui/avatar";
 import { LoginDialog } from "@/features/authentication/components/LoginDialog";
 import { useSignOutMutation } from "@/features/authentication/api/authApiSlice.ts";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export function UserProfile() {
   const navigate = useNavigate();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const user = useSelector((state: RootState) => state.auth.user);
+  const { user, isAuthenticated, displayName, initials, email } = useCurrentUser();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const [signOut, { isLoading: isSignOutLoading }] = useSignOutMutation();
+  const [signOut] = useSignOutMutation();
 
   const handleSignOut = async () => {
     try {
@@ -35,23 +33,6 @@ export function UserProfile() {
     }
   };
 
-  const getInitials = (firstName = "", lastName = "") => {
-    const firstInitial = firstName.trim().charAt(0) || "";
-    const lastInitial = lastName.trim().charAt(0) || "";
-    return (firstInitial + lastInitial).toUpperCase() || "NN";
-  };
-
-  const getUserName = (firstName = "", lastName = "", email = "") => {
-    const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-    if (name.length > 0) return name;
-    if (email.length > 0) return email;
-    return "User Profile";
-  };
-
-  // Use user data from Redux state (populated by login response)
-  const firstName = user?.first_name || "";
-  const lastName = user?.last_name || "";
-
   if (isAuthenticated && user) {
     return (
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
@@ -60,14 +41,14 @@ export function UserProfile() {
             <Avatar className="w-8 h-8 border-2 border-accent">
               <AvatarImage src={"/placeholder-user.jpg"} />
               <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
-                {getInitials(firstName, lastName)}
+                {initials}
               </AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuLabel className="text-foreground">
-            {getUserName(firstName, lastName, user?.email)}
+            {displayName}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/usuario/me")}>
@@ -77,10 +58,6 @@ export function UserProfile() {
           <DropdownMenuItem disabled={true}>
             <BookOpen className="mr-2 h-4 w-4" />
             <span>Mis Préstamos (proximamente)</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/configuracion")}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Configuración</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} className="hover:bg-destructive/10 text-destructive">

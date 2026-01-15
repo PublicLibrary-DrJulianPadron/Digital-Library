@@ -19,6 +19,14 @@ const initialState: AuthState = {
   error: null,
 };
 
+// Helper to determine role from groups
+const determineRole = (groups: string[] = []): AppRole | null => {
+  if (groups.includes('ADMIN')) return 'ADMIN';
+  if (groups.includes('LIBRARIAN')) return 'LIBRARIAN';
+  if (groups.includes('USER')) return 'USER';
+  return null;
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -45,10 +53,13 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+
+
     builder
       .addMatcher(authApiSlice.endpoints.logIn.matchFulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
+        state.userRole = determineRole(action.payload.groups);
         state.error = null;
       })
       .addMatcher(authApiSlice.endpoints.logIn.matchRejected, (state, action) => {
@@ -60,6 +71,7 @@ const authSlice = createSlice({
       .addMatcher(authApiSlice.endpoints.signUp.matchFulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
+        state.userRole = determineRole(action.payload.groups);
         state.error = null;
       })
       .addMatcher(authApiSlice.endpoints.signUp.matchRejected, (state, action) => {
@@ -83,12 +95,7 @@ const authSlice = createSlice({
       })
       .addMatcher(authApiSlice.endpoints.getUserProfile.matchFulfilled, (state, action) => {
         state.profile = action.payload;
-        if (action.payload.user) {
-          state.user = {
-            ...action.payload.user,
-            groups: state.user?.groups ?? []
-          };
-        }
+        // We do not merge profile.user into state.user to preserve auth state source of truth.
       });
   },
 });

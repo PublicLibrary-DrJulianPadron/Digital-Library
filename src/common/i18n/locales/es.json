@@ -1,0 +1,145 @@
+{
+    "sidebar": {
+        "navigation": "Navegación",
+        "home": "Inicio",
+        "salas": "Salas",
+        "history": "Historia",
+        "administration": "Administración",
+        "roomBooking": "Préstamo de Salas",
+        "contentManagement": "Gestión de Contenido",
+        "collection": "Colección",
+        "genres": "Géneros",
+        "languages": "Idiomas",
+        "materials": "Materiales",
+        "authors": "Autores",
+        "userManagement": "Gestión de Usuarios",
+        "brand": {
+            "title": "Biblioteca Pública Central",
+            "subtitle": "Dr. Julián Padrón"
+        },
+        "footer": {
+            "address": "Calle Bermúdez, Complejo Cultural de Maturín",
+            "city_state_country": "Maturín, Monagas, Venezuela"
+        }
+    },
+    "common": {
+        "return": "VOLVER"
+    },
+    "header": {
+        "title": "Biblioteca Pública Central Dr. Julián Padrón"
+    },
+    "homepage": {
+        "hero": {
+            "location_label": "Maturín, Venezuela",
+            "title_line1": "Biblioteca Pública",
+            "central": "Central",
+            "name": "Dr. Julián Padrón",
+            "description": "Democratizando el acceso al conocimiento y la cultura para toda la comunidad de Maturín.",
+            "address": "Calle Bermúdez, Complejo Cultural de Maturín",
+            "state_country": "Maturín, Monagas"
+        },
+        "services": {
+            "title": "Nuestros Servicios",
+            "subtitle": "Ofrecemos una amplia gama de servicios para apoyar tu educación y crecimiento personal",
+            "items": {
+                "room_booking": {
+                    "title": "Préstamo de Sala",
+                    "description": "Reserva nuestras instalaciones para eventos académicos y culturales"
+                },
+                "extended_hours": {
+                    "title": "Horario Extendido",
+                    "description": "Abierto de lunes a sábado con horarios flexibles para tu comodidad"
+                },
+                "study_rooms": {
+                    "title": "Salas de Estudio",
+                    "description": "Espacios dedicados para estudio individual y grupal"
+                },
+                "digital_access": {
+                    "title": "Acceso Digital",
+                    "description": "WiFi gratuito y acceso a recursos digitales y bases de datos"
+                }
+            }
+        },
+        "news": {
+            "title": "Noticias y Eventos",
+            "subtitle": "Mantente al día con las últimas novedades de nuestra biblioteca",
+            "view_all": "Ver todas",
+            "read_more": "Leer más"
+        }
+    },
+    "history": {
+        "title_prefix": "Nuestra",
+        "title_highlight": "Historia",
+        "subtitle": "Más de medio siglo construyendo el futuro a través del conocimiento y la cultura en Maturín",
+        "mission": {
+            "title": "Misión",
+            "content": "Facilitar el acceso universal al conocimiento y la información, promoviendo la lectura, la investigación y el desarrollo cultural de nuestra comunidad."
+        },
+        "vision": {
+            "title": "Visión",
+            "content": "Ser reconocida como la principal institución de información y cultura del oriente venezolano, adaptándose a las nuevas tecnologías mientras preservamos el valor del saber."
+        },
+        "milestones": {
+            "foundation": {
+                "title": "Fundación",
+                "content": "Establecida oficialmente en 1968, nacimos con la visión de democratizar el acceso al conocimiento en la región oriental.",
+                "highlight": "1968"
+            },
+            "location": {
+                "title": "Ubicación Estratégica",
+                "content": "Ubicada en la Av. Orinoco con Calle Libertador, somos el corazón cultural de Maturín.",
+                "highlight": "Av. Orinoco con Calle Libertador"
+            },
+            "patron": {
+                "title": "Dr. Julián Padrón",
+                "content": "En honor al Dr. Julián Padrón, destacado intelectual y educador venezolano.",
+                "highlight": "Dr. Julián Padrón"
+            },
+            "community": {
+                "title": "Servicio Comunitario",
+                "content": "Más de 55 años sirviendo a estudiantes, investigadores y ciudadanos de todas las edades.",
+                "highlight": "55 años"
+            }
+        },
+        "image_caption": "ICONO CULTURAL",
+        "quote": "\"El conocimiento es el único tesoro que crece cuando se comparte\"",
+        "legacy": "Legado Institucional"
+    },
+    "rooms": {
+        "title_prefix": "Nuestras",
+        "title_highlight": "Salas",
+        "description": "Explore los diferentes espacios dedicados al conocimiento y la cultura. Cada sala cuenta con una colección única esperando ser descubierta.",
+        "loading": "Cargando salas...",
+        "error_title": "Error al cargar las salas",
+        "error_message": "Por favor, intente de nuevo más tarde.",
+        "empty": "No se encontraron salas disponibles.",
+        "loading_single": "Cargando sala {{roomName}}...",
+        "error_single_title": "Error al cargar la sala",
+        "error_single_message": "Por favor, intente de nuevo más tarde.",
+        "empty_single": "No se encontró información para la sala {{roomName}}.",
+        "collection_label": "COLECCIÓN",
+        "view_all": "VER TODOS",
+        "empty_genre": "No hay libros disponibles en este género — Ghost Grid Active",
+        "no_genres": "No hay géneros asignados a esta sala."
+    },
+    "footer": {
+        "brand": {
+            "title": "Biblioteca Pública Central",
+            "subtitle": "Dr. Julián Padrón",
+            "description": "Democratizando el acceso al conocimiento y la cultura para toda la comunidad de Maturín y la región oriental de Venezuela."
+        },
+        "contact": {
+            "title": "Contacto",
+            "address_line1": "Av. Orinoco con Calle Libertador",
+            "address_line2": "Maturín, Monagas, Venezuela"
+        },
+        "hours": {
+            "title": "Horarios",
+            "weekdays": "Lunes - Viernes",
+            "saturdays": "Sábados",
+            "sundays": "Domingos",
+            "closed": "Cerrado"
+        },
+        "copyright": "© 2024 Biblioteca Pública Central Dr. Julián Padrón. Todos los derechos reservados."
+    }
+}

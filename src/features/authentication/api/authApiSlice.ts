@@ -1,4 +1,4 @@
-// src/features/authentication/api/authApiSlice.ts.ts
+// src/features/authentication/api/authApiSlice.ts
 import { apiSlice } from '@/common/api/apiSlice';
 import type { components } from '@/common/types/generated-api-types';
 import { deleteCookie } from '@/common/lib/utils'
@@ -58,8 +58,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
             },
         }),
         getUserProfile: builder.query<UserProfileResponse, void>({
-            query: () => 'user/',
-            transformResponse: (response: UserProfileResponse[]) => response[0],
+            query: () => 'user/me',
         }),
     }),
     overrideExisting: false,

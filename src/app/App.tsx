@@ -34,6 +34,8 @@ import MisPrestamos from "../features/loans/pages/MyLoansPage";
 import NotFound from "../pages/NotFound";
 import { ErrorBoundary } from "../common/components/ErrorBoundary";
 
+import { ThemeSynchronizer } from "@/features/configuration/components/ThemeSynchronizer";
+
 const queryClient = new QueryClient();
 
 export const App = () => {
@@ -44,6 +46,7 @@ export const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ThemeSynchronizer />
             <SidebarProvider>
               <div className="min-h-screen flex w-full">
                 <AppSidebar />

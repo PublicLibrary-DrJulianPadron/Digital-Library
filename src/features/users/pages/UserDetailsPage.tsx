@@ -1,26 +1,19 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/common/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/common/components/ui/card';
 import { ReturnButton } from '@/common/components/ui/return-button';
-import { Badge } from '@/common/components/ui/badge';
 import { ArrowLeft, Mail, Phone, Calendar, Activity, User, CreditCard, MapPin } from 'lucide-react';
 import { useToast } from '@/common/hooks/use-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useGetUserProfileQuery } from "@/features/authentication/api/authApiSlice.ts";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/app/store";
 import { Loader2 } from 'lucide-react';
+import { useCurrentUser } from '../../authentication/hooks/useCurrentUser';
 
 export default function DetallesUsuario() {
-  const { data: profile, isLoading, isError } = useGetUserProfileQuery();
-  const storedProfile = useSelector((state: RootState) => state.auth.profile);
-  const { id } = useParams<{ id: string }>();
+  const { isLoading, isError } = useGetUserProfileQuery();
+  const { profile, displayName, email, initials } = useCurrentUser();
   const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const UserProfile = profile || storedProfile;
 
   if (isLoading) {
     return (
@@ -30,7 +23,7 @@ export default function DetallesUsuario() {
     );
   }
 
-  if (isError || !UserProfile) {
+  if (isError || !profile) {
     return (
       <div className="container mx-auto py-10 text-center">
         <h2 className="text-2xl font-bold text-destructive">Error al cargar el perfil</h2>
@@ -41,7 +34,7 @@ export default function DetallesUsuario() {
   }
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <ReturnButton/>
+      <ReturnButton />
       <div className="flex items-center gap-4">
         <h1 className="text-3xl font-bold text-biblioteca-blue">Detalles del Usuario</h1>
       </div>
@@ -59,14 +52,14 @@ export default function DetallesUsuario() {
             <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Nombre Completo</label>
-                <p className="text-lg font-semibold">{UserProfile.user.first_name + ' ' + UserProfile.user.last_name}</p>
+                <p className="text-lg font-semibold">{displayName}</p>
               </div>
 
               <div className="flex flex-col space-y-1">
                 <label className="text-sm font-medium text-muted-foreground">Cédula</label>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <p className="font-mono">{UserProfile.national_document}</p>
+                  <p className="font-mono">{profile.national_document || 'No registrada'}</p>
                 </div>
               </div>
 
@@ -74,7 +67,7 @@ export default function DetallesUsuario() {
                 <label className="text-sm font-medium text-muted-foreground">Email</label>
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <p className="break-all">{UserProfile.user.email}</p>
+                  <p className="break-all">{email}</p>
                 </div>
               </div>
 
@@ -82,7 +75,7 @@ export default function DetallesUsuario() {
                 <label className="text-sm font-medium text-muted-foreground">Teléfono</label>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <p>{UserProfile.phone || 'No proporcionado'}</p>
+                  <p>{profile.phone || 'No proporcionado'}</p>
                 </div>
               </div>
 
@@ -90,7 +83,7 @@ export default function DetallesUsuario() {
                 <label className="text-sm font-medium text-muted-foreground">Dirección</label>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <p className="break-all">{UserProfile.address || 'No proporcionada'}</p>
+                  <p className="break-all">{profile.address || 'No proporcionada'}</p>
                 </div>
               </div>
 
@@ -98,7 +91,7 @@ export default function DetallesUsuario() {
                 <label className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</label>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <p>{UserProfile.birth_date ? format(new Date(UserProfile.birth_date), 'PPP', { locale: es }) : 'No proporcionada'}</p>
+                  <p>{profile.birth_date ? format(new Date(profile.birth_date), 'PPP', { locale: es }) : 'No proporcionada'}</p>
                 </div>
               </div>
             </div>
